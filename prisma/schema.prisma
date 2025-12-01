@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Product Model
+model Product {
+  id           String   @id @default(cuid())
+  category     String
+  name         String
+  tags         String[] @default([])
+  description  String   @db.Text
+  badge        String?
+  thumbnails   String[] @default([])
+  detailImages String[] @default([])
+  imageUrl     String?
+  storeUrl     String?
+  featured     Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@index([isActive])
+}
+
+// Banner Model
+model Banner {
+  id                 String   @id @default(cuid())
+  type               BannerType
+  title              String?
+  description        String?  @db.Text
+  contentPosition    ContentPosition?
+  titleColor         String?
+  descriptionColor   String?
+  textColor          String?
+  imageUrl           String
+  imagePosition      String?
+  imageX             Float?
+  imageY             Float?
+  imageScale         Float?
+  linkUrl            String?
+  buttonText         String?
+  buttonUrl          String?
+  showButton         Boolean  @default(false)
+  position           Int
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([type])
+  @@index([position])
+  @@index([isActive])
+}
+
+// Admin User Model
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  @@index([username])
+}
+
+// Enums
+enum BannerType {
+  main
+  promotion
+}
+
+enum ContentPosition {
+  top_left
+  top_center
+  top_right
+  middle_left
+  middle_center
+  middle_right
+  bottom_left
+  bottom_center
+  bottom_right
+}
+
+enum UserRole {
+  admin
+  editor
+}

@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const products = getProducts();
+    const products = await getProducts();
     const product = products.find(p => p.id === id);
 
     if (!product) {
@@ -51,7 +51,7 @@ export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPay
       );
     }
 
-    const updatedProduct = updateProduct(params.id, validation.data);
+    const updatedProduct = await updateProduct(params.id, validation.data);
 
     if (!updatedProduct) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -73,7 +73,7 @@ export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPay
 export const DELETE = withAuth(async (request: NextRequest, context: { user: JWTPayload; params?: Promise<Record<string, string>> }) => {
   const params = await context.params!;
   try {
-    const success = deleteProduct(params.id);
+    const success = await deleteProduct(params.id);
 
     if (!success) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });

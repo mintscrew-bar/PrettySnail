@@ -1,132 +1,262 @@
-import fs from 'fs';
-import path from 'path';
-import { Product, Banner, AdminUser } from '@/types';
+import { Product, Banner, AdminUser, ContentPosition } from '@/types';
 import { hashPassword, comparePassword } from './password';
+import prisma from './prisma';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
-const BANNERS_FILE = path.join(DATA_DIR, 'banners.json');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-
-// Ensure data directory exists
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
+// Helper to convert snake_case to kebab-case for ContentPosition
+function toKebabCase(str: string | null): ContentPosition | undefined {
+  if (!str) return undefined;
+  return str.replace(/_/g, '-') as ContentPosition;
 }
 
-// Ensure file exists with default data
-function ensureFile(filePath: string, defaultData: unknown) {
-  ensureDataDir();
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify(defaultData, null, 2));
-  }
+// Helper to convert kebab-case to snake_case for ContentPosition
+function toSnakeCase(str: string | undefined): string | undefined {
+  if (!str) return undefined;
+  return str.replace(/-/g, '_');
+}
+
+// Helper to convert Prisma Product to API Product
+function toPrismaProduct(product: {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  tags: string[];
+  badge: string | null;
+  thumbnails: string[];
+  detailImages: string[];
+  imageUrl: string | null;
+  storeUrl: string | null;
+  featured: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}): Product {
+  return {
+    ...product,
+    badge: product.badge || undefined,
+    imageUrl: product.imageUrl || undefined,
+    storeUrl: product.storeUrl || undefined,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+  };
+}
+
+// Helper to convert Prisma Banner to API Banner
+function toPrismaBanner(banner: {
+  id: string;
+  type: 'main' | 'promotion';
+  title: string | null;
+  description: string | null;
+  contentPosition: string | null;
+  titleColor: string | null;
+  descriptionColor: string | null;
+  textColor: string | null;
+  imageUrl: string;
+  imagePosition: string | null;
+  imageX: number | null;
+  imageY: number | null;
+  imageScale: number | null;
+  linkUrl: string | null;
+  buttonText: string | null;
+  buttonUrl: string | null;
+  showButton: boolean;
+  position: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}): Banner {
+  return {
+    id: banner.id,
+    type: banner.type,
+    title: banner.title || undefined,
+    description: banner.description || undefined,
+    contentPosition: toKebabCase(banner.contentPosition),
+    titleColor: banner.titleColor || undefined,
+    descriptionColor: banner.descriptionColor || undefined,
+    textColor: banner.textColor || undefined,
+    imageUrl: banner.imageUrl,
+    imagePosition: banner.imagePosition || undefined,
+    imageX: banner.imageX || undefined,
+    imageY: banner.imageY || undefined,
+    imageScale: banner.imageScale || undefined,
+    linkUrl: banner.linkUrl || undefined,
+    buttonText: banner.buttonText || undefined,
+    buttonUrl: banner.buttonUrl || undefined,
+    showButton: banner.showButton,
+    position: banner.position,
+    isActive: banner.isActive,
+    createdAt: banner.createdAt.toISOString(),
+    updatedAt: banner.updatedAt.toISOString(),
+  };
+}
+
+// Helper to convert Prisma AdminUser to API AdminUser
+function toPrismaAdminUser(user: {
+  id: string;
+  username: string;
+  password: string;
+  role: 'admin' | 'editor';
+  createdAt: Date;
+}): AdminUser {
+  return {
+    ...user,
+    createdAt: user.createdAt.toISOString(),
+  };
 }
 
 // Products
-export function getProducts(): Product[] {
-  ensureFile(PRODUCTS_FILE, []);
-  const data = fs.readFileSync(PRODUCTS_FILE, 'utf-8');
-  return JSON.parse(data);
+export async function getProducts(): Promise<Product[]> {
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+  return products.map(toPrismaProduct);
 }
 
-export function saveProducts(products: Product[]): void {
-  ensureDataDir();
-  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2));
+export async function addProduct(
+  product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<Product> {
+  const newProduct = await prisma.product.create({
+    data: {
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      tags: product.tags || [],
+      badge: product.badge,
+      thumbnails: product.thumbnails || [],
+      detailImages: product.detailImages || [],
+      imageUrl: product.imageUrl,
+      storeUrl: product.storeUrl,
+      featured: product.featured || false,
+      isActive: product.isActive,
+    },
+  });
+  return toPrismaProduct(newProduct);
 }
 
-export function addProduct(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Product {
-  const products = getProducts();
-  const newProduct: Product = {
-    ...product,
-    id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  products.push(newProduct);
-  saveProducts(products);
-  return newProduct;
+export async function updateProduct(
+  id: string,
+  updates: Partial<Product>
+): Promise<Product | null> {
+  try {
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: {
+        ...(updates.name !== undefined && { name: updates.name }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.category !== undefined && { category: updates.category }),
+        ...(updates.tags !== undefined && { tags: updates.tags }),
+        ...(updates.badge !== undefined && { badge: updates.badge }),
+        ...(updates.thumbnails !== undefined && { thumbnails: updates.thumbnails }),
+        ...(updates.detailImages !== undefined && { detailImages: updates.detailImages }),
+        ...(updates.imageUrl !== undefined && { imageUrl: updates.imageUrl }),
+        ...(updates.storeUrl !== undefined && { storeUrl: updates.storeUrl }),
+        ...(updates.featured !== undefined && { featured: updates.featured }),
+        ...(updates.isActive !== undefined && { isActive: updates.isActive }),
+      },
+    });
+    return toPrismaProduct(updatedProduct);
+  } catch {
+    return null;
+  }
 }
 
-export function updateProduct(id: string, updates: Partial<Product>): Product | null {
-  const products = getProducts();
-  const index = products.findIndex(p => p.id === id);
-  if (index === -1) return null;
-
-  products[index] = {
-    ...products[index],
-    ...updates,
-    id: products[index].id,
-    createdAt: products[index].createdAt,
-    updatedAt: new Date().toISOString(),
-  };
-  saveProducts(products);
-  return products[index];
-}
-
-export function deleteProduct(id: string): boolean {
-  const products = getProducts();
-  const filtered = products.filter(p => p.id !== id);
-  if (filtered.length === products.length) return false;
-  saveProducts(filtered);
-  return true;
+export async function deleteProduct(id: string): Promise<boolean> {
+  try {
+    await prisma.product.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // Banners
-export function getBanners(): Banner[] {
-  ensureFile(BANNERS_FILE, []);
-  const data = fs.readFileSync(BANNERS_FILE, 'utf-8');
-  return JSON.parse(data);
+export async function getBanners(): Promise<Banner[]> {
+  const banners = await prisma.banner.findMany({
+    orderBy: { position: 'asc' },
+  });
+  return banners.map(toPrismaBanner);
 }
 
-export function saveBanners(banners: Banner[]): void {
-  ensureDataDir();
-  fs.writeFileSync(BANNERS_FILE, JSON.stringify(banners, null, 2));
+export async function addBanner(
+  banner: Omit<Banner, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<Banner> {
+  const newBanner = await prisma.banner.create({
+    data: {
+      type: banner.type,
+      title: banner.title,
+      description: banner.description,
+      contentPosition: banner.contentPosition
+        ? (toSnakeCase(banner.contentPosition) as 'top_left' | 'top_center' | 'top_right' | 'middle_left' | 'middle_center' | 'middle_right' | 'bottom_left' | 'bottom_center' | 'bottom_right')
+        : undefined,
+      titleColor: banner.titleColor,
+      descriptionColor: banner.descriptionColor,
+      textColor: banner.textColor,
+      imageUrl: banner.imageUrl,
+      imagePosition: banner.imagePosition,
+      imageX: banner.imageX,
+      imageY: banner.imageY,
+      imageScale: banner.imageScale,
+      linkUrl: banner.linkUrl,
+      buttonText: banner.buttonText,
+      buttonUrl: banner.buttonUrl,
+      showButton: banner.showButton || false,
+      position: banner.position,
+      isActive: banner.isActive,
+    },
+  });
+  return toPrismaBanner(newBanner);
 }
 
-export function addBanner(banner: Omit<Banner, 'id' | 'createdAt' | 'updatedAt'>): Banner {
-  const banners = getBanners();
-  const newBanner: Banner = {
-    ...banner,
-    id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  banners.push(newBanner);
-  saveBanners(banners);
-  return newBanner;
+export async function updateBanner(id: string, updates: Partial<Banner>): Promise<Banner | null> {
+  try {
+    const updatedBanner = await prisma.banner.update({
+      where: { id },
+      data: {
+        ...(updates.type !== undefined && { type: updates.type }),
+        ...(updates.title !== undefined && { title: updates.title }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.contentPosition !== undefined && {
+          contentPosition: updates.contentPosition
+            ? (toSnakeCase(updates.contentPosition) as 'top_left' | 'top_center' | 'top_right' | 'middle_left' | 'middle_center' | 'middle_right' | 'bottom_left' | 'bottom_center' | 'bottom_right')
+            : null,
+        }),
+        ...(updates.titleColor !== undefined && { titleColor: updates.titleColor }),
+        ...(updates.descriptionColor !== undefined && {
+          descriptionColor: updates.descriptionColor,
+        }),
+        ...(updates.textColor !== undefined && { textColor: updates.textColor }),
+        ...(updates.imageUrl !== undefined && { imageUrl: updates.imageUrl }),
+        ...(updates.imagePosition !== undefined && { imagePosition: updates.imagePosition }),
+        ...(updates.imageX !== undefined && { imageX: updates.imageX }),
+        ...(updates.imageY !== undefined && { imageY: updates.imageY }),
+        ...(updates.imageScale !== undefined && { imageScale: updates.imageScale }),
+        ...(updates.linkUrl !== undefined && { linkUrl: updates.linkUrl }),
+        ...(updates.buttonText !== undefined && { buttonText: updates.buttonText }),
+        ...(updates.buttonUrl !== undefined && { buttonUrl: updates.buttonUrl }),
+        ...(updates.showButton !== undefined && { showButton: updates.showButton }),
+        ...(updates.position !== undefined && { position: updates.position }),
+        ...(updates.isActive !== undefined && { isActive: updates.isActive }),
+      },
+    });
+    return toPrismaBanner(updatedBanner);
+  } catch {
+    return null;
+  }
 }
 
-export function updateBanner(id: string, updates: Partial<Banner>): Banner | null {
-  const banners = getBanners();
-  const index = banners.findIndex(b => b.id === id);
-  if (index === -1) return null;
-
-  banners[index] = {
-    ...banners[index],
-    ...updates,
-    id: banners[index].id,
-    createdAt: banners[index].createdAt,
-    updatedAt: new Date().toISOString(),
-  };
-  saveBanners(banners);
-  return banners[index];
-}
-
-export function deleteBanner(id: string): boolean {
-  const banners = getBanners();
-  const filtered = banners.filter(b => b.id !== id);
-  if (filtered.length === banners.length) return false;
-  saveBanners(filtered);
-  return true;
+export async function deleteBanner(id: string): Promise<boolean> {
+  try {
+    await prisma.banner.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // Admin Users
-export function getAdminUsers(): AdminUser[] {
-  const defaultUsers: AdminUser[] = [];
-  ensureFile(USERS_FILE, defaultUsers);
-  const data = fs.readFileSync(USERS_FILE, 'utf-8');
-  return JSON.parse(data);
+export async function getAdminUsers(): Promise<AdminUser[]> {
+  const users = await prisma.adminUser.findMany();
+  return users.map(toPrismaAdminUser);
 }
 
 /**
@@ -134,36 +264,36 @@ export function getAdminUsers(): AdminUser[] {
  * This should be run once during setup
  */
 export async function initializeDefaultAdmin(): Promise<void> {
-  const users = getAdminUsers();
+  const usersCount = await prisma.adminUser.count();
 
   // Only create if no users exist
-  if (users.length === 0) {
+  if (usersCount === 0) {
     const hashedPassword = await hashPassword(process.env.ADMIN_PASSWORD || 'admin123');
-    const defaultAdmin: AdminUser = {
-      id: '1',
-      username: process.env.ADMIN_USERNAME || 'admin',
-      password: hashedPassword,
-      role: 'admin',
-      createdAt: new Date().toISOString(),
-    };
-
-    users.push(defaultAdmin);
-    ensureDataDir();
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+    await prisma.adminUser.create({
+      data: {
+        username: process.env.ADMIN_USERNAME || 'admin',
+        password: hashedPassword,
+        role: 'admin',
+      },
+    });
   }
 }
 
 /**
  * Find admin user by username and verify password
  */
-export async function findAdminUser(username: string, password: string): Promise<AdminUser | null> {
-  const users = getAdminUsers();
-  const user = users.find(u => u.username === username);
+export async function findAdminUser(
+  username: string,
+  password: string
+): Promise<AdminUser | null> {
+  const user = await prisma.adminUser.findUnique({
+    where: { username },
+  });
 
   if (!user) {
     return null;
   }
 
   const isPasswordValid = await comparePassword(password, user.password);
-  return isPasswordValid ? user : null;
+  return isPasswordValid ? toPrismaAdminUser(user) : null;
 }

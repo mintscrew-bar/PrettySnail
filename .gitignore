@@ -73,3 +73,5 @@ logs/
 # Uploads
 public/uploads/*
 !public/uploads/.gitkeep
+
+/src/generated/prisma

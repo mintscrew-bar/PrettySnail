@@ -5,7 +5,7 @@ import { withAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const banners = getBanners();
+    const banners = await getBanners();
     return NextResponse.json(banners);
   } catch (error) {
     console.error('Failed to fetch banners:', error);
@@ -39,7 +39,7 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    const newBanner = addBanner(validation.data);
+    const newBanner = await addBanner(validation.data);
     return NextResponse.json(newBanner, { status: 201 });
   } catch (error) {
     console.error('Failed to create banner:', error);

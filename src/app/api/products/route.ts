@@ -5,7 +5,7 @@ import { withAuth } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const products = getProducts();
+    const products = await getProducts();
     return NextResponse.json(products);
   } catch (error) {
     console.error('Failed to fetch products:', error);
@@ -39,7 +39,7 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    const newProduct = addProduct(validation.data);
+    const newProduct = await addProduct(validation.data);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     console.error('Failed to create product:', error);

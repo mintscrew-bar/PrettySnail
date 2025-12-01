@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const banners = getBanners();
+    const banners = await getBanners();
     const banner = banners.find(b => b.id === id);
 
     if (!banner) {
@@ -51,7 +51,7 @@ export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPay
       );
     }
 
-    const updatedBanner = updateBanner(params.id, validation.data);
+    const updatedBanner = await updateBanner(params.id, validation.data);
 
     if (!updatedBanner) {
       return NextResponse.json({ error: 'Banner not found' }, { status: 404 });
@@ -73,7 +73,7 @@ export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPay
 export const DELETE = withAuth(async (request: NextRequest, context: { user: JWTPayload; params?: Promise<Record<string, string>> }) => {
   const params = await context.params!;
   try {
-    const success = deleteBanner(params.id);
+    const success = await deleteBanner(params.id);
 
     if (!success) {
       return NextResponse.json({ error: 'Banner not found' }, { status: 404 });
