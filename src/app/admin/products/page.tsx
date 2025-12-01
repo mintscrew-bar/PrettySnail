@@ -100,7 +100,9 @@ export default function AdminProductsPage() {
         console.error('Validation error:', errorData);
         if (errorData.details) {
           console.error('Validation details:', JSON.stringify(errorData.details, null, 2));
-          const errorMessages = errorData.details.map((d: any) => `${d.field}: ${d.message}`).join('\n');
+          const errorMessages = (errorData.details as Array<{ field: string; message: string }>)
+            .map(d => `${d.field}: ${d.message}`)
+            .join('\n');
           alert(`Validation 오류:\n${errorMessages}`);
         } else {
           alert(`오류: ${errorData.error || '제품 저장에 실패했습니다'}`);
