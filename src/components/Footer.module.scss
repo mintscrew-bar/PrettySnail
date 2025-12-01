@@ -1,0 +1,169 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.footer {
+  background: $footer-bg;
+  color: $footer-text;
+  padding: $space-3xl $space-lg $space-xl;
+}
+
+.container {
+  @include container;
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: $space-3xl;
+  margin-bottom: $space-xl;
+}
+
+.footerBrand {
+  max-width: 400px;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-lg;
+
+  .logoIcon {
+    font-size: $text-2xl;
+    line-height: 1;
+  }
+
+  .logoText {
+    h3 {
+      font-size: $text-xl;
+      color: $footer-text;
+      margin: 0;
+      font-weight: $font-bold;
+    }
+
+    span {
+      color: $footer-muted;
+      font-size: $text-sm;
+      font-weight: $font-medium;
+      display: block;
+      margin-top: 2px;
+    }
+  }
+}
+
+.footerDesc {
+  color: $footer-text;
+  line-height: $leading-relaxed;
+  margin-bottom: $space-lg;
+  font-size: $text-base;
+}
+
+.certifications {
+  display: flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+}
+
+.cert {
+  @include badge;
+  background: rgba($primary, 0.1);
+  color: $primary;
+  border-color: rgba($primary, 0.2);
+}
+
+.footerLinks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+}
+
+.footerColumn {
+  h4 {
+    color: $footer-text;
+    margin-bottom: $space-md;
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: $space-sm;
+    color: $footer-muted;
+    font-size: $text-sm;
+    line-height: $leading-relaxed;
+  }
+
+  a {
+    color: $footer-muted;
+    text-decoration: none;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $footer-text;
+    }
+  }
+}
+
+.footerBottom {
+  padding-top: $space-lg;
+  border-top: 1px solid rgba($footer-muted, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-lg;
+}
+
+.footerInfo {
+  color: $footer-muted;
+  font-size: $text-sm;
+  line-height: $leading-relaxed;
+  flex: 1;
+
+  p {
+    margin-bottom: $space-xs;
+  }
+}
+
+.footerCopyright {
+  color: $footer-muted;
+  font-size: $text-sm;
+  text-align: right;
+}
+
+// Responsive design
+@include respond-to(md) {
+  .footerContent {
+    grid-template-columns: 1fr;
+    gap: $space-xl;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    gap: $space-md;
+    text-align: left;
+  }
+
+  .footerCopyright {
+    text-align: left;
+  }
+}
+
+@include respond-to(sm) {
+  .footer {
+    padding: $space-xl $space-sm $space-lg;
+  }
+
+  .footerLinks {
+    grid-template-columns: 1fr;
+    gap: $space-lg;
+  }
+
+  .footerBrand {
+    max-width: none;
+  }
+}

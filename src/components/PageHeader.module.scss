@@ -1,0 +1,51 @@
+@use "../styles/design-system" as *;
+@use "../styles/design-mixins" as *;
+
+.pageHeader {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-bg-dark;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+
+  @include tablet-up {
+    min-height: 500px;
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: $color-text-inverse;
+  max-width: 800px;
+  padding: 0 $spacing-component-md;
+  animation: fadeInUp 0.8s ease-out;
+
+  h1 {
+    @include heading-1;
+    color: $color-text-inverse;
+    margin-bottom: $spacing-component-lg;
+  }
+
+  p {
+    @include body-large;
+    color: rgba($color-text-inverse, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}

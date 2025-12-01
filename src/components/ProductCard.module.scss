@@ -1,0 +1,107 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.productCard {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.productBadge {
+  @include badge;
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 2;
+}
+
+.productImage {
+  height: 250px;
+  overflow: hidden;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: $gradient-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba($light-green, 0.1);
+}
+
+.placeholderIcon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.imagePlaceholder p {
+  color: $text-light;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.productInfo {
+  padding: 2rem;
+}
+
+.productName {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-green;
+  margin-bottom: 1rem;
+}
+
+.productDesc {
+  color: $text-light;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.productSpecs {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+
+  li {
+    color: $text-medium;
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 1rem;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: $light-green;
+      font-weight: bold;
+    }
+  }
+}
+
+.productPrice {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.originalPrice {
+  color: $text-light;
+  text-decoration: line-through;
+  font-size: 1rem;
+}
+
+.price {
+  color: $primary-green;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.orderButton {
+  @include button-primary;
+  width: 100%;
+}

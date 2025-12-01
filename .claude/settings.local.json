@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "WebSearch",
+      "WebFetch(domain:www.pulmuone.co.kr)",
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)",
+      "Bash(npm run lint)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 10 npm run dev)",
+      "Bash(del datausers.json)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,523 @@
+@use "design-system" as *;
+
+// ========================================
+// TYPOGRAPHY MIXINS
+// ========================================
+
+@mixin heading-1 {
+  font-family: $font-family-primary;
+  font-size: clamp($font-size-3xl, 5vw, $font-size-5xl);
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin heading-2 {
+  font-family: $font-family-primary;
+  font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-normal;
+}
+
+@mixin heading-3 {
+  font-family: $font-family-primary;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-normal;
+}
+
+@mixin body-large {
+  font-family: $font-family-primary;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+}
+
+@mixin body-base {
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+}
+
+@mixin body-small {
+  font-family: $font-family-primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+}
+
+@mixin caption {
+  font-family: $font-family-primary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+// ========================================
+// SPACING MIXINS
+// ========================================
+
+@mixin spacing-stack($size) {
+  margin-bottom: $size;
+}
+
+@mixin spacing-inline($size) {
+  margin-right: $size;
+}
+
+@mixin spacing-inset($size) {
+  padding: $size;
+}
+
+@mixin spacing-squish($vertical, $horizontal) {
+  padding: $vertical $horizontal;
+}
+
+// ========================================
+// BUTTON MIXINS
+// ========================================
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-component-xs;
+  font-family: $font-family-primary;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: $transition-normal;
+  cursor: pointer;
+  border: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-interactive-primary;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background: $color-interactive-primary;
+  color: $color-text-inverse;
+  @include spacing-squish($space-3, $space-6);
+
+  &:hover {
+    background: $color-interactive-primary-hover;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background: transparent;
+  color: $color-interactive-primary;
+  border: 2px solid $color-interactive-primary;
+  @include spacing-squish($space-3, $space-6);
+
+  &:hover {
+    background: $color-interactive-primary;
+    color: $color-text-inverse;
+  }
+}
+
+@mixin button-ghost {
+  @include button-base;
+  background: transparent;
+  color: $color-interactive-primary;
+  @include spacing-squish($space-2, $space-4);
+
+  &:hover {
+    background: $color-bg-secondary;
+  }
+}
+
+@mixin button-accent {
+  @include button-base;
+  background: $gradient-accent;
+  color: $color-text-inverse;
+  @include spacing-squish($space-4, $space-8);
+  font-size: $font-size-lg;
+  box-shadow: $shadow-lg;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+// Button Sizes
+@mixin button-sm {
+  @include spacing-squish($space-2, $space-4);
+  font-size: $font-size-sm;
+  min-height: 36px;
+}
+
+@mixin button-md {
+  @include spacing-squish($space-3, $space-6);
+  font-size: $font-size-base;
+  min-height: 44px;
+}
+
+@mixin button-lg {
+  @include spacing-squish($space-4, $space-8);
+  font-size: $font-size-lg;
+  min-height: 56px;
+}
+
+// ========================================
+// CARD MIXINS
+// ========================================
+
+@mixin card-base {
+  background: $color-card-bg;
+  border: 1px solid $color-card-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  transition: $transition-normal;
+  overflow: hidden;
+
+  &:focus-within {
+    outline: 3px solid $color-interactive-primary;
+    outline-offset: 2px;
+  }
+}
+
+@mixin card-interactive {
+  @include card-base;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-interactive-primary;
+  }
+}
+
+@mixin card-static {
+  @include card-base;
+}
+
+@mixin card-elevated {
+  @include card-base;
+  box-shadow: $shadow-md;
+
+  &:hover {
+    box-shadow: $shadow-xl;
+  }
+}
+
+@mixin card-vertical {
+  display: flex;
+  flex-direction: column;
+
+  .card-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .card-content {
+    @include spacing-inset($spacing-component-md);
+    flex: 1;
+  }
+}
+
+@mixin card-horizontal {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+
+  .card-image {
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .card-content {
+    @include spacing-inset($spacing-component-md);
+  }
+}
+
+// ========================================
+// SECTION MIXINS
+// ========================================
+
+@mixin section-base {
+  width: 100%;
+  padding: $spacing-section-lg 0;
+
+  @media (max-width: $breakpoint-desktop) {
+    padding: $spacing-section-md 0;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $spacing-section-sm 0;
+  }
+}
+
+@mixin section-light {
+  @include section-base;
+  background: $color-bg-primary;
+}
+
+@mixin section-dark {
+  @include section-base;
+  background: $color-bg-dark;
+  color: $color-text-inverse;
+}
+
+@mixin section-gradient {
+  @include section-base;
+  background: $gradient-subtle;
+}
+
+@mixin section-header {
+  text-align: center;
+  margin-bottom: $spacing-section-md;
+  max-width: $content-max-width;
+  margin-left: auto;
+  margin-right: auto;
+
+  h2 {
+    @include heading-2;
+    margin-bottom: $spacing-component-md;
+  }
+
+  p {
+    @include body-large;
+    color: $color-text-secondary;
+  }
+}
+
+// ========================================
+// LAYOUT MIXINS
+// ========================================
+
+@mixin container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-component-md;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 0 $spacing-component-sm;
+  }
+}
+
+@mixin grid-responsive($min-width: 280px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $spacing-grid-lg;
+
+  @media (max-width: $breakpoint-desktop) {
+    gap: $spacing-grid-md;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+    gap: $spacing-grid-md;
+  }
+}
+
+// ========================================
+// RESPONSIVE MIXINS
+// ========================================
+
+@mixin mobile-only {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin desktop-only {
+  @media (min-width: $breakpoint-desktop) and (max-width: $breakpoint-wide - 1) {
+    @content;
+  }
+}
+
+@mixin wide-up {
+  @media (min-width: $breakpoint-wide) {
+    @content;
+  }
+}
+
+// Legacy support
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $breakpoint-mobile) {
+      @content;
+    }
+  }
+  @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-tablet) {
+      @content;
+    }
+  }
+  @else if $breakpoint == md {
+    @media (max-width: $breakpoint-desktop) {
+      @content;
+    }
+  }
+  @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-wide) {
+      @content;
+    }
+  }
+}
+
+// ========================================
+// ANIMATION MIXINS
+// ========================================
+
+@mixin fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@mixin fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@mixin slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+@mixin slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+// ========================================
+// KEYFRAMES
+// ========================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// ========================================
+// ACCESSIBILITY MIXINS
+// ========================================
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@mixin focus-visible {
+  &:focus-visible {
+    outline: 3px solid $color-interactive-primary;
+    outline-offset: 2px;
+  }
+}
+
+// ========================================
+// UTILITY MIXINS
+// ========================================
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

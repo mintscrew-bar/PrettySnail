@@ -1,0 +1,263 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba($white, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: $z-nav;
+  border-bottom: 1px solid $neutral-300;
+  transition: $transition-normal;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navContainer {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  text-decoration: none;
+  color: inherit;
+  transition: $transition-fast;
+
+  &:hover {
+    transform: none;
+  }
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 80px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    transition: $transition-fast;
+  }
+
+  &:hover svg {
+    transform: scale(1.05);
+  }
+}
+
+.logoText {
+  h2 {
+    color: $text-primary;
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+}
+
+.logoSubtext {
+  color: $text-tertiary;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: $space-2xl;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: $text-secondary;
+    font-weight: $font-medium;
+    font-size: $text-base;
+    transition: $transition-normal;
+    position: relative;
+    padding: $space-sm $space-md;
+    border-radius: $radius-md;
+
+    &.active {
+      color: $primary;
+      background: $neutral-100;
+    }
+
+    &:hover {
+      color: $primary;
+      background: $neutral-100;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+// 햄버거 메뉴 버튼
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: $z-nav + 2;
+
+  span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: $primary;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &.open {
+    span:nth-child(1) {
+      transform: translateY(9.5px) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-9.5px) rotate(-45deg);
+    }
+  }
+
+  &:hover span {
+    background: $primary-dark;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// 모바일 메뉴 오버레이
+.overlay {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: $z-nav - 1;
+  animation: fadeIn 0.3s ease;
+}
+
+// Responsive design
+@include respond-to(lg) {
+  .navContainer {
+    padding: 0 $space-lg;
+  }
+}
+
+@include respond-to(md) {
+  .navLinks {
+    gap: $space-lg;
+
+    a {
+      font-size: $text-sm;
+      padding: $space-xs $space-sm;
+    }
+  }
+}
+
+@include respond-to(sm) {
+  .nav {
+    height: 80px;
+  }
+
+  .navContainer {
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .logoIcon {
+    width: 160px;
+    height: 64px;
+  }
+
+  // 햄버거 버튼 표시
+  .menuToggle {
+    display: flex;
+  }
+
+  // 모바일 메뉴 스타일
+  .navLinks {
+    position: fixed;
+    top: 80px;
+    left: -100%;
+    width: 80%;
+    max-width: 320px;
+    height: calc(100vh - 80px);
+    background: $white;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: $space-xl;
+    box-shadow: $shadow-xl;
+    transition: left 0.3s ease;
+    z-index: $z-nav + 1;
+    overflow-y: auto;
+
+    &.open {
+      left: 0;
+    }
+
+    li {
+      width: 100%;
+      border-bottom: 1px solid $neutral-200;
+    }
+
+    a {
+      display: block;
+      width: 100%;
+      padding: $space-lg $space-md;
+      font-size: $text-lg;
+      font-weight: $font-semibold;
+      color: $text-primary;
+      border-radius: 0;
+
+      &:hover {
+        background: $neutral-100;
+        color: $primary;
+      }
+
+      &.active {
+        color: $primary;
+        background: $neutral-100;
+      }
+    }
+  }
+
+  .overlay {
+    display: block;
+  }
+}

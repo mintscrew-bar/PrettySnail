@@ -1,0 +1,33 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.valueCard {
+  @include card;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.valueIcon {
+  font-size: $text-4xl;
+  margin-bottom: $space-lg;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.valueCard h3 {
+  font-size: $text-xl;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  margin-bottom: $space-md;
+  line-height: $leading-tight;
+}
+
+.valueCard p {
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+  text-align: left;
+  font-size: $text-base;
+  flex: 1;
+}

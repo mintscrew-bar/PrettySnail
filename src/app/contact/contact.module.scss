@@ -1,0 +1,347 @@
+@use "../../styles/variables" as *;
+@use "../../styles/animations" as *;
+
+// ========================================
+// CONTACT PAGE STYLES
+// ========================================
+
+// Common section styling
+.sectionContainer {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $space-4xl $container-padding;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-3xl $container-padding-mobile;
+  }
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: $space-4xl;
+
+  h2 {
+    font-size: $text-4xl;
+    font-weight: $font-bold;
+    color: $text-primary;
+    margin-bottom: $space-md;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $text-3xl;
+    }
+  }
+
+  p {
+    font-size: $text-lg;
+    color: $text-secondary;
+    max-width: 600px;
+    margin: 0 auto;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $text-base;
+    }
+  }
+}
+
+// ========================================
+// CONTACT METHODS SECTION
+// ========================================
+
+.contactMethods {
+  background: $background-alt;
+  padding: $space-4xl 0;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-3xl 0;
+  }
+}
+
+.methodsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2xl;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $space-lg;
+  }
+}
+
+.methodCard {
+  background: $white;
+  border-radius: $radius-xl;
+  padding: $space-3xl $space-2xl;
+  text-align: center;
+  box-shadow: $shadow-sm;
+  transition: $transition-normal;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-lg;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-xl;
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.methodIcon {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: $space-md;
+}
+
+.methodCard h3 {
+  font-size: $text-2xl;
+  font-weight: $font-bold;
+  color: $text-primary;
+  margin: 0;
+}
+
+.methodDescription {
+  font-size: $text-base;
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+  margin: 0;
+}
+
+.methodButton {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  color: $primary;
+  font-weight: $font-semibold;
+  font-size: $text-lg;
+  margin-top: $space-md;
+  transition: $transition-fast;
+
+  svg {
+    transition: $transition-fast;
+  }
+
+  .methodCard:hover & {
+    gap: $space-md;
+
+    svg {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// ========================================
+// LOCATION SECTION
+// ========================================
+
+.locationSection {
+  padding: $space-4xl 0;
+  background: $white;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-3xl 0;
+  }
+}
+
+.locationContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3xl;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $space-2xl;
+  }
+}
+
+.mapContainer {
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+  height: 450px;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.addressInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 450px;
+  padding: $space-2xl;
+
+  @media (max-width: $breakpoint-md) {
+    height: auto;
+    padding: $space-xl 0;
+  }
+}
+
+.addressCard {
+  background: $background-alt;
+  border-radius: $radius-lg;
+  padding: $space-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.addressIcon {
+  font-size: 2.5rem;
+  line-height: 1;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 2rem;
+  }
+}
+
+.addressDetails {
+  h3 {
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    color: $text-primary;
+    margin: 0 0 $space-md 0;
+    line-height: $leading-tight;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $text-lg;
+    }
+  }
+}
+
+.contactInfo {
+  font-size: $text-base;
+  color: $text-secondary;
+  margin: 0;
+  line-height: $leading-relaxed;
+  white-space: pre-line;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $text-sm;
+  }
+}
+
+// ========================================
+// FAQ SECTION
+// ========================================
+
+.faqSection {
+  background: $background-alt;
+  padding: $space-4xl 0;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-3xl 0;
+  }
+}
+
+.faqList {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.faqItem {
+  background: $white;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  transition: $transition-normal;
+
+  &.open {
+    box-shadow: $shadow-md;
+  }
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-xl $space-2xl;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: $text-lg;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  transition: $transition-fast;
+
+  &:hover {
+    background: $background-alt;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-lg $space-lg;
+    font-size: $text-base;
+    gap: $space-sm;
+  }
+}
+
+.faqQ {
+  font-size: $text-2xl;
+  font-weight: $font-bold;
+  color: $primary;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $text-xl;
+  }
+}
+
+.faqIcon {
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: $transition-fast;
+  color: $text-secondary;
+
+  .faqItem.open & {
+    transform: rotate(180deg);
+    color: $primary;
+  }
+}
+
+.faqAnswer {
+  padding: 0 $space-2xl $space-xl $space-2xl;
+  display: flex;
+  gap: $space-md;
+  animation: fadeInUp 0.3s ease;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 $space-lg $space-lg $space-lg;
+    gap: $space-sm;
+  }
+}
+
+.faqA {
+  font-size: $text-2xl;
+  font-weight: $font-bold;
+  color: $secondary;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $text-xl;
+  }
+}
+
+.faqAnswer p {
+  font-size: $text-base;
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+  margin: 0;
+  padding-top: 2px;
+}

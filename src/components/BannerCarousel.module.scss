@@ -1,0 +1,382 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+@use "../styles/animations" as *;
+
+.carousel {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  margin-top: $hero-margin-top;
+
+  @media (max-width: $breakpoint-sm) {
+    margin-top: $hero-margin-top-mobile;
+  }
+}
+
+.bannerContainer {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+// heroBackgroundImage 스타일은 인라인으로 적용됨
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.heroContainer {
+  @include container;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+  display: flex;
+
+  // 9개 위치 지원
+  &[data-position="top-left"] {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  &[data-position="top-center"] {
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &[data-position="top-right"] {
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  &[data-position="middle-left"] {
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  &[data-position="middle-center"] {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &[data-position="middle-right"] {
+    align-items: center;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  &[data-position="bottom-left"] {
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  &[data-position="bottom-center"] {
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &[data-position="bottom-right"] {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 $container-padding-mobile;
+  }
+}
+
+.heroContent {
+  max-width: 800px;
+  color: $white;
+  animation: fadeInUp 0.5s ease-out;
+
+  // 위치에 따라 margin 조정
+  .heroContainer[data-position="top-left"] &,
+  .heroContainer[data-position="middle-left"] &,
+  .heroContainer[data-position="bottom-left"] & {
+    margin: 0;
+  }
+
+  .heroContainer[data-position="top-center"] &,
+  .heroContainer[data-position="middle-center"] &,
+  .heroContainer[data-position="bottom-center"] & {
+    margin: 0 auto;
+  }
+
+  .heroContainer[data-position="top-right"] &,
+  .heroContainer[data-position="middle-right"] &,
+  .heroContainer[data-position="bottom-right"] & {
+    margin: 0 0 0 auto;
+  }
+}
+
+.heroTitle {
+  margin-bottom: $space-xs;
+
+  &:focus {
+    outline: 2px solid $white;
+    outline-offset: 4px;
+  }
+}
+
+.heroTitleMain,
+.heroTitleHighlight {
+  display: block;
+  font-size: clamp($text-4xl, 6vw, $text-5xl);
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  margin-bottom: $space-xs;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.02em;
+}
+
+.heroTitleMain {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.heroTitleHighlight {
+  font-size: clamp($text-5xl, 7vw, 4rem);
+  animation: slideInRight 0.5s ease-out;
+}
+
+.heroCTA {
+  display: flex;
+  gap: $space-xl;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.5s ease-out;
+  margin-top: $space-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $space-lg;
+    align-items: center;
+  }
+}
+
+.ctaButtonPrimary {
+  @include button-primary;
+  background: $primary;
+  color: $white;
+  padding: $space-lg $space-2xl;
+  font-size: $text-lg;
+  min-height: 56px;
+  box-shadow: $shadow-xl;
+  gap: $space-md;
+  border: none;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:hover {
+    background: $primary-dark;
+    color: $white;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba($primary-dark, 0.4);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  svg {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-md $space-xl;
+    font-size: $text-base;
+    min-height: 48px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $space-md $space-lg;
+    font-size: $text-sm;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+// 네비게이션 버튼
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.navButtonPrev {
+  left: $space-2xl;
+
+  @media (max-width: $breakpoint-sm) {
+    left: $space-md;
+  }
+}
+
+.navButtonNext {
+  right: $space-2xl;
+
+  @media (max-width: $breakpoint-sm) {
+    right: $space-md;
+  }
+}
+
+// 인디케이터
+.indicators {
+  position: absolute;
+  bottom: $space-3xl;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: $space-sm;
+
+  @media (max-width: $breakpoint-sm) {
+    bottom: $space-xl;
+  }
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(1.2);
+  }
+}
+
+.indicatorActive {
+  background: white;
+  width: 32px;
+  border-radius: 6px;
+}
+
+// 스크롤 인디케이터
+.scrollIndicator {
+  position: absolute;
+  bottom: $space-2xl;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+  color: $white;
+  cursor: pointer;
+  animation: bounceVertical 2s infinite ease-in-out;
+
+  @media (max-width: $breakpoint-sm) {
+    bottom: $space-xl;
+  }
+}
+
+.scrollText {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  letter-spacing: 0.05em;
+}
+
+.scrollArrow {
+  animation: arrowBounce 2s infinite ease-in-out;
+}
+
+@keyframes bounceVertical {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+@keyframes arrowBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

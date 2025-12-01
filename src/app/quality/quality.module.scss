@@ -1,0 +1,751 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+@use "../../styles/animations" as *;
+
+.container {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 공통 스타일 재사용 */
+.nav,
+.navContainer,
+.logo,
+.logoIcon,
+.logoText,
+.logoSubtext,
+.navLinks {
+  /* 메인 페이지 스타일과 동일 */
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 100, 0, 0.1);
+}
+
+.navContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 100, 0, 0.2));
+}
+
+.logoText h2 {
+  color: #006400;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.logoSubtext {
+  color: #8b9a7e;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 3rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks a {
+  text-decoration: none;
+  color: #2d2d2d;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.navLinks a.active {
+  color: #006400;
+  font-weight: 600;
+}
+
+.navLinks a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #1a1a1a;
+  transition: width 0.3s ease;
+}
+
+.navLinks a:hover::after,
+.navLinks a.active::after {
+  width: 100%;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #fafafa, #f5f5f5);
+  padding: 12rem 3rem 8rem;
+  text-align: center;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  margin-bottom: 2rem;
+  color: #6b7280;
+}
+
+.breadcrumb a {
+  color: #006400;
+  text-decoration: none;
+}
+
+.heroTitle {
+  font-size: clamp(1.75rem, 4.5vw, 3.5rem);
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: #006400;
+}
+
+.heroDescription {
+  font-size: 1.3rem;
+  color: #4a5568;
+  line-height: 1.8;
+}
+
+/* HACCP Section */
+.haccp {
+  padding: 8rem 3rem;
+  background: white;
+}
+
+.haccpContent {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sectionBadge {
+  display: inline-block;
+  background: #1a1a1a;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.haccpText h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+}
+
+.haccpDescription {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.haccpFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.haccpFeature {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.featureIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 100, 0, 0.2));
+}
+
+.haccpFeature h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #006400;
+  margin-bottom: 0.5rem;
+}
+
+.haccpFeature p {
+  color: #6b7280;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  max-width: 500px;
+  height: 400px;
+  background: linear-gradient(135deg, #f5f5f5, #ececec);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 60px rgba(84, 116, 22, 0.15);
+  border: 2px solid rgba(84, 116, 22, 0.2);
+}
+
+.placeholderIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.imagePlaceholder p {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Process Section */
+.process {
+  @include section;
+  background: $white;
+  padding: $space-4xl 0;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionHeader h2 {
+  color: $text-primary;
+  font-size: $text-4xl;
+  font-weight: $font-bold;
+  margin-bottom: $space-lg;
+  line-height: $leading-tight;
+}
+
+.sectionHeader p {
+  color: $text-secondary;
+  font-size: $text-lg;
+  line-height: $leading-relaxed;
+  margin: 0;
+}
+
+.processFlow {
+  overflow: hidden;
+  margin-top: $space-3xl;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, $white, transparent);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, $white, transparent);
+  }
+}
+
+.processTrack {
+  display: flex;
+  gap: $space-xl;
+  animation: scroll 30s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.processStep {
+  background: $white;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  border: 2px solid $neutral-200;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  width: 320px;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $primary;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 280px;
+  }
+}
+
+.stepImage {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .processStep:hover & img {
+    transform: scale(1.05);
+  }
+}
+
+.stepNumber {
+  position: absolute;
+  top: $space-md;
+  right: $space-md;
+  background: $gradient-primary;
+  color: $white;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $text-sm;
+  font-weight: $font-bold;
+  z-index: 2;
+}
+
+.stepContent {
+  padding: $space-xl;
+
+  h3 {
+    color: $text-primary;
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+    margin-bottom: $space-sm;
+  }
+
+  p {
+    color: $text-secondary;
+    line-height: $leading-relaxed;
+    margin: 0;
+    font-size: $text-sm;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-lg;
+
+    h3 {
+      font-size: $text-base;
+    }
+
+    p {
+      font-size: $text-xs;
+    }
+  }
+}
+
+.haccpImageContent,
+.testingImageContent,
+.traceImageContent {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: $radius-lg;
+}
+
+/* 나머지 섹션들도 유사한 패턴으로 스타일링 */
+.testing,
+.certifications,
+.traceability {
+  padding: 8rem 3rem;
+}
+
+.testing {
+  background: white;
+}
+
+.certifications {
+  background: linear-gradient(to bottom, #fafafa, #f5f5f5);
+}
+
+.traceability {
+  background: white;
+}
+
+.testingContent,
+.traceContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.testingText h2,
+.traceText h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #006400;
+}
+
+.testingDescription,
+.traceDescription {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.testingItems,
+.traceSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.testingItem,
+.traceStep {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.testingItem h4,
+.traceStep h4 {
+  color: #006400;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.testingItem p,
+.traceStep p {
+  color: #6b7280;
+}
+
+.traceNumber {
+  font-size: 1.5rem;
+  min-width: 40px;
+}
+
+.certGrid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  justify-items: center;
+  align-items: start;
+}
+
+// 2개 인증 카드용 그리드
+.certGridTwo {
+  max-width: 700px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  justify-items: center;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .certGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .certGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .certGridTwo {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.certCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(84, 116, 22, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+}
+
+.certCard:hover {
+  transform: translateY(-15px);
+  border-color: rgba(84, 116, 22, 0.5);
+  box-shadow: 0 20px 60px rgba(84, 116, 22, 0.2);
+}
+
+.certIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 100, 0, 0.2));
+}
+
+.certCard h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #006400;
+  margin-bottom: 0.5rem;
+}
+
+.certCard p {
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.certDate {
+  color: #8b9a7e;
+  font-size: 0.9rem;
+}
+
+.certBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #1a1a1a;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.checkButton {
+  background: #1a1a1a;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(84, 116, 22, 0.3);
+}
+
+.checkButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(84, 116, 22, 0.4);
+}
+
+/* Footer - 기존과 동일 */
+.footer {
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+  color: white;
+  padding: 4rem 3rem 2rem;
+}
+
+.footerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 3rem;
+}
+
+.footerBrand {
+  padding-right: 2rem;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.footerLogo h3 {
+  font-size: 2rem;
+  color: #547416;
+  margin: 0;
+}
+
+.footerLogo span {
+  color: #8b9a7e;
+  font-size: 0.9rem;
+}
+
+.footerDesc {
+  color: #cccccc;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.certifications {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cert {
+  background: rgba(84, 116, 22, 0.2);
+  color: #547416;
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid rgba(84, 116, 22, 0.3);
+}
+
+.footerLinks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+}
+
+.footerColumn h4 {
+  color: #547416;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.footerColumn ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerColumn li {
+  margin-bottom: 0.8rem;
+  color: #cccccc;
+}
+
+.footerColumn a {
+  color: #cccccc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerColumn a:hover {
+  color: #547416;
+}
+
+.footerBottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid #404040;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footerInfo {
+  color: #999999;
+  font-size: 0.9rem;
+}
+
+.footerInfo p {
+  margin-bottom: 0.3rem;
+}
+
+.footerCopyright {
+  color: #999999;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .haccpContent,
+  .testingContent,
+  .traceContent {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .processFlow {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .footerContent {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .navContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navLinks {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .heroTitle,
+  .haccpText h2,
+  .testingText h2,
+  .traceText h2 {
+    font-size: 2.2rem;
+  }
+
+  .certGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}

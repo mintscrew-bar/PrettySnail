@@ -1,0 +1,184 @@
+// Enhanced Color Palette for PrettySnail - Natural & Earthy Brand Colors
+$primary: #547416; // Deep olive green - natural, earthy, farm-like
+$primary-light: #e7e7e7; // Lighter olive green
+$primary-dark: #313f10; // Darker olive green
+$primary-ultra: #5c6e2a; // Ultra vibrant olive
+$secondary: #8b4513; // Saddle brown - earthy, natural
+$secondary-light: #a0522d; // Light brown
+$secondary-dark: #654321; // Dark brown
+$accent: #d2691e; // Chocolate orange - warm, appetizing
+$accent-dark: #b8601a; // Darker orange
+$accent-light: #00a00d; // Golden rod - premium, natural
+$nature-green: #27ae60; // Fresh emerald green - better contrast
+$nature-blue: #3498db; // Clear sky blue - improved accessibility
+$electric-pink: #e91e63; // Electric pink for special effects
+$electric-purple: #9b59b6; // Electric purple for contrast
+$neutral-100: #f8f9fa; // Clean light gray
+$neutral-200: #e9ecef; // Light background
+$neutral-300: #dee2e6; // Subtle border
+$neutral-400: #ced4da; // Medium border
+$neutral-500: #adb5bd; // Medium gray for text
+
+// Typography Colors - Enhanced Accessibility
+$text-primary: #0f0f0f; // Deep blue-gray for better readability
+$text-secondary: #5a6c7d; // Medium blue-gray with sufficient contrast
+$text-tertiary: #95a5a6; // Light gray for subtle text
+$text-inverse: #ffffff; // Pure white
+$text-success: #27ae60; // Success state text
+$text-warning: #f39c12; // Warning state text
+$text-error: #e74c3c; // Error state text
+
+// Background Colors
+$white: #ffffff;
+$background: #fdfdfd; // Off-white
+$background-alt: #f9fafb; // Very light gray
+
+// Footer Colors (WCAG AAA compliant) - Dark Green Theme
+$footer-bg: #2d3e2d;      // Dark green
+$footer-text: #f3f4f6;    // 12:1 대비 (AAA)
+$footer-muted: #d1d5db;   // 8.5:1 대비 (AAA)
+
+// Enhanced Spacing System - Better Visual Rhythm
+$space-xs: 0.25rem; // 4px - micro spacing
+$space-sm: 0.5rem; // 8px - small spacing
+$space-md: 1rem; // 16px - base spacing
+$space-lg: 1.5rem; // 24px - medium spacing
+$space-xl: 2rem; // 32px - large spacing
+$space-2xl: 3rem; // 48px - extra large spacing
+$space-3xl: 4rem; // 64px - section spacing
+$space-4xl: 6rem; // 96px - major section spacing
+$space-5xl: 8rem; // 128px - hero spacing
+
+// Layout - Enhanced Responsive Design
+$section-padding: $space-4xl $space-xl;
+$section-padding-mobile: $space-3xl $space-lg;
+$container-max-width: 1200px;
+$content-max-width: 800px;
+$container-padding: $space-xl;
+$container-padding-mobile: $space-lg;
+
+// Border Radius - Enhanced Design System
+$radius-xs: 3px; // Small elements
+$radius-sm: 6px; // Buttons, small cards
+$radius-md: 8px; // Medium elements
+$radius-lg: 12px; // Cards, containers
+$radius-xl: 16px; // Large cards
+$radius-2xl: 24px; // Hero elements, major containers
+$radius-full: 50%; // Circular elements
+
+// Enhanced Shadow System - Better Depth & Accessibility
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.16);
+$shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.2);
+$shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-focus: 0 0 0 3px rgba($primary, 0.3);
+
+// Dynamic gradients for impact
+$gradient-hero: linear-gradient(
+  135deg,
+  $primary 0%,
+  $secondary 50%,
+  $primary-light 100%
+);
+$gradient-hero-alt: linear-gradient(
+  45deg,
+  $secondary 0%,
+  $nature-green 30%,
+  $secondary-light 100%
+);
+$gradient-accent: linear-gradient(90deg, $accent 0%, $accent-dark 100%);
+$gradient-nature: linear-gradient(135deg, $nature-green 0%, $nature-blue 100%);
+$gradient-subtle: linear-gradient(to bottom, $white, $neutral-200);
+$gradient-card: linear-gradient(
+  135deg,
+  rgba($secondary, 0.1) 0%,
+  rgba($primary, 0.05) 100%
+);
+$gradient-primary: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+$gradient-interactive: linear-gradient(
+  135deg,
+  $primary 0%,
+  $primary-dark 50%,
+  $secondary 100%
+);
+$gradient-electric: linear-gradient(
+  135deg,
+  $electric-pink 0%,
+  $electric-purple 100%
+);
+$gradient-ultra: linear-gradient(
+  135deg,
+  $primary-ultra 0%,
+  $secondary-dark 50%,
+  $accent-light 100%
+);
+$gradient-rainbow: linear-gradient(
+  135deg,
+  $primary 0%,
+  $secondary 25%,
+  $accent 50%,
+  $nature-green 75%,
+  $nature-blue 100%
+);
+$gradient-shimmer: linear-gradient(
+  90deg,
+  transparent 0%,
+  rgba($accent, 0.4) 50%,
+  transparent 100%
+);
+
+// Transitions
+$transition-fast: all 0.15s ease;
+$transition-normal: all 0.25s ease;
+$transition-slow: all 0.4s ease;
+
+// Typography Scale
+$text-xs: 0.75rem; // 12px
+$text-sm: 0.875rem; // 14px
+$text-base: 1rem; // 16px
+$text-lg: 1.125rem; // 18px
+$text-xl: 1.25rem; // 20px
+$text-2xl: 1.5rem; // 24px
+$text-3xl: 1.875rem; // 30px
+$text-4xl: 2.25rem; // 36px
+$text-5xl: 3rem; // 48px
+
+// Font Weights
+$font-light: 300;
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+
+// Line Heights
+$leading-tight: 1.25;
+$leading-snug: 1.375;
+$leading-normal: 1.5;
+$leading-relaxed: 1.625;
+$leading-loose: 2;
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 968px;
+$breakpoint-lg: 1200px;
+$breakpoint-xl: 1400px;
+
+// Z-index
+$z-nav: 1000;
+$z-modal: 9999;
+$z-tooltip: 10000;
+
+// Animation and interaction values
+$mouse-parallax-intensity: 20;
+$scroll-parallax-speed: 0.5;
+$scroll-parallax-slow: 0.3;
+$scroll-parallax-medium: 0.6;
+$scroll-parallax-fast: 0.9;
+$scroll-reveal-distance: 30px;
+$scroll-reveal-stagger-delay: 100ms;
+$hero-margin-top: 80px;
+$hero-margin-top-mobile: 120px;

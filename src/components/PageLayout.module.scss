@@ -1,0 +1,14 @@
+@use "../styles/design-system" as *;
+@use "../styles/design-mixins" as *;
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  margin-top: 80px; // Header 높이
+  width: 100%;
+}
