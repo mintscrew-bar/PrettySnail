@@ -41,12 +41,12 @@ Local git hooks
 To install the included repo-local pre-commit hook which prevents Windows reserved filenames from being committed:
 
 - On Windows (cmd.exe):
-	```cmd
-	scripts\install-hooks.cmd
-	```
+  ```cmd
+  scripts\install-hooks.cmd
+  ```
 - On macOS / Linux:
-	```bash
-	scripts/install-hooks.sh
-	```
+  ```bash
+  scripts/install-hooks.sh
+  ```
 
 The hook will reject commits containing files whose basenames match reserved names (e.g., `nul`, `con`, `com1`, `lpt1`).
