@@ -28,7 +28,8 @@
       "Bash(vercel env:*)",
       "Bash(vercel login)",
       "Bash(git rm:*)",
-      "Bash(node scripts/add-credentials-to-fetch.js:*)"
+      "Bash(node scripts/add-credentials-to-fetch.js:*)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []

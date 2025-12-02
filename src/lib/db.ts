@@ -298,3 +298,54 @@ export async function findAdminUser(
   const isPasswordValid = await comparePassword(password, user.password);
   return isPasswordValid ? toPrismaAdminUser(user) : null;
 }
+
+/**
+ * Find admin user by ID
+ */
+export async function findAdminUserById(id: string): Promise<AdminUser | null> {
+  const user = await prisma.adminUser.findUnique({
+    where: { id },
+  });
+
+  return user ? toPrismaAdminUser(user) : null;
+}
+
+/**
+ * Change admin user password
+ */
+export async function changeAdminPassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Get user
+    const user = await prisma.adminUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return { success: false, error: 'User not found' };
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await comparePassword(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      return { success: false, error: 'Current password is incorrect' };
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password
+    await prisma.adminUser.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error changing password:', error);
+    return { success: false, error: 'Failed to change password' };
+  }
+}

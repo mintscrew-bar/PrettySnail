@@ -75,6 +75,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             🖼️ 배너 관리
           </Link>
+          <Link
+            href="/admin/settings"
+            className={pathname === '/admin/settings' ? styles.active : ''}
+          >
+            ⚙️ 설정
+          </Link>
         </nav>
 
         <div className={styles.user}>
