@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { ErrorCode } from './errorCodes';
 
+
 export enum LogLevel {
   INFO = 'INFO',
   WARN = 'WARN',
@@ -25,21 +26,38 @@ class Logger {
   private errorLogFile: string;
   private accessLogFile: string;
   private debugLogFile: string;
+  private isProduction: boolean;
 
   constructor() {
-    this.logsDir = path.join(process.cwd(), 'logs');
+    this.isProduction = process.env.NODE_ENV === 'production';
+    // Vercel 서버리스 환경에서는 /tmp만 쓰기 가능
+    const isVercel = process.env.VERCEL === '1';
+    this.logsDir = isVercel ? '/tmp/logs' : path.join(process.cwd(), 'logs');
+   // 로그 파일 경로 설정
     this.errorLogFile = path.join(this.logsDir, 'error.log');
     this.accessLogFile = path.join(this.logsDir, 'access.log');
     this.debugLogFile = path.join(this.logsDir, 'debug.log');
+   // logs 디렉토리 생성 시도
     this.ensureLogsDirectory();
   }
 
   /**
    * logs 디렉토리가 존재하는지 확인하고 없으면 생성
+   * 프로덕션 환경(Vercel)에서는 파일 로그를 사용하지 않음
    */
   private ensureLogsDirectory() {
-    if (!fs.existsSync(this.logsDir)) {
-      fs.mkdirSync(this.logsDir, { recursive: true });
+
+    if (this.isProduction) {
+      // 프로덕션에서는 콘솔 로그만 사용 (파일 시스템 쓰기 제한)
+      return;
+    }
+
+    try {
+      if (!fs.existsSync(this.logsDir)) {
+        fs.mkdirSync(this.logsDir, { recursive: true });
+      }
+    } catch (error) {
+      console.warn('Failed to create logs directory:', error);
     }
   }
 
@@ -47,10 +65,19 @@ class Logger {
    * 로그 엔트리를 파일에 기록
    */
   private writeToFile(filePath: string, entry: LogEntry) {
+    // 프로덕션 환경에서는 파일 로그를 사용하지 않음
+    if (this.isProduction) {
+      return;
+    }
+    // 로그 파일에 JSON 형식으로 기록
     try {
       const logLine = JSON.stringify(entry) + '\n';
-      fs.appendFileSync(filePath, logLine, 'utf-8');
-    } catch (error) {
+
+      if (fs.existsSync(this.logsDir)) {
+        fs.appendFileSync(filePath, logLine, 'utf-8');
+    }
+  } catch (error) {
+    //파일 시스템 에러는 콘솔로만 남기고 무시
       console.error('Failed to write log to file:', error);
     }
   }

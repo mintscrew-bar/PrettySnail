@@ -55,6 +55,16 @@ data/*.json
 Thumbs.db
 Desktop.ini
 
+# Windows reserved device names (prevent accidental files named like these from being tracked on Windows)
+nul
+con
+prn
+aux
+com1
+com2
+lpt1
+lpt2
+
 # IDE files
 .vscode/*
 !.vscode/settings.json

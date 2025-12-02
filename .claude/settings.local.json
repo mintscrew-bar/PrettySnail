@@ -14,7 +14,19 @@
       "Bash(taskkill:*)",
       "Bash(npx tsc:*)",
       "Bash(timeout 10 npm run dev)",
-      "Bash(del datausers.json)"
+      "Bash(del datausers.json)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run db:generate:*)",
+      "Bash(npm run db:push:*)",
+      "Bash(echo $env:DATABASE_URL)",
+      "Bash(cat:*)",
+      "Bash($env:DATABASE_URL=\"postgres://f4724439080e134917397214a8b3a3c111f9878b021b1d07d14068c9edabaefe:sk_otlYCXlw44jYX3aCwxw3Z@db.prisma.io:5432/postgres?sslmode=require\")",
+      "Bash(npm run db:seed:*)",
+      "Bash(vercel env:*)",
+      "Bash(vercel login)"
     ],
     "deny": [],
     "ask": []
