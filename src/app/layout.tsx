@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.scss";
 
 // 한글 웹폰트 (Noto Sans KR) - 한글 가독성 최적화
@@ -72,6 +73,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={notoSansKR.variable}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
