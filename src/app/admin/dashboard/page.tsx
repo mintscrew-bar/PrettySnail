@@ -33,8 +33,8 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       const [productsRes, bannersRes] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/banners'),
+        fetch('/api/products', { credentials: 'include' }),
+        fetch('/api/banners', { credentials: 'include' }),
       ]);
 
       const products: Product[] = await productsRes.json();

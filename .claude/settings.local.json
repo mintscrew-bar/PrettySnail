@@ -27,7 +27,8 @@
       "Bash(npm run db:seed:*)",
       "Bash(vercel env:*)",
       "Bash(vercel login)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(node scripts/add-credentials-to-fetch.js:*)"
     ],
     "deny": [],
     "ask": []

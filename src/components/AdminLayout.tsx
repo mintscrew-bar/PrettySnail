@@ -12,21 +12,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     // Check if user is logged in
-    const token = localStorage.getItem('adminToken');
     const userData = localStorage.getItem('adminUser');
 
-    if (!token || !userData) {
+    if (!userData) {
       router.push('/admin/login');
       return;
     }
 
-    setUser(JSON.parse(userData));
+    try {
+      setUser(JSON.parse(userData));
+    } catch (error) {
+      console.error('Failed to parse user data:', error);
+      localStorage.removeItem('adminUser');
+      router.push('/admin/login');
+    }
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    router.push('/admin/login');
+  const handleLogout = async () => {
+    try {
+      // Call logout API to clear httpOnly cookie
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // Important: Include cookies
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear user data from localStorage
+      localStorage.removeItem('adminUser');
+      router.push('/admin/login');
+    }
   };
 
   if (!user) {

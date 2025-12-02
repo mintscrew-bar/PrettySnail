@@ -37,7 +37,7 @@ export default function AdminBannersPage() {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch('/api/banners');
+      const res = await fetch('/api/banners', { credentials: 'include' });
       const data = await res.json();
       setBanners(data);
     } catch {

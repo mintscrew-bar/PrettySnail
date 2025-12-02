@@ -21,6 +21,7 @@ export default function AdminLoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
+        credentials: 'include', // Important: Include cookies in request
       });
 
       const data = await res.json();
@@ -30,8 +31,7 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Store token in localStorage
-      localStorage.setItem('adminToken', data.token);
+      // Store user info in localStorage (JWT is in httpOnly cookie)
       localStorage.setItem('adminUser', JSON.stringify(data.user));
 
       // Redirect to admin dashboard
