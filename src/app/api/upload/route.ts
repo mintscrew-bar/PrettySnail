@@ -6,6 +6,10 @@ import { withAuth } from '@/lib/auth';
 import { ErrorCode, createErrorResponse } from '@/lib/errorCodes';
 import { logger } from '@/lib/logger';
 
+// Configure route segment for file uploads
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 // File type verification using magic numbers (file signatures)
 const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
   jpg: [[0xff, 0xd8, 0xff]],

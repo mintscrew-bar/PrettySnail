@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
+  /* API route body size limit (10MB for file uploads) */
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
+
   /* Security headers */
   async headers() {
     return [
