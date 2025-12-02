@@ -26,7 +26,8 @@
       "Bash($env:DATABASE_URL=\"postgres://f4724439080e134917397214a8b3a3c111f9878b021b1d07d14068c9edabaefe:sk_otlYCXlw44jYX3aCwxw3Z@db.prisma.io:5432/postgres?sslmode=require\")",
       "Bash(npm run db:seed:*)",
       "Bash(vercel env:*)",
-      "Bash(vercel login)"
+      "Bash(vercel login)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

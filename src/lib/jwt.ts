@@ -1,8 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
+import { getEnv } from './env';
 
-const SECRET_KEY = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'default-secret-key-change-in-production'
-);
+const SECRET_KEY = new TextEncoder().encode(getEnv('JWT_SECRET'));
 
 export interface JWTPayload {
   userId: string;

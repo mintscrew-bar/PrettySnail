@@ -87,10 +87,6 @@ export default function AdminLoginPage() {
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-
-        <div className={styles.info}>
-          <p>기본 계정: admin / admin123</p>
-        </div>
       </div>
     </div>
   );

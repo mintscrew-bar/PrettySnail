@@ -1,6 +1,7 @@
 import { Product, Banner, AdminUser, ContentPosition } from '@/types';
 import { hashPassword, comparePassword } from './password';
 import prisma from './prisma';
+import { getEnv } from './env';
 
 // Helper to convert snake_case to kebab-case for ContentPosition
 function toKebabCase(str: string | null): ContentPosition | undefined {
@@ -268,10 +269,10 @@ export async function initializeDefaultAdmin(): Promise<void> {
 
   // Only create if no users exist
   if (usersCount === 0) {
-    const hashedPassword = await hashPassword(process.env.ADMIN_PASSWORD || 'admin123');
+    const hashedPassword = await hashPassword(getEnv('ADMIN_PASSWORD'));
     await prisma.adminUser.create({
       data: {
-        username: process.env.ADMIN_USERNAME || 'admin',
+        username: getEnv('ADMIN_USERNAME'),
         password: hashedPassword,
         role: 'admin',
       },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { getEnv } from "@/lib/env";
 import "./globals.scss";
 
 // 한글 웹폰트 (Noto Sans KR) - 한글 가독성 최적화
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(getEnv('NEXT_PUBLIC_BASE_URL')),
   openGraph: {
     title: "이쁜우렁이 - 신선한 우렁이 전문 양식장",
     description: "HACCP 인증 시설에서 무항생제 사료만을 사용하여 신선함과 건강함을 최우선으로",
