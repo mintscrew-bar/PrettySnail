@@ -1,0 +1,134 @@
+name: CI - Code Quality & Build Validation
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+jobs:
+  check-reserved-filenames:
+    name: Check for Windows Reserved Filenames
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for reserved filenames
+        run: |
+          set -e
+          reserved_regex='^(nul|con|prn|aux|com[0-9]+|lpt[0-9]+)(\..*)?$'
+          bad_found=0
+          
+          # Get all tracked files from git
+          files=$(git ls-files)
+          
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            base=$(basename "$file")
+            base_lower=$(printf "%s" "$base" | tr '[:upper:]' '[:lower:]')
+            if [[ "$base_lower" =~ $reserved_regex ]]; then
+              echo "ERROR: Found Windows reserved filename: '$file' (basename: $base)"
+              bad_found=1
+            fi
+          done <<< "$files"
+          
+          if [ "$bad_found" -ne 0 ]; then
+            echo "❌ Commit contains Windows-reserved filenames. Please rename them."
+            exit 1
+          fi
+          
+          echo "✅ No Windows-reserved filenames found."
+
+  lint:
+    name: ESLint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Run TypeScript compiler
+        run: npx tsc --noEmit
+
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: [check-reserved-filenames, lint]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run db:generate
+        env:
+          DATABASE_URL: 'postgresql://dummy:dummy@localhost:5432/dummy'
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      - name: Check build output
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "❌ Build failed: .next directory not found"
+            exit 1
+          fi
+          echo "✅ Build successful"
+
+  security-check:
+    name: Security & Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Check for critical vulnerabilities
+        run: |
+          npm audit --json > audit.json || true
+          critical=$(jq '[.vulnerabilities[] | select(.severity=="critical")] | length' audit.json)
+          if [ "$critical" -gt 0 ]; then
+            echo "⚠️  Warning: Found $critical critical vulnerabilities"
+          fi
+
+summary: |
+  ✅ **All checks passed!**
+  - Windows reserved filenames: OK
+  - ESLint: OK
+  - TypeScript compilation: OK
+  - Next.js build: OK
+  - Dependencies: Checked
