@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import styles from './AdminLayout.module.scss';
@@ -9,6 +9,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+
+  // Logout function that clears all authentication data
+  const performLogout = useCallback(async (showMessage = false) => {
+    try {
+      // Call logout API to clear httpOnly cookies and CSRF token
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear all authentication data from localStorage
+      localStorage.removeItem('adminUser');
+      localStorage.removeItem('adminToken'); // Legacy token cleanup
+
+      if (showMessage) {
+        alert('보안을 위해 자동으로 로그아웃되었습니다.');
+      }
+
+      router.push('/admin/login');
+    }
+  }, [router]);
 
   useEffect(() => {
     // Check if user is logged in
@@ -28,20 +51,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [router]);
 
-  const handleLogout = async () => {
-    try {
-      // Call logout API to clear httpOnly cookie
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include', // Important: Include cookies
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Clear user data from localStorage
+  // Auto-logout when leaving admin pages
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Synchronously clear localStorage before page unloads
       localStorage.removeItem('adminUser');
-      router.push('/admin/login');
-    }
+      localStorage.removeItem('adminToken');
+    };
+
+    const handleVisibilityChange = () => {
+      // Auto-logout when user navigates away or closes tab
+      if (document.visibilityState === 'hidden') {
+        // Call logout API asynchronously
+        navigator.sendBeacon('/api/auth/logout');
+        // Clear localStorage
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('adminToken');
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    performLogout(false);
   };
 
   if (!user) {

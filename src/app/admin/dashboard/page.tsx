@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
 import styles from './dashboard.module.scss';
 import type { Product, Banner } from '@/types';
+import { initializeCsrfToken } from '@/lib/api';
 
 interface Stats {
   products: number;
@@ -27,7 +28,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
+    // Initialize CSRF token before making any requests
+    initializeCsrfToken().then(() => {
+      fetchStats();
+    });
   }, []);
 
   const fetchStats = async () => {

@@ -48,13 +48,28 @@ export function verifyCsrfToken(request: NextRequest): boolean {
   const cookieToken = request.cookies.get(CSRF_COOKIE_NAME)?.value;
   const headerToken = request.headers.get(CSRF_HEADER_NAME);
 
+  // Debug logging in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[verifyCsrfToken] Cookie token:', cookieToken?.substring(0, 10) + '...');
+    console.log('[verifyCsrfToken] Header token:', headerToken?.substring(0, 10) + '...');
+  }
+
   // Both tokens must exist and match
   if (!cookieToken || !headerToken) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[verifyCsrfToken] Missing token - Cookie:', !!cookieToken, 'Header:', !!headerToken);
+    }
     return false;
   }
 
   // Constant-time comparison to prevent timing attacks
-  return timingSafeEqual(cookieToken, headerToken);
+  const isValid = timingSafeEqual(cookieToken, headerToken);
+
+  if (process.env.NODE_ENV === 'development' && !isValid) {
+    console.log('[verifyCsrfToken] Token mismatch!');
+  }
+
+  return isValid;
 }
 
 /**

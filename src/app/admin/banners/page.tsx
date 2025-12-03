@@ -5,6 +5,7 @@ import AdminLayout from '@/components/AdminLayout';
 import BannerImageEditor from '@/components/BannerImageEditor';
 import { Banner } from '@/types';
 import styles from './banners.module.scss';
+import { initializeCsrfToken, uploadFile, apiFetch } from '@/lib/api';
 
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -32,7 +33,10 @@ export default function AdminBannersPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
-    fetchBanners();
+    // Initialize CSRF token before making any requests
+    initializeCsrfToken().then(() => {
+      fetchBanners();
+    });
   }, []);
 
   const fetchBanners = async () => {
@@ -64,30 +68,26 @@ export default function AdminBannersPage() {
         buttonUrl: formData.buttonUrl?.trim() || undefined,
       };
 
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch(url, {
+      await apiFetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(cleanedData),
+        body: cleanedData,
       });
 
-      if (res.ok) {
-        alert(editingId ? '배너가 수정되었습니다' : '배너가 추가되었습니다');
-        setShowForm(false);
-        setEditingId(null);
-        resetForm();
-        fetchBanners();
-      } else {
-        const errorData = await res.json();
-        console.error('Validation error:', errorData);
-        alert(`오류: ${errorData.error || '배너 저장에 실패했습니다'}`);
-      }
-    } catch (error) {
+      alert(editingId ? '배너가 수정되었습니다' : '배너가 추가되었습니다');
+      setShowForm(false);
+      setEditingId(null);
+      resetForm();
+      fetchBanners();
+    } catch (error: unknown) {
       console.error('Submit error:', error);
-      alert('오류가 발생했습니다');
+
+      // Handle API errors
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = (error as { data: { error?: string } }).data;
+        alert(`오류: ${errorData.error || '배너 저장에 실패했습니다'}`);
+      } else {
+        alert('오류가 발생했습니다');
+      }
     }
   };
 
@@ -95,18 +95,14 @@ export default function AdminBannersPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch(`/api/banners/${id}`, {
+      await apiFetch(`/api/banners/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
       });
-      if (res.ok) {
-        alert('배너가 삭제되었습니다');
-        fetchBanners();
-      }
+
+      alert('배너가 삭제되었습니다');
+      fetchBanners();
     } catch (error) {
+      console.error('Delete error:', error);
       alert('삭제 중 오류가 발생했습니다');
     }
   };
@@ -144,29 +140,14 @@ export default function AdminBannersPage() {
 
     setUploadingImage(true);
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', file);
-
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formDataUpload,
+      const data = await uploadFile(file);
+      setFormData({
+        ...formData,
+        imageUrl: data.url,
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        setFormData({
-          ...formData,
-          imageUrl: data.url,
-        });
-      } else {
-        alert('이미지 업로드에 실패했습니다');
-      }
     } catch (error) {
-      alert('업로드 중 오류가 발생했습니다');
+      console.error('Image upload failed:', error);
+      alert('이미지 업로드에 실패했습니다');
     } finally {
       setUploadingImage(false);
     }

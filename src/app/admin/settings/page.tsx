@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import styles from './settings.module.scss';
+import { apiFetch } from '@/lib/api';
 
 export default function AdminSettingsPage() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -19,36 +20,35 @@ export default function AdminSettingsPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/change-password', {
+      await apiFetch('/api/auth/change-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
+        body: {
           currentPassword,
           newPassword,
           confirmPassword,
-        }),
+        },
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (data.details) {
-          // Validation errors
-          const errorMessages = data.details.map((d: { field: string; message: string }) => d.message).join(', ');
-          setError(errorMessages);
-        } else {
-          setError(data.error || '비밀번호 변경에 실패했습니다');
-        }
-        return;
-      }
 
       setSuccess('비밀번호가 성공적으로 변경되었습니다');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch {
-      setError('비밀번호 변경 중 오류가 발생했습니다');
+    } catch (error: unknown) {
+      console.error('Password change error:', error);
+
+      // Handle API errors
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = (error as { data: { details?: Array<{ field: string; message: string }>; error?: string } }).data;
+
+        if (errorData.details) {
+          const errorMessages = errorData.details.map((d: { field: string; message: string }) => d.message).join(', ');
+          setError(errorMessages);
+        } else {
+          setError(errorData.error || '비밀번호 변경에 실패했습니다');
+        }
+      } else {
+        setError('비밀번호 변경 중 오류가 발생했습니다');
+      }
     } finally {
       setLoading(false);
     }

@@ -113,15 +113,21 @@ export default function ProductsPage() {
                   <div className={styles.productInfo}>
                     <p className={styles.productCategory}>{product.category}</p>
                     <h3>{product.name}</h3>
-                    <div className={styles.productTags}>
-                      {product.tags?.slice(0, 3).map((tag, index) => (
-                        <span key={index} className={styles.tag}>{tag}</span>
-                      ))}
-                      {product.badge && (
-                        <span className={styles.badge}>{product.badge}</span>
-                      )}
-                    </div>
-                    <p className={styles.description}>{product.description?.substring(0, 80)}...</p>
+                    {product.tags && product.tags.length > 0 && (
+                      <div className={styles.productTags}>
+                        {product.tags.slice(0, 3).map((tag, index) => (
+                          <span key={index} className={styles.tag}>{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                    {product.description && (
+                      <p className={styles.description}>
+                        {product.description.length > 60
+                          ? `${product.description.substring(0, 60)}...`
+                          : product.description
+                        }
+                      </p>
+                    )}
                   </div>
                 </Link>
               ))

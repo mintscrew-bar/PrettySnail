@@ -11,25 +11,64 @@ interface FetchOptions extends Omit<RequestInit, 'body'> {
 let csrfToken: string | null = null;
 
 /**
+ * Get CSRF token from cookie if available
+ */
+function getCsrfTokenFromCookie(): string | null {
+  if (typeof document === 'undefined') return null;
+
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrf_token') {
+      return value;
+    }
+  }
+  return null;
+}
+
+/**
  * Get CSRF token from API
  */
 async function getCsrfToken(): Promise<string> {
-  if (csrfToken) {
+  try {
+    // First check if we have a cached token
+    if (csrfToken) {
+      return csrfToken;
+    }
+
+    // Try to get token from cookie
+    const cookieToken = getCsrfTokenFromCookie();
+    if (cookieToken) {
+      csrfToken = cookieToken;
+      return cookieToken;
+    }
+
+    // If no token in cookie, fetch from API
+    const response = await fetch('/api/auth/csrf', {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSRF token: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    csrfToken = data.csrfToken;
+
+    if (!csrfToken) {
+      throw new Error('CSRF token not found in response');
+    }
+
+    // Wait a brief moment for cookie to be set by browser
+    await new Promise(resolve => setTimeout(resolve, 50));
+
     return csrfToken;
+  } catch (error) {
+    console.error('Error getting CSRF token:', error);
+    throw new Error(
+      `Failed to get CSRF token: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
-
-  const response = await fetch('/api/auth/csrf', {
-    credentials: 'include',
-  });
-
-  const data = await response.json();
-  csrfToken = data.csrfToken;
-
-  if (!csrfToken) {
-    throw new Error('Failed to get CSRF token');
-  }
-
-  return csrfToken;
 }
 
 /**
@@ -44,7 +83,17 @@ export async function apiFetch(url: string, options: FetchOptions = {}) {
     (options.method || 'GET').toUpperCase()
   );
 
-  const csrfHeader: Record<string, string> = needsCsrf ? { 'x-csrf-token': await getCsrfToken() } : {};
+  let csrfHeader: Record<string, string> = {};
+  if (needsCsrf) {
+    const token = await getCsrfToken();
+    csrfHeader = { 'x-csrf-token': token };
+
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[apiFetch] CSRF token:', token.substring(0, 10) + '...');
+      console.log('[apiFetch] Cookie token:', getCsrfTokenFromCookie()?.substring(0, 10) + '...');
+    }
+  }
 
   const fetchOptions: RequestInit = {
     ...restOptions,
@@ -78,6 +127,14 @@ export async function apiFetch(url: string, options: FetchOptions = {}) {
   }
 
   return { response, data };
+}
+
+/**
+ * Initialize CSRF token
+ * Call this when the app loads to ensure CSRF token is ready
+ */
+export async function initializeCsrfToken(): Promise<void> {
+  await getCsrfToken();
 }
 
 /**

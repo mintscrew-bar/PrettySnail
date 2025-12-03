@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Product } from '@/types';
 import styles from './products.module.scss';
+import { initializeCsrfToken, uploadFile, apiFetch } from '@/lib/api';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +37,10 @@ export default function AdminProductsPage() {
   const [showCategorySuggestions, setShowCategorySuggestions] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    // Initialize CSRF token before making any requests
+    initializeCsrfToken().then(() => {
+      fetchProducts();
+    });
   }, []);
 
   const fetchProducts = async () => {
@@ -79,38 +83,35 @@ export default function AdminProductsPage() {
         imageUrl: formData.imageUrl?.trim() || undefined,
       };
 
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch(url, {
+      const { data } = await apiFetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(cleanedData),
+        body: cleanedData,
       });
 
-      if (res.ok) {
-        alert(editingId ? '제품이 수정되었습니다' : '제품이 추가되었습니다');
-        setShowForm(false);
-        setEditingId(null);
-        resetForm();
-        fetchProducts();
-      } else {
-        const errorData = await res.json();
-        console.error('Validation error:', errorData);
+      alert(editingId ? '제품이 수정되었습니다' : '제품이 추가되었습니다');
+      setShowForm(false);
+      setEditingId(null);
+      resetForm();
+      fetchProducts();
+    } catch (error: unknown) {
+      console.error('Submit error:', error);
+
+      // Handle API errors
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = (error as { data: { details?: Array<{ field: string; message: string }>; error?: string } }).data;
+
         if (errorData.details) {
           console.error('Validation details:', JSON.stringify(errorData.details, null, 2));
-          const errorMessages = (errorData.details as Array<{ field: string; message: string }>)
+          const errorMessages = errorData.details
             .map(d => `${d.field}: ${d.message}`)
             .join('\n');
           alert(`Validation 오류:\n${errorMessages}`);
         } else {
           alert(`오류: ${errorData.error || '제품 저장에 실패했습니다'}`);
         }
+      } else {
+        alert('오류가 발생했습니다');
       }
-    } catch (error) {
-      console.error('Submit error:', error);
-      alert('오류가 발생했습니다');
     }
   };
 
@@ -120,29 +121,14 @@ export default function AdminProductsPage() {
 
     setUploadingThumbnail(true);
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', file);
-
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formDataUpload,
+      const data = await uploadFile(file);
+      setFormData({
+        ...formData,
+        thumbnails: [...(formData.thumbnails || []), data.url],
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        setFormData({
-          ...formData,
-          thumbnails: [...(formData.thumbnails || []), data.url],
-        });
-      } else {
-        alert('이미지 업로드에 실패했습니다');
-      }
     } catch (error) {
-      alert('업로드 중 오류가 발생했습니다');
+      console.error('Thumbnail upload failed:', error);
+      alert('이미지 업로드에 실패했습니다');
     } finally {
       setUploadingThumbnail(false);
     }
@@ -154,29 +140,14 @@ export default function AdminProductsPage() {
 
     setUploadingDetail(true);
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', file);
-
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formDataUpload,
+      const data = await uploadFile(file);
+      setFormData({
+        ...formData,
+        detailImages: [...(formData.detailImages || []), data.url],
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        setFormData({
-          ...formData,
-          detailImages: [...(formData.detailImages || []), data.url],
-        });
-      } else {
-        alert('이미지 업로드에 실패했습니다');
-      }
     } catch (error) {
-      alert('업로드 중 오류가 발생했습니다');
+      console.error('Detail image upload failed:', error);
+      alert('이미지 업로드에 실패했습니다');
     } finally {
       setUploadingDetail(false);
     }
@@ -198,18 +169,14 @@ export default function AdminProductsPage() {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch(`/api/products/${id}`, {
+      await apiFetch(`/api/products/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
       });
-      if (res.ok) {
-        alert('제품이 삭제되었습니다');
-        fetchProducts();
-      }
+
+      alert('제품이 삭제되었습니다');
+      fetchProducts();
     } catch (error) {
+      console.error('Delete error:', error);
       alert('삭제 중 오류가 발생했습니다');
     }
   };

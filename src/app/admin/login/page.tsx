@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './login.module.scss';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Show message if user was redirected due to missing auth
+  useEffect(() => {
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+      setError('로그인이 필요합니다. 로그인 후 자동으로 이동합니다.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,8 +43,9 @@ export default function AdminLoginPage() {
       // Store user info in localStorage (JWT is in httpOnly cookie)
       localStorage.setItem('adminUser', JSON.stringify(data.user));
 
-      // Redirect to admin dashboard
-      router.push('/admin/dashboard');
+      // Redirect to original page or dashboard
+      const redirectPath = searchParams.get('redirect') || '/admin/dashboard';
+      router.push(redirectPath);
     } catch {
       setError('로그인 중 오류가 발생했습니다');
     } finally {
