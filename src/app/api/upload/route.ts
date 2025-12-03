@@ -91,6 +91,14 @@ export const POST = withAuth(async (request: NextRequest, context) => {
     const fileName = `${timestamp}-${randomString}${fileExtension}`;
 
     // Vercel Blob Storage에 업로드
+    // 환경 변수 확인 (디버깅용)
+    const hasToken = !!process.env.BLOB_READ_WRITE_TOKEN;
+    logger.info('Attempting blob upload', {
+      fileName,
+      hasToken,
+      tokenPrefix: process.env.BLOB_READ_WRITE_TOKEN?.substring(0, 20) || 'MISSING',
+    });
+
     const blob = await put(fileName, buffer, {
       access: 'public',
       contentType: file.type,
@@ -105,12 +113,34 @@ export const POST = withAuth(async (request: NextRequest, context) => {
 
     return NextResponse.json({ url: blob.url }, { status: 200 });
   } catch (error) {
+    // 상세한 에러 정보 로깅
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+      // 환경 변수 상태도 함께 로깅
+      hasToken: !!process.env.BLOB_READ_WRITE_TOKEN,
+      nodeEnv: process.env.NODE_ENV,
+    };
+
     logger.error(
       'File upload failed: Server error',
       ErrorCode.FILE005,
-      error instanceof Error ? { message: error.message, stack: error.stack } : error,
+      errorDetails,
       { userId: user.userId, endpoint: request.url }
     );
+
+    // 개발 환경에서는 더 자세한 에러 메시지 반환
+    if (process.env.NODE_ENV === 'development') {
+      return NextResponse.json(
+        {
+          ...createErrorResponse(ErrorCode.FILE005),
+          debug: errorDetails.message,
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(createErrorResponse(ErrorCode.FILE005), { status: 500 });
   }
 });
