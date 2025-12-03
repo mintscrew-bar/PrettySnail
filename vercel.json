@@ -1,7 +1,9 @@
 {
   "functions": {
     "src/app/api/upload/route.ts": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "memory": 1024,
+      "maxRequestBodySize": "15mb"
     }
   }
 }

@@ -8,6 +8,7 @@ import { logger } from '@/lib/logger';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 최대 실행 시간 60초
+// Body size limit은 vercel.json에서 설정 (15MB)
 
 // File type verification using magic numbers (file signatures)
 const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
