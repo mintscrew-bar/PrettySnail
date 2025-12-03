@@ -8,13 +8,13 @@ import { verifyCsrfToken } from './csrf';
 /**
  * Middleware to protect API routes with JWT authentication
  */
-export function withAuth(
+export function withAuth<T = any>(
   handler: (
     request: NextRequest,
-    context: { user: JWTPayload; params?: Promise<Record<string, string>> }
+    context: { user: JWTPayload; params?: T }
   ) => Promise<NextResponse>
 ) {
-  return async (request: NextRequest, context?: { params?: Promise<Record<string, string>> }) => {
+  return async (request: NextRequest, context?: { params?: T }) => {
     // Verify CSRF token for state-changing requests
     if (!verifyCsrfToken(request)) {
       logger.warn('CSRF token verification failed', {
