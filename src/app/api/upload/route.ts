@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { put } from '@vercel/blob';
 import { withAuth } from '@/lib/auth';
 import { ErrorCode, createErrorResponse } from '@/lib/errorCodes';
 import { logger } from '@/lib/logger';
@@ -10,7 +8,6 @@ import { logger } from '@/lib/logger';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 최대 실행 시간 60초
-
 
 // File type verification using magic numbers (file signatures)
 const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
@@ -87,31 +84,25 @@ export const POST = withAuth(async (request: NextRequest, { user }) => {
       return NextResponse.json(createErrorResponse(ErrorCode.FILE004), { status: 400 });
     }
 
-    // 업로드 디렉토리 확인 및 생성
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadDir)) {
-      mkdirSync(uploadDir, { recursive: true });
-    }
-
     // 고유한 파일명 생성 (타임스탬프 + 랜덤 문자열)
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
     const fileName = `${timestamp}-${randomString}${fileExtension}`;
-    const filePath = join(uploadDir, fileName);
 
-    await writeFile(filePath, buffer);
+    // Vercel Blob Storage에 업로드
+    const blob = await put(fileName, buffer, {
+      access: 'public',
+      contentType: file.type,
+    });
 
-    // 클라이언트에서 접근 가능한 URL 반환
-    const fileUrl = `/uploads/${fileName}`;
-
-    logger.info('File uploaded successfully', {
+    logger.info('File uploaded successfully to Vercel Blob', {
       userId: user.userId,
       fileName,
       fileSize: file.size,
-      fileUrl,
+      fileUrl: blob.url,
     });
 
-    return NextResponse.json({ url: fileUrl }, { status: 200 });
+    return NextResponse.json({ url: blob.url }, { status: 200 });
   } catch (error) {
     logger.error(
       'File upload failed: Server error',
