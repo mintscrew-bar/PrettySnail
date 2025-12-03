@@ -14,12 +14,26 @@ export default function ProductDetailPage() {
   const [otherProducts, setOtherProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (params.id) {
       fetchProduct(params.id as string);
     }
   }, [params.id]);
+
+  // Auto-rotate thumbnails
+  useEffect(() => {
+    if (!product?.thumbnails || product.thumbnails.length <= 1 || isHovered) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setSelectedImage((prev) => (prev + 1) % product.thumbnails!.length);
+    }, 3000); // 3초마다 전환
+
+    return () => clearInterval(interval);
+  }, [product, isHovered]);
 
   const fetchProduct = async (id: string) => {
     try {
@@ -73,7 +87,11 @@ export default function ProductDetailPage() {
 
         <div className={styles.mainSection}>
           {/* 좌측: 이미지 갤러리 */}
-          <div className={styles.imageSection}>
+          <div
+            className={styles.imageSection}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <div className={styles.mainImage}>
               {product.thumbnails && product.thumbnails[selectedImage] ? (
                 <img src={product.thumbnails[selectedImage]} alt={product.name} />
