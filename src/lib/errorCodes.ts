@@ -61,7 +61,7 @@ export const ErrorMessages: Record<ErrorCode, string> = {
   // 파일 업로드
   [ErrorCode.FILE001]: '파일이 없습니다',
   [ErrorCode.FILE002]: '지원하지 않는 파일 형식입니다',
-  [ErrorCode.FILE003]: '파일 크기가 너무 큽니다 (최대 10MB)',
+  [ErrorCode.FILE003]: '파일 크기가 너무 큽니다 (최대 20MB)',
   [ErrorCode.FILE004]: '파일 내용이 확장자와 일치하지 않습니다',
   [ErrorCode.FILE005]: '파일 저장 중 오류가 발생했습니다',
 

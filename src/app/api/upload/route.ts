@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 최대 실행 시간 60초
-// Body size limit은 vercel.json에서 설정 (15MB)
+// Body size limit은 vercel.json에서 설정 (25MB)
 
 // File type verification using magic numbers (file signatures)
 const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
@@ -60,8 +60,8 @@ export const POST = withAuth(async (request: NextRequest, context) => {
       );
     }
 
-    // 파일 크기 제한 (10MB)
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    // 파일 크기 제한 (20MB) - 고품질 상세 이미지 지원
+    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
     if (file.size > MAX_FILE_SIZE) {
       logger.warn('File upload failed: File size exceeds limit', {
         userId: user.userId,
