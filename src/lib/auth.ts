@@ -8,7 +8,7 @@ import { verifyCsrfToken } from './csrf';
 /**
  * Middleware to protect API routes with JWT authentication
  */
-export function withAuth<T = any>(
+export function withAuth<T = Record<string, string | string[]>>(
   handler: (
     request: NextRequest,
     context: { user: JWTPayload; params?: T }
