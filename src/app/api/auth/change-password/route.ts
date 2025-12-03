@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { changeAdminPassword } from '@/lib/db';
 import { ChangePasswordSchema } from '@/lib/validation';
-import { withAuth } from '@/lib/auth';
+import { withAuth, AuthContext } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { ErrorCode } from '@/lib/errorCodes';
 
@@ -10,7 +10,7 @@ import { ErrorCode } from '@/lib/errorCodes';
  * Change admin user password
  * Requires authentication
  */
-export const POST = withAuth(async (request, context) => {
+export const POST = withAuth(async (request, context: AuthContext) => {
   try {
     const body = await request.json();
     const validation = ChangePasswordSchema.safeParse(body);

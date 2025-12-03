@@ -29,7 +29,8 @@ function verifyFileSignature(buffer: Buffer, extension: string): boolean {
   );
 }
 
-export const POST = withAuth(async (request: NextRequest, { user }) => {
+export const POST = withAuth(async (request: NextRequest, context) => {
+  const { user } = context;
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;

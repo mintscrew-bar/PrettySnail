@@ -6,15 +6,39 @@ import { getAuthToken } from './cookies';
 import { verifyCsrfToken } from './csrf';
 
 /**
- * Middleware to protect API routes with JWT authentication
+ * Context type for authenticated route handlers
  */
-export function withAuth<T = Record<string, string | string[]>>(
-  handler: (
-    request: NextRequest,
-    context: { user: JWTPayload; params?: T }
-  ) => Promise<NextResponse>
+export interface AuthContext {
+  user: JWTPayload;
+  params?: Promise<Record<string, string>>;
+}
+
+/**
+ * Middleware to protect API routes with JWT authentication
+ * For routes without params
+ */
+export function withAuth(
+  handler: (request: NextRequest, context: AuthContext) => Promise<NextResponse>
+): (request: NextRequest) => Promise<NextResponse>;
+
+/**
+ * Middleware to protect API routes with JWT authentication
+ * For routes with params (dynamic routes like [id])
+ */
+export function withAuth(
+  handler: (request: NextRequest, context: AuthContext) => Promise<NextResponse>
+): (request: NextRequest, context: { params: Promise<Record<string, string>> }) => Promise<NextResponse>;
+
+/**
+ * Implementation
+ */
+export function withAuth(
+  handler: (request: NextRequest, context: AuthContext) => Promise<NextResponse>
 ) {
-  return async (request: NextRequest, context?: { params?: T }) => {
+  return async (
+    request: NextRequest,
+    routeContext?: { params: Promise<Record<string, string>> }
+  ) => {
     // Verify CSRF token for state-changing requests
     if (!verifyCsrfToken(request)) {
       logger.warn('CSRF token verification failed', {
@@ -75,6 +99,6 @@ export function withAuth<T = Record<string, string | string[]>>(
     }
 
     // Pass user info to handler
-    return handler(request, { user, params: context?.params });
+    return handler(request, { user, params: routeContext?.params });
   };
 }

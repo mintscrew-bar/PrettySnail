@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateBanner, deleteBanner, getBanners } from '@/lib/db';
 import { BannerSchema } from '@/lib/validation';
-import { withAuth } from '@/lib/auth';
-import type { JWTPayload } from '@/lib/jwt';
+import { withAuth, AuthContext } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
@@ -30,7 +29,7 @@ export async function GET(
   }
 }
 
-export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPayload; params?: Promise<Record<string, string>> }) => {
+export const PUT = withAuth(async (request: NextRequest, context: AuthContext) => {
   const params = await context.params!;
   try {
     const body = await request.json();
@@ -70,7 +69,7 @@ export const PUT = withAuth(async (request: NextRequest, context: { user: JWTPay
   }
 });
 
-export const DELETE = withAuth(async (request: NextRequest, context: { user: JWTPayload; params?: Promise<Record<string, string>> }) => {
+export const DELETE = withAuth(async (request: NextRequest, context: AuthContext) => {
   const params = await context.params!;
   try {
     const success = await deleteBanner(params.id);
