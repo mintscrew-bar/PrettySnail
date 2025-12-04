@@ -20,6 +20,12 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // BannerImageEditor requires <img> for dynamic image manipulation (drag, position, scale)
+      "@next/next/no-img-element": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
