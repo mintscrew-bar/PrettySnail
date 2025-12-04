@@ -1,3 +1,12 @@
+/**
+ * 파일 업로드 API 라우트
+ * - 이미지 파일 업로드 지원 (jpg, jpeg, png, gif, webp)
+ * - 최대 파일 크기: 20MB
+ * - 서버 측 이미지 최적화 및 압축
+ * - Vercel Blob Storage에 저장
+ * - 인증 필요
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { withAuth } from '@/lib/auth';
@@ -6,21 +15,33 @@ import { logger } from '@/lib/logger';
 import sharp from 'sharp';
 
 // Configure route segment for file uploads
+// Node.js 런타임 사용
+// 동적 실행 모드
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 최대 실행 시간 60초
 // Note: Vercel의 serverless function body size limit은 4.5MB (고정, 변경 불가)
 // 대용량 이미지는 서버 측에서 자동으로 압축됨
 
-// File type verification using magic numbers (file signatures)
-const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
-  jpg: [[0xff, 0xd8, 0xff]],
-  jpeg: [[0xff, 0xd8, 0xff]],
-  png: [[0x89, 0x50, 0x4e, 0x47]],
-  gif: [[0x47, 0x49, 0x46, 0x38]],
-  webp: [[0x52, 0x49, 0x46, 0x46]], // RIFF (WebP container)
-};
+/**
+ * 허용된 파일 시그니처(매직 넘버) 정의
+ * - 확장자별로 여러 시그니처 지원
+ * - 참고: https://en.wikipedia.org/wiki/List_of_file_signatures
+ */
+const ALLOWED_SIGNATURES: { [key: string]: number[][] } = { // 확장자별 시그니처 배열
+  jpg: [[0xff, 0xd8, 0xff]], // JPEG 파일 시그니처
+  jpeg: [[0xff, 0xd8, 0xff]], // JPEG 파일 시그니처
+  png: [[0x89, 0x50, 0x4e, 0x47]],// PNG 파일 시그니처
+  gif: [[0x47, 0x49, 0x46, 0x38]],// GIF 파일 시그니처
+  webp: [[0x52, 0x49, 0x46, 0x46]], // RIFF (WebP container) // WebP 파일 시그니처
+};  
 
+/**
+ * 파일 시그니처(매직 넘버)로 실제 파일 타입 검증
+ * @param buffer 파일 버퍼
+ * @param extension 파일 확장자
+ * @returns 시그니처 일치 여부
+ */
 function verifyFileSignature(buffer: Buffer, extension: string): boolean {
   const ext = extension.replace('.', '').toLowerCase();
   const signatures = ALLOWED_SIGNATURES[ext];
@@ -37,6 +58,10 @@ function verifyFileSignature(buffer: Buffer, extension: string): boolean {
  * - 최대 너비: 2000px (상세 이미지용 고해상도 유지)
  * - JPEG 품질: 85% (고품질 유지)
  * - WebP 변환: 최적의 압축률
+ * - GIF는 애니메이션 가능성으로 인해 비압축 유지
+ * @param buffer 원본 이미지 버퍼
+ * @param extension 파일 확장자
+ * @returns 최적화된 이미지 버퍼, 콘텐츠 타입, 확장자
  */
 async function optimizeImage(
   buffer: Buffer,
@@ -103,6 +128,17 @@ async function optimizeImage(
   }
 }
 
+/**
+ * POST /api/upload
+ * 파일 업로드 API
+ * 인증 필요
+ * - 이미지 파일 업로드 지원 (jpg, jpeg, png, gif, webp)
+ * - 최대 파일 크기: 20MB
+ * - 서버 측 이미지 최적화 및 압축
+ * - Vercel Blob Storage에 저장
+ * - 업로드된 파일의 공개 URL 반환
+ * - 상세한 에러 로깅 및 개발 환경에서의 디버그 정보 제공
+ */
 export const POST = withAuth(async (request: NextRequest, context) => {
   const { user } = context;
   try {

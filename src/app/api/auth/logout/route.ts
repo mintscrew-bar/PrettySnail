@@ -1,8 +1,3 @@
-/**
- * 로그아웃 API
- * - 인증 쿠키 및 CSRF 토큰 쿠키 삭제
- * - 로그아웃 성공/실패 모두 로깅
- */
 import { NextRequest, NextResponse } from 'next/server';
 import { clearAuthCookie } from '@/lib/cookies';
 import { CSRF_COOKIE_NAME } from '@/lib/csrf';
@@ -15,10 +10,10 @@ export async function POST(request: NextRequest) {
       message: 'Logout successful',
     });
 
-    // 인증 쿠키 삭제
+    // Clear auth cookie
     clearAuthCookie(response);
 
-    // CSRF 토큰 쿠키 삭제
+    // Clear CSRF token cookie
     response.cookies.set({
       name: CSRF_COOKIE_NAME,
       value: '',

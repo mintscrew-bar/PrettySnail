@@ -1,8 +1,17 @@
+/**
+ * 배너 API 라우트
+ * - GET: 모든 배너 데이터 반환
+ * - POST: 새로운 배너 생성 (인증 필요)
+ * - 입력 데이터 유효성 검사 포함
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getBanners, addBanner } from '@/lib/db';
 import { BannerSchema } from '@/lib/validation';
 import { withAuth } from '@/lib/auth';
 
+// GET /api/banners
+// 모든 배너 데이터 반환
 export async function GET() {
   try {
     const banners = await getBanners();
@@ -19,6 +28,8 @@ export async function GET() {
   }
 }
 
+// POST /api/banners
+// 새로운 배너 생성 (인증 필요)
 export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
@@ -48,7 +59,7 @@ export const POST = withAuth(async (request: NextRequest) => {
         error: 'Failed to create banner',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 } // 500 Internal Server Error
     );
   }
 });

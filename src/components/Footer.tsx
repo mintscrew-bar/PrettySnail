@@ -32,13 +32,16 @@ export default function Footer() {
           </div>
 
           <div className={styles.footerLinks}>
-            {/* 제품 컬럼은 요청에 따라 제거됨 */}
+            {/* 제품 컬럼 제거: 회사 컬럼을 헤더 메뉴와 동일하게 구성 */}
 
             <div className={styles.footerColumn}>
               <h4>회사</h4>
               <ul>
                 <li>
                   <Link href="/story">브랜드 스토리</Link>
+                </li>
+                <li>
+                  <Link href="/products">제품</Link>
                 </li>
                 <li>
                   <Link href="/quality">품질관리</Link>

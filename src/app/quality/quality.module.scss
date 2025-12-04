@@ -293,17 +293,10 @@
 .processTrack {
   display: flex;
   gap: $space-xl;
-  animation: scroll 30s linear infinite;
+  animation: scroll 25s linear infinite;
 
   &:hover {
     animation-play-state: paused;
-  }
-}
-
-/* 모바일에서 애니메이션을 더 빠르게 재생하여 답답함 해소 */
-@media (max-width: 768px) {
-  .processTrack {
-    animation-duration: 10s; /* 모바일에서 속도 증가 (빠르게) */
   }
 }
 
@@ -723,6 +716,11 @@
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+
+  .processFlow {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
   .footerContent {
     grid-template-columns: 1fr;
   }
@@ -749,11 +747,5 @@
 
   .certGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  /* 모바일에서 캐러셀이 줄바꿈되어 일부 단계만 보이는 현상 방지 */
-  .processTrack {
-    flex-wrap: nowrap;
-    animation-duration: 10s; /* 모바일에서는 더 빠르게 재생 */
   }
 }

@@ -1,9 +1,5 @@
-// schema.prisma
-// PrettySnail 프로젝트 DB 모델 정의 (Prisma)
-// - Product: 제품 정보
-// - Banner: 배너 정보
-// - AdminUser: 관리자 계정
-// - Enum: 배너 타입, 위치, 권한
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -13,77 +9,76 @@ datasource db {
   provider = "postgresql"
 }
 
-// 제품 모델: 쇼핑몰 제품 정보
+// Product Model
 model Product {
-  id           String   @id @default(cuid()) // 제품 고유 ID
-  category     String   // 카테고리
-  name         String   // 제품명
-  tags         String[] @default([]) // 태그 목록
-  description  String   @db.Text     // 상세 설명
-  badge        String?  // 뱃지(예: 신상품)
-  thumbnails   String[] @default([]) // 썸네일 이미지
-  detailImages String[] @default([]) // 상세 이미지
-  imageUrl     String?  // 대표 이미지
-  storeUrl     String?  // 구매 링크
-  featured     Boolean  @default(false) // 메인 노출 여부
-  isActive     Boolean  @default(true)  // 활성화 여부
-  createdAt    DateTime @default(now()) // 생성일
-  updatedAt    DateTime @updatedAt      // 수정일
+  id           String   @id @default(cuid())
+  category     String
+  name         String
+  tags         String[] @default([])
+  description  String   @db.Text
+  badge        String?
+  thumbnails   String[] @default([])
+  detailImages String[] @default([])
+  imageUrl     String?
+  storeUrl     String?
+  featured     Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([category])
   @@index([featured])
   @@index([isActive])
 }
 
-// 배너 모델: 메인/프로모션 배너 정보
+// Banner Model
 model Banner {
-  id                 String   @id @default(cuid()) // 배너 고유 ID
-  type               BannerType // 배너 타입(main/promotion)
-  title              String?  // 배너 타이틀
-  description        String?  @db.Text // 배너 설명
-  contentPosition    ContentPosition? // 텍스트 위치
-  titleColor         String?  // 타이틀 색상
-  titleFontSize      String?  // 타이틀 폰트 크기(h1~h6/pt)
-  descriptionColor   String?  // 설명 색상
-  descriptionFontSize String? // 설명 폰트 크기(h1~h6/pt)
-  textColor          String?  // 전체 텍스트 색상
-  imageUrl           String   // 배경 이미지
-  imagePosition      String?  // 이미지 위치
-  imageX             Float?   // 이미지 X 좌표
-  imageY             Float?   // 이미지 Y 좌표
-  imageScale         Float?   // 이미지 스케일
-  linkUrl            String?  // 배너 클릭 링크
-  buttonText         String?  // CTA 버튼 텍스트
-  buttonUrl          String?  // CTA 버튼 링크
-  showButton         Boolean  @default(false) // 버튼 노출 여부
-  position           Int      // 배너 순서
-  isActive           Boolean  @default(true)  // 활성화 여부
-  createdAt          DateTime @default(now()) // 생성일
-  updatedAt          DateTime @updatedAt      // 수정일
+  id                 String   @id @default(cuid())
+  type               BannerType
+  title              String?
+  description        String?  @db.Text
+  contentPosition    ContentPosition?
+  titleColor         String?
+  titleFontSize      String?           // h1~h6 or pt value
+  descriptionColor   String?
+  descriptionFontSize String?          // h1~h6 or pt value
+  textColor          String?
+  imageUrl           String
+  imagePosition      String?
+  imageX             Float?
+  imageY             Float?
+  imageScale         Float?
+  linkUrl            String?
+  buttonText         String?
+  buttonUrl          String?
+  showButton         Boolean  @default(false)
+  position           Int
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([type])
   @@index([position])
   @@index([isActive])
 }
 
-// 관리자 모델: 관리자 계정 정보
+// Admin User Model
 model AdminUser {
-  id        String   @id @default(cuid()) // 관리자 고유 ID
-  username  String   @unique              // 로그인 ID
-  password  String                       // 해시된 비밀번호
-  role      UserRole                     // 권한(admin/editor)
-  createdAt DateTime @default(now())     // 생성일
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
 
   @@index([username])
 }
 
-// 배너 타입(main/promotion)
+// Enums
 enum BannerType {
   main
   promotion
 }
 
-// 배너 텍스트 위치(9방향)
 enum ContentPosition {
   top_left
   top_center
@@ -96,7 +91,6 @@ enum ContentPosition {
   bottom_right
 }
 
-// 관리자 권한(admin/editor)
 enum UserRole {
   admin
   editor

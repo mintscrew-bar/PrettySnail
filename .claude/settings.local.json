@@ -33,7 +33,15 @@
       "Bash(tasklist:*)",
       "Bash(findstr:*)",
       "Bash(openssl rand:*)",
-      "Bash(npx js-yaml:*)"
+      "Bash(npx js-yaml:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(if exist .next rmdir /s /q .next)",
+      "Bash(if exist node_modules.cache rmdir /s /q node_modules.cache)",
+      "Bash(powershell -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }\")",
+      "Bash(powershell -Command \"if (Test-Path node_modules\\.cache) { Remove-Item -Recurse -Force node_modules\\.cache }\")",
+      "Bash(powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

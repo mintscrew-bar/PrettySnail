@@ -1,9 +1,3 @@
-/**
- * 관리자 로그인 페이지
- * - 관리자 인증 및 세션 관리
- * - 로그인 실패/리다이렉트/에러 처리
- * - JWT는 httpOnly 쿠키로 저장, 사용자 정보는 localStorage에 저장
- */
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';

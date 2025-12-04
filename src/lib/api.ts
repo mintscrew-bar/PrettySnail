@@ -1,17 +1,26 @@
 /**
  * API client utilities for authenticated requests
+ * - Handles CSRF token management
+ * - JSON serialization/deserialization
  * Automatically includes credentials (cookies) and CSRF tokens in all requests
  */
-
+/**
+ * 패치 옵션 타입 정의
+ * - body는 직렬화되지 않은 상태로 전달
+ * - headers 및 기타 RequestInit 옵션 포함
+ * - Content-Type 헤더는 자동 설정됨
+ */
 interface FetchOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
 }
 
-// Cache CSRF token in memory
+// Cache CSRF token in memory 
+// 캐시 CSRF 토큰 변수
 let csrfToken: string | null = null;
 
 /**
  * Get CSRF token from cookie if available
+ * @returns CSRF 토큰 문자열 또는 null
  */
 function getCsrfTokenFromCookie(): string | null {
   if (typeof document === 'undefined') return null;
@@ -28,6 +37,9 @@ function getCsrfTokenFromCookie(): string | null {
 
 /**
  * Get CSRF token from API
+ * - Caches token in memory
+ * - First tries to get from cookie, if not found fetches from /api/auth/csrf
+ * @returns CSRF 토큰 문자열
  */
 async function getCsrfToken(): Promise<string> {
   try {
@@ -74,6 +86,10 @@ async function getCsrfToken(): Promise<string> {
 /**
  * Authenticated fetch wrapper
  * Automatically includes credentials, CSRF tokens, and handles JSON serialization
+ * 자격 증명, CSRF 토큰을 포함하고 JSON 직렬화 처리를 자동으로 수행하는 인증된 fetch 래퍼
+ * @param url API 엔드포인트 URL
+ * @param options Fetch 옵션
+ * @returns 응답 객체와 파싱된 JSON 데이터
  */
 export async function apiFetch(url: string, options: FetchOptions = {}) {
   const { body, headers = {}, ...restOptions } = options;
@@ -132,6 +148,8 @@ export async function apiFetch(url: string, options: FetchOptions = {}) {
 /**
  * Initialize CSRF token
  * Call this when the app loads to ensure CSRF token is ready
+ * 앱이 로드될 때 CSRF 토큰이 준비되도록 호출
+ * @return void
  */
 export async function initializeCsrfToken(): Promise<void> {
   await getCsrfToken();

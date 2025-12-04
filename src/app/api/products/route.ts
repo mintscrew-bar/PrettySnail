@@ -1,8 +1,18 @@
+/**
+ * 상품 API 라우트
+ * - GET: 모든 상품 데이터 반환
+ * - POST: 새로운 상품 생성 (인증 필요)
+ * - 입력 데이터 유효성 검사 포함
+ */
+
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getProducts, addProduct } from '@/lib/db';
 import { ProductSchema } from '@/lib/validation';
 import { withAuth } from '@/lib/auth';
 
+// GET /api/products
+// 모든 상품 데이터 반환
 export async function GET() {
   try {
     const products = await getProducts();
@@ -19,6 +29,8 @@ export async function GET() {
   }
 }
 
+// POST /api/products
+// 새로운 상품 생성 (인증 필요)
 export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
@@ -35,7 +47,7 @@ export const POST = withAuth(async (request: NextRequest) => {
             message: err.message,
           })),
         },
-        { status: 400 }
+        { status: 400 } // 400 Bad Request
       );
     }
 
@@ -48,7 +60,7 @@ export const POST = withAuth(async (request: NextRequest) => {
         error: 'Failed to create product',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 } // 500 Internal Server Error
     );
   }
 });

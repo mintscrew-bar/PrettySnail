@@ -1,3 +1,9 @@
+/**
+ * 로그 관리 API 라우트
+ * - GET: 로그 조회 (관리자 전용)
+ * - DELETE: 오래된 로그 정리 (관리자 전용)
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
@@ -29,7 +35,7 @@ export const GET = withAuth(async (request: NextRequest) => {
         { status: 400 }
       );
     }
-
+    
     const logs = logger.readLogs(logType, limit);
 
     return NextResponse.json(

@@ -1,9 +1,3 @@
-/**
- * 관리자 비밀번호 변경 API
- * - 인증된 사용자만 접근 가능
- * - 비밀번호 유효성 검사 및 변경 처리
- * - 모든 주요 단계에 로깅
- */
 import { NextResponse } from 'next/server';
 import { changeAdminPassword } from '@/lib/db';
 import { ChangePasswordSchema } from '@/lib/validation';
@@ -13,8 +7,8 @@ import { ErrorCode } from '@/lib/errorCodes';
 
 /**
  * POST /api/auth/change-password
- * 관리자 비밀번호 변경
- * 인증 필요
+ * Change admin user password
+ * Requires authentication
  */
 export const POST = withAuth(async (request, context: AuthContext) => {
   try {
@@ -42,7 +36,7 @@ export const POST = withAuth(async (request, context: AuthContext) => {
 
     const { currentPassword, newPassword } = validation.data;
 
-    // 실제 비밀번호 변경 처리
+    // Change password
     const result = await changeAdminPassword(
       context.user.userId,
       currentPassword,

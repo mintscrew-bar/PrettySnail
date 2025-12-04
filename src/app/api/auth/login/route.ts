@@ -1,9 +1,3 @@
-// /api/auth/login/route.ts
-// 관리자 로그인 API 엔드포인트
-// - JWT 기반 인증, httpOnly 쿠키 발급
-// - 레이트 리밋(15분 5회), 유효성 검사, 에러/로그 처리
-// - 성공 시 사용자 정보 반환
-
 import { NextRequest, NextResponse } from 'next/server';
 import { findAdminUser, initializeDefaultAdmin } from '@/lib/db';
 import { generateToken } from '@/lib/jwt';
@@ -17,10 +11,10 @@ export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request);
 
   try {
-    // 레이트 리밋: 15분당 5회 제한(IP 기준)
+    // Rate limiting: 5 attempts per 15 minutes per IP
     const rateLimit = checkRateLimit(clientIp, {
       limit: 5,
-      windowSeconds: 15 * 60, // 15분
+      windowSeconds: 15 * 60, // 15 minutes
     });
 
     if (!rateLimit.success) {
@@ -48,10 +42,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 최초 실행 시 기본 관리자 계정 생성
+    // Initialize default admin if needed
     await initializeDefaultAdmin();
 
-    // 요청 바디 파싱 및 유효성 검사
+    // Parse and validate request body
     const body = await request.json();
     const validation = LoginSchema.safeParse(body);
 
@@ -78,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const { username, password } = validation.data;
 
-    // 관리자 인증
+    // Find and authenticate user
     const user = await findAdminUser(username, password);
 
     if (!user) {
@@ -94,17 +88,17 @@ export async function POST(request: NextRequest) {
       );
     } // 인증 성공
 
-    // JWT 토큰 생성
+    // Generate JWT token
     const token = await generateToken({
       userId: user.id,
       username: user.username,
       role: user.role,
     });
     // 토큰 생성 실패
-    // 비밀번호 제외 사용자 정보 반환
+    // Return user info (excluding password)
     const { password: _, ...userWithoutPassword } = user;
 
-    // httpOnly 쿠키에 JWT 저장
+    // Set httpOnly cookie with JWT token
     const response = NextResponse.json({
       user: userWithoutPassword,
       message: 'Login successful',
@@ -112,7 +106,7 @@ export async function POST(request: NextRequest) {
     // 쿠키 설정
     setAuthCookie(response, token);
 
-    // 레이트 리밋 헤더 추가
+    // Add rate limit headers
     response.headers.set('X-RateLimit-Limit', rateLimit.limit.toString());
     response.headers.set('X-RateLimit-Remaining', rateLimit.remaining.toString());
     response.headers.set('X-RateLimit-Reset', rateLimit.resetTime.toString());

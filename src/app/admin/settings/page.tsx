@@ -1,9 +1,3 @@
-/**
- * 관리자 설정 페이지
- * - 비밀번호 변경 기능 제공
- * - 비밀번호 보안 요구사항 안내
- * - 모든 변경 요청은 API를 통해 처리
- */
 'use client';
 
 import { useState } from 'react';
