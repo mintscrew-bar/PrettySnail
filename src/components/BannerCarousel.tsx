@@ -53,12 +53,12 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
     // h1~h6 매핑 (모바일에서 더 작게 시작)
     const fontSizeMap: Record<string, string> = {
-      h1: 'clamp(1.75rem, 5vw, 3.5rem)',
-      h2: 'clamp(1.5rem, 4vw, 2.75rem)',
-      h3: 'clamp(1.25rem, 3.5vw, 2.25rem)',
-      h4: 'clamp(1.1rem, 3vw, 2rem)',
-      h5: 'clamp(1rem, 2.5vw, 1.75rem)',
-      h6: 'clamp(0.9rem, 2vw, 1.5rem)',
+      h1: 'clamp(1.25rem, 4vw, 3.5rem)',
+      h2: 'clamp(1.1rem, 3.5vw, 2.75rem)',
+      h3: 'clamp(1rem, 3vw, 2.25rem)',
+      h4: 'clamp(0.95rem, 2.5vw, 2rem)',
+      h5: 'clamp(0.9rem, 2vw, 1.75rem)',
+      h6: 'clamp(0.85rem, 1.8vw, 1.5rem)',
     };
     return fontSizeMap[size] || fontSizeMap.h2;
   };
@@ -100,8 +100,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
                 top: `${currentBanner.imageY || 50}%`,
                 transform: `translate(-50%, -50%) scale(${currentBanner.imageScale || 1})`,
                 width: '100%',
-                height: 'auto',
-                minHeight: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 filter: hasContent ? 'brightness(0.6)' : 'none'
               }}
