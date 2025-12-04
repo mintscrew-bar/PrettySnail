@@ -1,21 +1,27 @@
+// db.ts
+// Prisma ORM을 통한 DB 접근 및 변환 유틸리티
+// - Product, Banner, AdminUser CRUD
+// - Prisma 모델 → API 모델 변환, 포지션 케이스 변환
+// - 관리자 초기화, 비밀번호 변경 등 지원
+
 import { Product, Banner, AdminUser, ContentPosition } from '@/types';
 import { hashPassword, comparePassword } from './password';
 import prisma from './prisma';
 import { getEnv } from './env';
 
-// Helper to convert snake_case to kebab-case for ContentPosition
+// ContentPosition 변환: snake_case → kebab-case
 function toKebabCase(str: string | null): ContentPosition | undefined {
   if (!str) return undefined;
   return str.replace(/_/g, '-') as ContentPosition;
 }
 
-// Helper to convert kebab-case to snake_case for ContentPosition
+// ContentPosition 변환: kebab-case → snake_case
 function toSnakeCase(str: string | undefined): string | undefined {
   if (!str) return undefined;
   return str.replace(/-/g, '_');
 }
 
-// Helper to convert Prisma Product to API Product
+// Prisma Product → API Product 변환
 function toPrismaProduct(product: {
   id: string;
   name: string;
@@ -42,7 +48,7 @@ function toPrismaProduct(product: {
   };
 }
 
-// Helper to convert Prisma Banner to API Banner
+// Prisma Banner → API Banner 변환
 function toPrismaBanner(banner: {
   id: string;
   type: 'main' | 'promotion';
@@ -91,7 +97,7 @@ function toPrismaBanner(banner: {
   };
 }
 
-// Helper to convert Prisma AdminUser to API AdminUser
+// Prisma AdminUser → API AdminUser 변환
 function toPrismaAdminUser(user: {
   id: string;
   username: string;
@@ -105,7 +111,7 @@ function toPrismaAdminUser(user: {
   };
 }
 
-// Products
+// 제품 목록 조회
 export async function getProducts(): Promise<Product[]> {
   const products = await prisma.product.findMany({
     orderBy: { createdAt: 'desc' },
@@ -113,6 +119,7 @@ export async function getProducts(): Promise<Product[]> {
   return products.map(toPrismaProduct);
 }
 
+// 제품 추가
 export async function addProduct(
   product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<Product> {
@@ -134,6 +141,7 @@ export async function addProduct(
   return toPrismaProduct(newProduct);
 }
 
+// 제품 수정
 export async function updateProduct(
   id: string,
   updates: Partial<Product>
@@ -161,6 +169,7 @@ export async function updateProduct(
   }
 }
 
+// 제품 삭제
 export async function deleteProduct(id: string): Promise<boolean> {
   try {
     await prisma.product.delete({ where: { id } });
@@ -170,7 +179,7 @@ export async function deleteProduct(id: string): Promise<boolean> {
   }
 }
 
-// Banners
+// 배너 목록 조회
 export async function getBanners(): Promise<Banner[]> {
   const banners = await prisma.banner.findMany({
     orderBy: { position: 'asc' },
@@ -178,6 +187,7 @@ export async function getBanners(): Promise<Banner[]> {
   return banners.map(toPrismaBanner);
 }
 
+// 배너 추가
 export async function addBanner(
   banner: Omit<Banner, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<Banner> {
@@ -208,6 +218,7 @@ export async function addBanner(
   return toPrismaBanner(newBanner);
 }
 
+// 배너 수정
 export async function updateBanner(id: string, updates: Partial<Banner>): Promise<Banner | null> {
   try {
     const updatedBanner = await prisma.banner.update({
@@ -247,6 +258,7 @@ export async function updateBanner(id: string, updates: Partial<Banner>): Promis
   }
 }
 
+// 배너 삭제
 export async function deleteBanner(id: string): Promise<boolean> {
   try {
     await prisma.banner.delete({ where: { id } });
@@ -256,15 +268,15 @@ export async function deleteBanner(id: string): Promise<boolean> {
   }
 }
 
-// Admin Users
+// 관리자 목록 조회
 export async function getAdminUsers(): Promise<AdminUser[]> {
   const users = await prisma.adminUser.findMany();
   return users.map(toPrismaAdminUser);
 }
 
 /**
- * Initialize default admin user with hashed password
- * This should be run once during setup
+ * 관리자 계정 초기화 (최초 1회)
+ * 환경변수 기반 username/password로 생성
  */
 export async function initializeDefaultAdmin(): Promise<void> {
   const usersCount = await prisma.adminUser.count();
@@ -283,7 +295,7 @@ export async function initializeDefaultAdmin(): Promise<void> {
 }
 
 /**
- * Find admin user by username and verify password
+ * 관리자 로그인: username+password 검증
  */
 export async function findAdminUser(
   username: string,
@@ -302,7 +314,7 @@ export async function findAdminUser(
 }
 
 /**
- * Find admin user by ID
+ * 관리자 ID로 조회
  */
 export async function findAdminUserById(id: string): Promise<AdminUser | null> {
   const user = await prisma.adminUser.findUnique({
@@ -313,7 +325,7 @@ export async function findAdminUserById(id: string): Promise<AdminUser | null> {
 }
 
 /**
- * Change admin user password
+ * 관리자 비밀번호 변경
  */
 export async function changeAdminPassword(
   userId: string,

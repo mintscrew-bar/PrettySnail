@@ -1,3 +1,9 @@
+// /api/auth/login/route.ts
+// 관리자 로그인 API 엔드포인트
+// - JWT 기반 인증, httpOnly 쿠키 발급
+// - 레이트 리밋(15분 5회), 유효성 검사, 에러/로그 처리
+// - 성공 시 사용자 정보 반환
+
 import { NextRequest, NextResponse } from 'next/server';
 import { findAdminUser, initializeDefaultAdmin } from '@/lib/db';
 import { generateToken } from '@/lib/jwt';
@@ -11,10 +17,10 @@ export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request);
 
   try {
-    // Rate limiting: 5 attempts per 15 minutes per IP
+    // 레이트 리밋: 15분당 5회 제한(IP 기준)
     const rateLimit = checkRateLimit(clientIp, {
       limit: 5,
-      windowSeconds: 15 * 60, // 15 minutes
+      windowSeconds: 15 * 60, // 15분
     });
 
     if (!rateLimit.success) {
@@ -42,10 +48,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize default admin if needed
+    // 최초 실행 시 기본 관리자 계정 생성
     await initializeDefaultAdmin();
 
-    // Parse and validate request body
+    // 요청 바디 파싱 및 유효성 검사
     const body = await request.json();
     const validation = LoginSchema.safeParse(body);
 
@@ -54,6 +60,7 @@ export async function POST(request: NextRequest) {
         errors: validation.error.issues,
         ip: request.headers.get('x-forwarded-for') || 'unknown',
       });
+      // 유효성 검사 실패 응답
 
       return NextResponse.json(
         {
@@ -63,14 +70,15 @@ export async function POST(request: NextRequest) {
             field: err.path.join('.'),
             message: err.message,
           })),
+          // 메시지: '입력한 정보를 다시 확인해주세요.',
         },
         { status: 400 }
       );
-    }
+    } // 유효성 검사 통과
 
     const { username, password } = validation.data;
 
-    // Find and authenticate user
+    // 관리자 인증
     const user = await findAdminUser(username, password);
 
     if (!user) {
@@ -78,32 +86,33 @@ export async function POST(request: NextRequest) {
         username,
         ip: request.headers.get('x-forwarded-for') || 'unknown',
       });
+      // 인증 실패 응답
 
       return NextResponse.json(
         { error: 'Invalid credentials', errorCode: ErrorCode.AUTH002 },
         { status: 401 }
       );
-    }
+    } // 인증 성공
 
-    // Generate JWT token
+    // JWT 토큰 생성
     const token = await generateToken({
       userId: user.id,
       username: user.username,
       role: user.role,
     });
-
-    // Return user info (excluding password)
+    // 토큰 생성 실패
+    // 비밀번호 제외 사용자 정보 반환
     const { password: _, ...userWithoutPassword } = user;
 
-    // Set httpOnly cookie with JWT token
+    // httpOnly 쿠키에 JWT 저장
     const response = NextResponse.json({
       user: userWithoutPassword,
       message: 'Login successful',
     });
-
+    // 쿠키 설정
     setAuthCookie(response, token);
 
-    // Add rate limit headers
+    // 레이트 리밋 헤더 추가
     response.headers.set('X-RateLimit-Limit', rateLimit.limit.toString());
     response.headers.set('X-RateLimit-Remaining', rateLimit.remaining.toString());
     response.headers.set('X-RateLimit-Reset', rateLimit.resetTime.toString());
@@ -113,7 +122,7 @@ export async function POST(request: NextRequest) {
       username: user.username,
       ip: request.headers.get('x-forwarded-for') || 'unknown',
     });
-
+    // 성공 응답 반환
     return response;
   } catch (error) {
     logger.error(
@@ -123,7 +132,7 @@ export async function POST(request: NextRequest) {
       {
         ip: request.headers.get('x-forwarded-for') || 'unknown',
         endpoint: '/api/auth/login',
-      }
+      } // 추가 컨텍스트
     );
 
     return NextResponse.json(
@@ -134,5 +143,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
-  }
-}
+  }  // 에러 처리
+}// POST handler 끝
