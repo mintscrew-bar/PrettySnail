@@ -1,16 +1,11 @@
-// Footer.tsx
-// 사이트 하단 푸터 컴포넌트
-// - 브랜드 정보, 제품/회사/고객센터 링크, 인증, 사업자 정보 표시
-// - SCSS 모듈 스타일 적용
-
 import Image from "next/image";
+import Link from 'next/link';
 import styles from "./Footer.module.scss";
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* 푸터 메인 콘텐츠: 브랜드, 인증, 링크 */}
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo}>
@@ -36,34 +31,20 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* 푸터 링크: 제품, 회사, 고객센터 */}
           <div className={styles.footerLinks}>
-            <div className={styles.footerColumn}>
-              <h4>제품</h4>
-              <ul>
-                <li>
-                  <a href="#products">냉동 논우렁살</a>
-                </li>
-                <li>
-                  <a href="#products">생물 논우렁살</a>
-                </li>
-                <li>
-                  <a href="#products">업체용 논우렁살</a>
-                </li>
-              </ul>
-            </div>
+            {/* 제품 컬럼은 요청에 따라 제거됨 */}
 
             <div className={styles.footerColumn}>
               <h4>회사</h4>
               <ul>
                 <li>
-                  <a href="#story">브랜드 스토리</a>
+                  <Link href="/story">브랜드 스토리</Link>
                 </li>
                 <li>
-                  <a href="#quality">품질관리</a>
+                  <Link href="/quality">품질관리</Link>
                 </li>
                 <li>
-                  <a href="#contact">문의하기</a>
+                  <Link href="/contact">문의하기</Link>
                 </li>
               </ul>
             </div>
@@ -89,7 +70,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* 푸터 하단: 사업자 정보 및 저작권 */}
         <div className={styles.footerBottom}>
           <div className={styles.footerInfo}>
             <p>
