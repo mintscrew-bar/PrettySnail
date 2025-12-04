@@ -131,6 +131,7 @@
   max-width: 800px;
   color: $white;
   animation: fadeInUp 0.5s ease-out;
+  transition: transform 0.25s ease, opacity 0.25s ease;
   transform-origin: center top;
   transform: scale(var(--banner-content-scale, 1));
 
@@ -166,7 +167,7 @@
 .heroTitleMain,
 .heroTitleHighlight {
   display: block;
-  font-size: clamp($text-4xl, 6vw, $text-5xl);
+    font-size: clamp($text-4xl, 6vw, $text-5xl);
   font-weight: $font-bold;
   line-height: $leading-tight;
   margin-bottom: $space-xs;
@@ -182,6 +183,35 @@
 .heroTitleHighlight {
   font-size: clamp($text-5xl, 7vw, 4rem);
   animation: slideInRight 0.5s ease-out;
+}
+
+/* 모바일에서 타이틀/설명/버튼 크기 보정 */
+@media (max-width: $breakpoint-sm) {
+  .heroContent {
+    max-width: 90%;
+    transform-origin: center top;
+  }
+
+  .heroTitleMain {
+    font-size: clamp($text-3xl, 6.5vw, $text-4xl);
+  }
+
+  .heroTitleHighlight {
+    font-size: clamp($text-4xl, 7.5vw, 3rem);
+  }
+
+  .heroDescription {
+    font-size: $text-sm;
+    margin: $space-md auto $space-lg auto;
+  }
+
+  .heroContainer {
+    padding: 0 $space-md;
+  }
+
+  .heroBackground img {
+    transition: transform 0.35s ease, filter 0.25s ease;
+  }
 }
 
 .heroCTA {
