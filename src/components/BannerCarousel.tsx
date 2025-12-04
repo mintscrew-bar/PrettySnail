@@ -46,19 +46,19 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
   // 배너에 콘텐츠가 있는지 확인 (제목, 설명, 버튼)
   const hasContent = currentBanner.title || currentBanner.description || (currentBanner.showButton && currentBanner.buttonText && currentBanner.buttonUrl);
 
-  // 폰트 크기 계산 함수
+  // 폰트 크기 계산 함수 (모바일 최적화)
   const getFontSize = (size?: string) => {
     if (!size) return undefined;
     if (size.endsWith('pt')) return size;
 
-    // h1~h6 매핑
+    // h1~h6 매핑 (모바일에서 더 작게 시작)
     const fontSizeMap: Record<string, string> = {
-      h1: 'clamp(2.5rem, 5vw, 3.5rem)',
-      h2: 'clamp(2rem, 4vw, 2.75rem)',
-      h3: 'clamp(1.75rem, 3.5vw, 2.25rem)',
-      h4: 'clamp(1.5rem, 3vw, 2rem)',
-      h5: 'clamp(1.25rem, 2.5vw, 1.75rem)',
-      h6: 'clamp(1rem, 2vw, 1.5rem)',
+      h1: 'clamp(1.75rem, 5vw, 3.5rem)',
+      h2: 'clamp(1.5rem, 4vw, 2.75rem)',
+      h3: 'clamp(1.25rem, 3.5vw, 2.25rem)',
+      h4: 'clamp(1.1rem, 3vw, 2rem)',
+      h5: 'clamp(1rem, 2.5vw, 1.75rem)',
+      h6: 'clamp(0.9rem, 2vw, 1.5rem)',
     };
     return fontSizeMap[size] || fontSizeMap.h2;
   };
