@@ -1,3 +1,8 @@
+// Footer.tsx
+// 사이트 하단 푸터 컴포넌트
+// - 브랜드 정보, 제품/회사/고객센터 링크, 인증, 사업자 정보 표시
+// - SCSS 모듈 스타일 적용
+
 import Image from "next/image";
 import styles from "./Footer.module.scss";
 
@@ -5,6 +10,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
+        {/* 푸터 메인 콘텐츠: 브랜드, 인증, 링크 */}
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo}>
@@ -30,6 +36,7 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* 푸터 링크: 제품, 회사, 고객센터 */}
           <div className={styles.footerLinks}>
             <div className={styles.footerColumn}>
               <h4>제품</h4>
@@ -82,6 +89,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* 푸터 하단: 사업자 정보 및 저작권 */}
         <div className={styles.footerBottom}>
           <div className={styles.footerInfo}>
             <p>

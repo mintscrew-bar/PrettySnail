@@ -1,3 +1,8 @@
+// Header.tsx
+// 사이트 상단 네비게이션/헤더 컴포넌트
+// - 로고, 네비게이션 메뉴, 모바일 햄버거 버튼, 오버레이 지원
+// - SCSS 모듈 스타일 적용
+
 "use client";
 
 import Image from "next/image";
@@ -8,10 +13,12 @@ import styles from "./Header.module.scss";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // 모바일 메뉴 토글
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // 메뉴 닫기
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -19,6 +26,7 @@ export default function Header() {
   return (
     <nav className={styles.nav}>
       <div className={styles.navContainer}>
+        {/* 로고 영역 */}
         <Link href="/" className={styles.logo}>
           <div className={styles.logoIcon} aria-label="이쁜우렁이 로고">
             <Image
