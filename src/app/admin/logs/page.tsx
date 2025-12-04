@@ -1,3 +1,10 @@
+/**
+ * 시스템 로그 관리 페이지
+ * - 에러/접근/디버그 로그 조회 및 정리
+ * - 로그 타입/개수 선택, 상세 정보 확인 가능
+ * - 오래된 로그(30일 초과) 삭제 기능 제공
+ * - 로그 데이터는 API를 통해 불러옴
+ */
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';

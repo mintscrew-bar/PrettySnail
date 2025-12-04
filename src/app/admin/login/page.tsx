@@ -1,3 +1,9 @@
+/**
+ * 관리자 로그인 페이지
+ * - 관리자 인증 및 세션 관리
+ * - 로그인 실패/리다이렉트/에러 처리
+ * - JWT는 httpOnly 쿠키로 저장, 사용자 정보는 localStorage에 저장
+ */
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -20,11 +26,13 @@ function LoginForm() {
     }
   }, [searchParams]);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    // Call login API
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -32,7 +40,6 @@ function LoginForm() {
         body: JSON.stringify({ username, password }),
         credentials: 'include', // Important: Include cookies in request
       });
-
       const data = await res.json();
 
       if (!res.ok) {
