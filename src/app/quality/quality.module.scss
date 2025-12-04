@@ -300,6 +300,13 @@
   }
 }
 
+/* 모바일에서 애니메이션을 더 빠르게 재생하여 답답함 해소 */
+@media (max-width: 768px) {
+  .processTrack {
+    animation-duration: 10s; /* 모바일에서 속도 증가 (빠르게) */
+  }
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
