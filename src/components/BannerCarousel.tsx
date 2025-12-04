@@ -58,12 +58,12 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
     if (size.endsWith('pt')) return size;
 
     const fontSizeMap: Record<string, string> = {
-      h1: 'clamp(1.25rem, 4vw, 3.5rem)',
-      h2: 'clamp(1.1rem, 3.5vw, 2.75rem)',
-      h3: 'clamp(1rem, 3vw, 2.25rem)',
-      h4: 'clamp(0.95rem, 2.5vw, 2rem)',
-      h5: 'clamp(0.9rem, 2vw, 1.75rem)',
-      h6: 'clamp(0.85rem, 1.8vw, 1.5rem)',
+      h1: 'clamp(1.4rem, 4.5vw, 3.5rem)',
+      h2: 'clamp(1.25rem, 4vw, 2.75rem)',
+      h3: 'clamp(1.15rem, 3.5vw, 2.25rem)',
+      h4: 'clamp(1.05rem, 3vw, 2rem)',
+      h5: 'clamp(1rem, 2.5vw, 1.75rem)',
+      h6: 'clamp(0.95rem, 2vw, 1.5rem)',
     };
     return fontSizeMap[size] || fontSizeMap.h2;
   };
