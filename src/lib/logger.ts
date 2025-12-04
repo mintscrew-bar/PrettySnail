@@ -1,3 +1,9 @@
+/**
+ * 로그 기록/관리 유틸리티
+ * - 개발/운영 환경에 따라 로그 파일 또는 콘솔에 기록
+ * - 에러, 접근, 디버그 로그 분리 관리
+ * - 오래된 로그 자동 정리 기능 포함
+ */
 import fs from 'fs';
 import path from 'path';
 import { ErrorCode } from './errorCodes';
@@ -33,11 +39,11 @@ class Logger {
     // Vercel 서버리스 환경에서는 /tmp만 쓰기 가능
     const isVercel = process.env.VERCEL === '1';
     this.logsDir = isVercel ? '/tmp/logs' : path.join(process.cwd(), 'logs');
-   // 로그 파일 경로 설정
+    // 로그 파일 경로 설정
     this.errorLogFile = path.join(this.logsDir, 'error.log');
     this.accessLogFile = path.join(this.logsDir, 'access.log');
     this.debugLogFile = path.join(this.logsDir, 'debug.log');
-   // logs 디렉토리 생성 시도
+    // logs 디렉토리 생성 시도
     this.ensureLogsDirectory();
   }
 
@@ -46,12 +52,10 @@ class Logger {
    * 프로덕션 환경(Vercel)에서는 파일 로그를 사용하지 않음
    */
   private ensureLogsDirectory() {
-
     if (this.isProduction) {
       // 프로덕션에서는 콘솔 로그만 사용 (파일 시스템 쓰기 제한)
       return;
     }
-
     try {
       if (!fs.existsSync(this.logsDir)) {
         fs.mkdirSync(this.logsDir, { recursive: true });
@@ -72,12 +76,11 @@ class Logger {
     // 로그 파일에 JSON 형식으로 기록
     try {
       const logLine = JSON.stringify(entry) + '\n';
-
       if (fs.existsSync(this.logsDir)) {
         fs.appendFileSync(filePath, logLine, 'utf-8');
-    }
-  } catch (error) {
-    //파일 시스템 에러는 콘솔로만 남기고 무시
+      }
+    } catch (error) {
+      //파일 시스템 에러는 콘솔로만 남기고 무시
       console.error('Failed to write log to file:', error);
     }
   }
@@ -88,17 +91,14 @@ class Logger {
   private logToConsole(entry: LogEntry) {
     const isDev = process.env.NODE_ENV !== 'production';
     if (!isDev) return;
-
     const colorCodes = {
       [LogLevel.INFO]: '\x1b[36m', // Cyan
       [LogLevel.WARN]: '\x1b[33m', // Yellow
       [LogLevel.ERROR]: '\x1b[31m', // Red
       [LogLevel.DEBUG]: '\x1b[90m', // Gray
     };
-
     const resetCode = '\x1b[0m';
     const color = colorCodes[entry.level] || '';
-
     console.log(
       `${color}[${entry.timestamp}] [${entry.level}]${resetCode} ${entry.message}`,
       entry.errorCode ? `(${entry.errorCode})` : '',
@@ -116,7 +116,6 @@ class Logger {
       message,
       details,
     };
-
     this.logToConsole(entry);
     this.writeToFile(this.accessLogFile, entry);
   }
@@ -131,7 +130,6 @@ class Logger {
       message,
       details,
     };
-
     this.logToConsole(entry);
     this.writeToFile(this.errorLogFile, entry);
   }
@@ -157,7 +155,6 @@ class Logger {
       details,
       ...context,
     };
-
     this.logToConsole(entry);
     this.writeToFile(this.errorLogFile, entry);
   }
@@ -167,14 +164,12 @@ class Logger {
    */
   debug(message: string, details?: unknown) {
     if (process.env.NODE_ENV === 'production') return;
-
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level: LogLevel.DEBUG,
       message,
       details,
     };
-
     this.logToConsole(entry);
     this.writeToFile(this.debugLogFile, entry);
   }
@@ -189,19 +184,14 @@ class Logger {
         access: this.accessLogFile,
         debug: this.debugLogFile,
       };
-
       const filePath = fileMap[logType];
-
       if (!fs.existsSync(filePath)) {
         return [];
       }
-
       const content = fs.readFileSync(filePath, 'utf-8');
       const lines = content.trim().split('\n').filter(line => line);
-
       // 최근 로그부터 반환 (역순)
       const recentLines = lines.slice(-limit).reverse();
-
       return recentLines.map(line => {
         try {
           return JSON.parse(line) as LogEntry;
@@ -227,17 +217,13 @@ class Logger {
    */
   cleanOldLogs(daysToKeep: number = 30) {
     const files = [this.errorLogFile, this.accessLogFile, this.debugLogFile];
-
     files.forEach(filePath => {
       if (!fs.existsSync(filePath)) return;
-
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const lines = content.trim().split('\n').filter(line => line);
-
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
-
         const filteredLines = lines.filter(line => {
           try {
             const entry = JSON.parse(line) as LogEntry;
@@ -247,7 +233,6 @@ class Logger {
             return false;
           }
         });
-
         fs.writeFileSync(filePath, filteredLines.join('\n') + '\n', 'utf-8');
         this.info(`Cleaned old logs from ${path.basename(filePath)}`, {
           before: lines.length,

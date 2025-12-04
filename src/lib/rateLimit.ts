@@ -1,7 +1,8 @@
 /**
- * Rate limiting utility to prevent brute force attacks
- * Uses in-memory storage (suitable for single-instance deployments)
- * For multi-instance deployments, consider using Redis
+ * API 요청 제한(Rate Limiting) 유틸리티
+ * - 단일 인스턴스 환경에서는 메모리 기반으로 동작
+ * - 다중 인스턴스 환경에서는 Redis 등 외부 저장소 사용 권장
+ * - 브루트포스 공격 방지 목적
  */
 
 interface RateLimitEntry {
@@ -9,10 +10,10 @@ interface RateLimitEntry {
   resetTime: number;
 }
 
-// In-memory storage for rate limiting
+// 메모리 기반 요청 제한 저장소
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
-// Cleanup old entries every 5 minutes
+// 5분마다 오래된 엔트리 정리
 setInterval(() => {
   const now = Date.now();
   for (const [key, entry] of rateLimitStore.entries()) {
@@ -24,12 +25,11 @@ setInterval(() => {
 
 export interface RateLimitConfig {
   /**
-   * Maximum number of requests allowed within the window
+   * 허용 요청 최대 횟수
    */
   limit: number;
-
   /**
-   * Time window in seconds
+   * 제한 시간(초)
    */
   windowSeconds: number;
 }
@@ -42,10 +42,10 @@ export interface RateLimitResult {
 }
 
 /**
- * Check if a request should be rate limited
- * @param identifier Unique identifier for the requester (e.g., IP address, user ID)
- * @param config Rate limit configuration
- * @returns Rate limit result
+ * 요청 제한 체크 함수
+ * @param identifier 요청자 식별자(IP, userId 등)
+ * @param config 제한 설정
+ * @returns 제한 결과
  */
 export function checkRateLimit(
   identifier: string,
@@ -53,18 +53,14 @@ export function checkRateLimit(
 ): RateLimitResult {
   const now = Date.now();
   const windowMs = config.windowSeconds * 1000;
-
   const entry = rateLimitStore.get(identifier);
-
   if (!entry || entry.resetTime < now) {
-    // No entry or expired - create new entry
+    // 새 엔트리 생성
     const newEntry: RateLimitEntry = {
       count: 1,
       resetTime: now + windowMs,
     };
-
     rateLimitStore.set(identifier, newEntry);
-
     return {
       success: true,
       limit: config.limit,
@@ -72,10 +68,9 @@ export function checkRateLimit(
       resetTime: newEntry.resetTime,
     };
   }
-
-  // Entry exists and is still valid
+  // 기존 엔트리 유효
   if (entry.count >= config.limit) {
-    // Rate limit exceeded
+    // 제한 초과
     return {
       success: false,
       limit: config.limit,
@@ -83,11 +78,9 @@ export function checkRateLimit(
       resetTime: entry.resetTime,
     };
   }
-
-  // Increment counter
+  // 카운트 증가
   entry.count++;
   rateLimitStore.set(identifier, entry);
-
   return {
     success: true,
     limit: config.limit,
@@ -97,37 +90,32 @@ export function checkRateLimit(
 }
 
 /**
- * Get the client IP address from the request
+ * 요청에서 클라이언트 IP 추출
  */
 export function getClientIp(request: Request): string {
-  // Check various headers for IP address
+  // 다양한 헤더에서 IP 추출
   const headers = request.headers;
-
   // Vercel/Cloudflare
   const forwardedFor = headers.get('x-forwarded-for');
   if (forwardedFor) {
     return forwardedFor.split(',')[0].trim();
   }
-
   // Cloudflare
   const cfConnectingIp = headers.get('cf-connecting-ip');
   if (cfConnectingIp) {
     return cfConnectingIp;
   }
-
-  // Other proxies
+  // 기타 프록시
   const realIp = headers.get('x-real-ip');
   if (realIp) {
     return realIp;
   }
-
-  // Fallback
+  // 기본값
   return 'unknown';
 }
 
 /**
- * Reset rate limit for a specific identifier
- * Useful for testing or manual intervention
+ * 특정 식별자의 요청 제한 초기화 (테스트/수동 조치용)
  */
 export function resetRateLimit(identifier: string): void {
   rateLimitStore.delete(identifier);
