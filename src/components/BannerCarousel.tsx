@@ -53,9 +53,15 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
     });
   }
 
+  // 배너 컨테이너를 링크로 감쌀지 결정
+  const BannerWrapper = currentBanner.linkUrl ? 'a' : 'div';
+  const wrapperProps = currentBanner.linkUrl
+    ? { href: currentBanner.linkUrl, className: styles.bannerContainer, style: { cursor: 'pointer' } }
+    : { className: styles.bannerContainer };
+
   return (
     <div className={styles.carousel}>
-      <div className={styles.bannerContainer}>
+      <BannerWrapper {...wrapperProps}>
         {/* 배경 이미지 */}
         <div className={styles.heroBackground}>
           <div style={{
@@ -101,7 +107,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
               )}
             </h1>
             {currentBanner.showButton && currentBanner.buttonText && currentBanner.buttonUrl && (
-              <div className={styles.heroCTA}>
+              <div className={styles.heroCTA} onClick={(e) => e.stopPropagation()}>
                 <a
                   href={currentBanner.buttonUrl}
                   className={styles.ctaButtonPrimary}
@@ -128,7 +134,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
             )}
           </div>
         </div>
-      </div>
+      </BannerWrapper>
 
       {/* 스크롤 유도 인디케이터 (showButton이 true일 때만 표시) */}
       {currentBanner.showButton && (
