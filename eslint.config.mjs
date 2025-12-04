@@ -24,6 +24,16 @@ const eslintConfig = [
     rules: {
       // BannerImageEditor requires <img> for dynamic image manipulation (drag, position, scale)
       "@next/next/no-img-element": "off",
+
+      // Allow unused variables that start with underscore
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ],
     },
   },
 ];
