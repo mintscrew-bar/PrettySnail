@@ -37,7 +37,54 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Development
 
-Local git hooks
+### Database Setup
+
+The application uses PostgreSQL (via Prisma ORM). Currently supports both local PostgreSQL and Vercel Postgres.
+
+#### Quick Setup
+
+**On Windows (cmd.exe):**
+```cmd
+scripts\setup-db.cmd
+```
+
+**On macOS / Linux:**
+```bash
+chmod +x scripts/setup-db.sh
+scripts/setup-db.sh
+```
+
+This will:
+1. Install dependencies
+2. Generate Prisma Client
+3. Sync schema with database
+4. Seed initial data (if available)
+
+#### Manual Setup
+
+```bash
+# Copy environment template
+cp .env.example .env.local
+
+# Update DATABASE_URL in .env.local with your database connection
+
+# Generate Prisma Client
+npm run db:generate
+
+# Sync schema with database
+npm run db:push
+
+# Seed initial data
+npm run db:seed
+
+# View data in GUI (optional)
+npm run db:studio
+```
+
+For detailed migration guide, see [MIGRATION.md](./MIGRATION.md)
+
+### Git Hooks
+
 To install the included repo-local pre-commit hook which prevents Windows reserved filenames from being committed:
 
 - On Windows (cmd.exe):
