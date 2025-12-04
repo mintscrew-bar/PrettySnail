@@ -7,16 +7,9 @@
   min-height: 100vh;
   overflow: hidden;
   margin-top: $hero-margin-top;
-  /* CSS 변수로 배너 내부 요소 스케일을 제어 (기본 1) */
-  --banner-content-scale: 1;
-  --banner-image-scale: 1;
 
   @media (max-width: $breakpoint-sm) {
-    /* 모바일에서는 배너 세로 길이를 줄임 */
-    min-height: 60vh;
-    /* 모바일에서 내부 컨텐츠와 이미지 축소 비율 */
-    --banner-content-scale: 0.85;
-    --banner-image-scale: 0.95;
+    margin-top: $hero-margin-top-mobile;
   }
 }
 
@@ -27,13 +20,6 @@
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.5s ease-in-out;
-}
-
-/* 모바일에서 배너 컨테이너도 높이 축소 */
-@media (max-width: $breakpoint-sm) {
-  .bannerContainer {
-    min-height: 60vh;
-  }
 }
 
 .heroBackground {
@@ -131,9 +117,6 @@
   max-width: 800px;
   color: $white;
   animation: fadeInUp 0.5s ease-out;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  transform-origin: center top;
-  transform: scale(var(--banner-content-scale, 1));
 
   // 위치에 따라 margin 조정
   .heroContainer[data-position="top-left"] &,
@@ -167,7 +150,7 @@
 .heroTitleMain,
 .heroTitleHighlight {
   display: block;
-    font-size: clamp($text-4xl, 6vw, $text-5xl);
+  font-size: clamp($text-4xl, 6vw, $text-5xl);
   font-weight: $font-bold;
   line-height: $leading-tight;
   margin-bottom: $space-xs;
@@ -183,35 +166,6 @@
 .heroTitleHighlight {
   font-size: clamp($text-5xl, 7vw, 4rem);
   animation: slideInRight 0.5s ease-out;
-}
-
-/* 모바일에서 타이틀/설명/버튼 크기 보정 */
-@media (max-width: $breakpoint-sm) {
-  .heroContent {
-    max-width: 90%;
-    transform-origin: center top;
-  }
-
-  .heroTitleMain {
-    font-size: clamp($text-3xl, 6.5vw, $text-4xl);
-  }
-
-  .heroTitleHighlight {
-    font-size: clamp($text-4xl, 7.5vw, 3rem);
-  }
-
-  .heroDescription {
-    font-size: $text-sm;
-    margin: $space-md auto $space-lg auto;
-  }
-
-  .heroContainer {
-    padding: 0 $space-md;
-  }
-
-  .heroBackground img {
-    transition: transform 0.35s ease, filter 0.25s ease;
-  }
 }
 
 .heroCTA {
@@ -273,10 +227,10 @@
   }
 
   @media (max-width: $breakpoint-sm) {
-    padding: $space-sm $space-md;
-    font-size: $text-xs;
+    padding: $space-md $space-lg;
+    font-size: $text-sm;
     width: 100%;
-    max-width: 260px;
+    max-width: 300px;
   }
 }
 
@@ -291,7 +245,7 @@
   gap: $space-sm;
 
   @media (max-width: $breakpoint-sm) {
-    bottom: 60px;
+    bottom: 100px;
   }
 }
 
