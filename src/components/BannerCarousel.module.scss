@@ -255,41 +255,58 @@
   }
 }
 
-// 인디케이터
+// 프로그레스 바 인디케이터
 .indicators {
   position: absolute;
-  bottom: 120px;  // 스크롤 인디케이터보다 위에 위치
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
   z-index: 10;
   display: flex;
-  gap: $space-sm;
-
-  @media (max-width: $breakpoint-sm) {
-    bottom: 50px;
-  }
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
 }
 
-.indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  border: 2px solid rgba(255, 255, 255, 0.6);
+.progressSegment {
+  flex: 1;
+  height: 100%;
+  position: relative;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease;
+  border: none;
   padding: 0;
+  background: transparent;
+
+  // 세그먼트 사이 구분선
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.2);
+  }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(1.2);
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
-.indicatorActive {
-  background: white;
-  width: 32px;
-  border-radius: 6px;
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, $primary 0%, $primary-dark 100%);
+  transition: none; // 실시간 진행률 업데이트를 위해 transition 제거
+  box-shadow: 0 0 10px rgba($primary, 0.5);
+}
+
+// 활성 세그먼트 표시
+.progressSegmentActive {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 // 스크롤 인디케이터
@@ -308,7 +325,7 @@
   animation: bounceVertical 2s infinite ease-in-out;
 
   @media (max-width: $breakpoint-sm) {
-    bottom: 1rem;
+    bottom: 1.5rem;  // 더 명확한 간격 확보
   }
 }
 
