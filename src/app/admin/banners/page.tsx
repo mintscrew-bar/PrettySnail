@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import BannerImageEditor from '@/components/BannerImageEditor';
 import { Banner } from '@/types';
@@ -50,6 +50,15 @@ export default function AdminBannersPage() {
       setLoading(false);
     }
   };
+
+  const handlePositionChange = useCallback((pos: { x: number; y: number; scale: number }) => {
+    setFormData(prev => ({
+      ...prev,
+      imageX: pos.x,
+      imageY: pos.y,
+      imageScale: pos.scale
+    }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,12 +195,7 @@ export default function AdminBannersPage() {
                 <h3>이미지 위치 및 크기 조정</h3>
                 <BannerImageEditor
                   imageUrl={formData.imageUrl}
-                  onPositionChange={(pos) => setFormData({
-                    ...formData,
-                    imageX: pos.x,
-                    imageY: pos.y,
-                    imageScale: pos.scale
-                  })}
+                  onPositionChange={handlePositionChange}
                   initialPosition={{
                     x: formData.imageX || 50,
                     y: formData.imageY || 50,
