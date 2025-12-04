@@ -43,6 +43,16 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
   const currentBanner = banners[currentIndex];
 
+  // 디버깅: 배너 데이터 로깅
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Current Banner:', {
+      index: currentIndex,
+      showButton: currentBanner.showButton,
+      buttonText: currentBanner.buttonText,
+      buttonUrl: currentBanner.buttonUrl,
+    });
+  }
+
   return (
     <div className={styles.carousel}>
       <div className={styles.bannerContainer}>

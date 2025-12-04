@@ -269,7 +269,7 @@ export default function AdminBannersPage() {
                           {formData.description}
                         </p>
                       )}
-                      {formData.buttonText && (
+                      {formData.showButton && formData.buttonText && formData.buttonUrl && (
                         <div className={styles.previewButton} style={{
                           display: 'inline-block',
                           padding: '12px 24px',
