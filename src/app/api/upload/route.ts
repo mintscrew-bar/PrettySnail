@@ -9,7 +9,8 @@ import sharp from 'sharp';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 최대 실행 시간 60초
-// Body size limit은 vercel.json에서 설정 (25MB)
+// Note: Vercel의 serverless function body size limit은 4.5MB (고정, 변경 불가)
+// 대용량 이미지는 서버 측에서 자동으로 압축됨
 
 // File type verification using magic numbers (file signatures)
 const ALLOWED_SIGNATURES: { [key: string]: number[][] } = {
