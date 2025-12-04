@@ -3,6 +3,7 @@ import { put } from '@vercel/blob';
 import { withAuth } from '@/lib/auth';
 import { ErrorCode, createErrorResponse } from '@/lib/errorCodes';
 import { logger } from '@/lib/logger';
+import sharp from 'sharp';
 
 // Configure route segment for file uploads
 export const runtime = 'nodejs';
@@ -28,6 +29,77 @@ function verifyFileSignature(buffer: Buffer, extension: string): boolean {
   return signatures.some(signature =>
     signature.every((byte, index) => buffer[index] === byte)
   );
+}
+
+/**
+ * 이미지 최적화 및 압축
+ * - 최대 너비: 2000px (상세 이미지용 고해상도 유지)
+ * - JPEG 품질: 85% (고품질 유지)
+ * - WebP 변환: 최적의 압축률
+ */
+async function optimizeImage(
+  buffer: Buffer,
+  extension: string
+): Promise<{ buffer: Buffer; contentType: string; extension: string }> {
+  const ext = extension.replace('.', '').toLowerCase();
+
+  // GIF는 애니메이션 가능성이 있으므로 압축하지 않음
+  if (ext === 'gif') {
+    return { buffer, contentType: 'image/gif', extension: '.gif' };
+  }
+
+  try {
+    const image = sharp(buffer);
+    const metadata = await image.metadata();
+
+    logger.info('Image optimization started', {
+      originalSize: buffer.length,
+      width: metadata.width,
+      height: metadata.height,
+      format: metadata.format,
+    });
+
+    // 최대 너비 2000px로 리사이징 (비율 유지)
+    const MAX_WIDTH = 2000;
+    let processedImage = image;
+
+    if (metadata.width && metadata.width > MAX_WIDTH) {
+      processedImage = processedImage.resize(MAX_WIDTH, undefined, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      });
+    }
+
+    // WebP로 변환 (최고의 압축률 + 품질)
+    const optimizedBuffer = await processedImage
+      .webp({ quality: 85, effort: 6 })
+      .toBuffer();
+
+    const compressionRatio = ((1 - optimizedBuffer.length / buffer.length) * 100).toFixed(1);
+
+    logger.info('Image optimization completed', {
+      originalSize: buffer.length,
+      optimizedSize: optimizedBuffer.length,
+      compressionRatio: `${compressionRatio}%`,
+      format: 'webp',
+    });
+
+    return {
+      buffer: optimizedBuffer,
+      contentType: 'image/webp',
+      extension: '.webp',
+    };
+  } catch (error) {
+    logger.warn('Image optimization failed, using original', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // 최적화 실패 시 원본 사용
+    return {
+      buffer,
+      contentType: `image/${ext === 'jpg' ? 'jpeg' : ext}`,
+      extension,
+    };
+  }
 }
 
 export const POST = withAuth(async (request: NextRequest, context) => {
@@ -86,29 +158,27 @@ export const POST = withAuth(async (request: NextRequest, context) => {
       return NextResponse.json(createErrorResponse(ErrorCode.FILE004), { status: 400 });
     }
 
+    // 이미지 최적화 및 압축
+    const originalSize = buffer.length;
+    const optimized = await optimizeImage(buffer, fileExtension);
+
     // 고유한 파일명 생성 (타임스탬프 + 랜덤 문자열)
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
-    const fileName = `${timestamp}-${randomString}${fileExtension}`;
+    const fileName = `${timestamp}-${randomString}${optimized.extension}`;
 
     // Vercel Blob Storage에 업로드
-    // 환경 변수 확인 (디버깅용)
-    const hasToken = !!process.env.BLOB_READ_WRITE_TOKEN;
-    logger.info('Attempting blob upload', {
-      fileName,
-      hasToken,
-      tokenPrefix: process.env.BLOB_READ_WRITE_TOKEN?.substring(0, 20) || 'MISSING',
-    });
-
-    const blob = await put(fileName, buffer, {
+    const blob = await put(fileName, optimized.buffer, {
       access: 'public',
-      contentType: file.type,
+      contentType: optimized.contentType,
     });
 
     logger.info('File uploaded successfully to Vercel Blob', {
       userId: user.userId,
       fileName,
-      fileSize: file.size,
+      originalSize,
+      optimizedSize: optimized.buffer.length,
+      compressionRatio: `${(((originalSize - optimized.buffer.length) / originalSize) * 100).toFixed(1)}%`,
       fileUrl: blob.url,
     });
 
