@@ -6,10 +6,17 @@
   position: relative;
   min-height: 100vh;
   overflow: hidden;
+  margin-top: $hero-margin-top;
+  /* CSS 변수로 배너 내부 요소 스케일을 제어 (기본 1) */
+  --banner-content-scale: 1;
+  --banner-image-scale: 1;
 
   @media (max-width: $breakpoint-sm) {
     /* 모바일에서는 배너 세로 길이를 줄임 */
     min-height: 60vh;
+    /* 모바일에서 내부 컨텐츠와 이미지 축소 비율 */
+    --banner-content-scale: 0.85;
+    --banner-image-scale: 0.95;
   }
 }
 
@@ -25,7 +32,7 @@
 /* 모바일에서 배너 컨테이너도 높이 축소 */
 @media (max-width: $breakpoint-sm) {
   .bannerContainer {
-    min-height: 40vh;
+    min-height: 60vh;
   }
 }
 
@@ -124,6 +131,8 @@
   max-width: 800px;
   color: $white;
   animation: fadeInUp 0.5s ease-out;
+  transform-origin: center top;
+  transform: scale(var(--banner-content-scale, 1));
 
   // 위치에 따라 margin 조정
   .heroContainer[data-position="top-left"] &,
@@ -234,10 +243,10 @@
   }
 
   @media (max-width: $breakpoint-sm) {
-    padding: $space-md $space-lg;
-    font-size: $text-sm;
+    padding: $space-sm $space-md;
+    font-size: $text-xs;
     width: 100%;
-    max-width: 300px;
+    max-width: 260px;
   }
 }
 

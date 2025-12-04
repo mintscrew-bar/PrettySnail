@@ -98,10 +98,10 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
                 position: 'absolute',
                 left: `${currentBanner.imageX || 50}%`,
                 top: `${currentBanner.imageY || 50}%`,
-                transform: `translate(-50%, -50%) scale(${currentBanner.imageScale || 1})`,
+                /* 이미지 스케일에 CSS 변수를 곱해 모바일 축소 반영 */
+                transform: `translate(-50%, -50%) scale(calc(${currentBanner.imageScale || 1} * var(--banner-image-scale, 1)))`,
                 width: '100%',
-                height: 'auto',
-                minHeight: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 filter: hasContent ? 'brightness(0.6)' : 'none'
               }}
