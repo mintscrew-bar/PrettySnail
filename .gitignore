@@ -90,8 +90,8 @@ lpt9
 *.swo
 *~
 
-# Logs
-logs/
+# Logs (only root level logs directory, not src/app/admin/logs)
+/logs/
 *.log
 
 # Uploads
