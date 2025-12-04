@@ -151,7 +151,11 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
         <>
           <button
             className={`${styles.navButton} ${styles.navButtonPrev}`}
-            onClick={prevSlide}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              prevSlide();
+            }}
             aria-label="이전 배너"
             disabled={isTransitioning}
           >
@@ -161,7 +165,11 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
           </button>
           <button
             className={`${styles.navButton} ${styles.navButtonNext}`}
-            onClick={nextSlide}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              nextSlide();
+            }}
             aria-label="다음 배너"
             disabled={isTransitioning}
           >
@@ -176,7 +184,9 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
               <button
                 key={index}
                 className={`${styles.indicator} ${index === currentIndex ? styles.indicatorActive : ''}`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   if (!isTransitioning) {
                     setIsTransitioning(true);
                     setCurrentIndex(index);
