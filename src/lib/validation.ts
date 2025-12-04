@@ -20,8 +20,8 @@ export type ProductInput = z.infer<typeof ProductSchema>;
 // Banner Validation Schema
 export const BannerSchema = z.object({
   type: z.enum(['main', 'promotion']),
-  title: z.string().max(100).optional(),
-  description: z.string().max(500).optional(),
+  title: z.union([z.string().max(100), z.literal(''), z.undefined()]).optional(),
+  description: z.union([z.string().max(500), z.literal(''), z.undefined()]).optional(),
   contentPosition: z
     .enum([
       'top-left',
@@ -44,7 +44,7 @@ export const BannerSchema = z.object({
   imageY: z.number().min(0).max(100).optional(),
   imageScale: z.number().min(0.5).max(3).optional(),
   linkUrl: z.union([z.string().url('Invalid link URL'), z.literal(''), z.undefined()]).optional(),
-  buttonText: z.string().max(50).optional(),
+  buttonText: z.union([z.string().max(50), z.literal(''), z.undefined()]).optional(),
   buttonUrl: z.union([z.string().url('Invalid button URL'), z.literal(''), z.undefined()]).optional(),
   showButton: z.boolean().optional(),
   position: z.number().int().min(0),
