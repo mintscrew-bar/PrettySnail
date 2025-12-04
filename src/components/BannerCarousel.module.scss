@@ -234,61 +234,10 @@
   }
 }
 
-// 네비게이션 버튼
-.navButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-50%) scale(1.1);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-.navButtonPrev {
-  left: $space-2xl;
-
-  @media (max-width: $breakpoint-sm) {
-    left: $space-md;
-  }
-}
-
-.navButtonNext {
-  right: $space-2xl;
-
-  @media (max-width: $breakpoint-sm) {
-    right: $space-md;
-  }
-}
-
 // 인디케이터
 .indicators {
   position: absolute;
-  bottom: $space-3xl;
+  bottom: 120px;  // 스크롤 인디케이터보다 위에 위치
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -296,7 +245,7 @@
   gap: $space-sm;
 
   @media (max-width: $breakpoint-sm) {
-    bottom: $space-xl;
+    bottom: 100px;
   }
 }
 

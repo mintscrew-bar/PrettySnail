@@ -136,6 +136,28 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
         </div>
       </BannerWrapper>
 
+      {/* 인디케이터 (배너가 여러 개일 때만 표시) */}
+      {banners.length > 1 && (
+        <div className={styles.indicators}>
+          {banners.map((_, index) => (
+            <button
+              key={index}
+              className={`${styles.indicator} ${index === currentIndex ? styles.indicatorActive : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!isTransitioning) {
+                  setIsTransitioning(true);
+                  setCurrentIndex(index);
+                  setTimeout(() => setIsTransitioning(false), 500);
+                }
+              }}
+              aria-label={`배너 ${index + 1}로 이동`}
+            />
+          ))}
+        </div>
+      )}
+
       {/* 스크롤 유도 인디케이터 (showButton이 true일 때만 표시) */}
       {currentBanner.showButton && (
         <div className={styles.scrollIndicator} aria-hidden="true">
@@ -144,60 +166,6 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
             <path d="M12 5v14m0 0l-7-7m7 7l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-      )}
-
-      {/* 네비게이션 버튼 (배너가 여러 개일 때만 표시) */}
-      {banners.length > 1 && (
-        <>
-          <button
-            className={`${styles.navButton} ${styles.navButtonPrev}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              prevSlide();
-            }}
-            aria-label="이전 배너"
-            disabled={isTransitioning}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <button
-            className={`${styles.navButton} ${styles.navButtonNext}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              nextSlide();
-            }}
-            aria-label="다음 배너"
-            disabled={isTransitioning}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-
-          {/* 인디케이터 */}
-          <div className={styles.indicators}>
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                className={`${styles.indicator} ${index === currentIndex ? styles.indicatorActive : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (!isTransitioning) {
-                    setIsTransitioning(true);
-                    setCurrentIndex(index);
-                    setTimeout(() => setIsTransitioning(false), 500);
-                  }
-                }}
-                aria-label={`배너 ${index + 1}로 이동`}
-              />
-            ))}
-          </div>
-        </>
       )}
     </div>
   );
