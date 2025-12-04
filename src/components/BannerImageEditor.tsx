@@ -21,7 +21,7 @@ export default function BannerImageEditor({
 
   useEffect(() => {
     onPositionChange(position);
-  }, [position]);
+  }, [position, onPositionChange]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
