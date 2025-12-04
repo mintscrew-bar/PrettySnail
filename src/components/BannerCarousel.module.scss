@@ -6,10 +6,8 @@
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  margin-top: $hero-margin-top;
 
   @media (max-width: $breakpoint-sm) {
-    margin-top: $hero-margin-top-mobile;
     /* 모바일에서는 배너 세로 길이를 줄임 */
     min-height: 60vh;
   }
@@ -27,7 +25,7 @@
 /* 모바일에서 배너 컨테이너도 높이 축소 */
 @media (max-width: $breakpoint-sm) {
   .bannerContainer {
-    min-height: 60vh;
+    min-height: 40vh;
   }
 }
 
