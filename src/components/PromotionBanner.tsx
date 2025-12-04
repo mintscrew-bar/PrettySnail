@@ -3,11 +3,11 @@ import styles from './PromotionBanner.module.scss';
 
 interface PromotionBannerProps {
   imageUrl: string;
-  title?: string;
-  description?: string;
-  linkUrl?: string;
-  buttonText?: string;
-  buttonUrl?: string;
+  title?: string | null;
+  description?: string | null;
+  linkUrl?: string | null;
+  buttonText?: string | null;
+  buttonUrl?: string | null;
   imagePosition?: string;
   imageX?: number;
   imageY?: number;

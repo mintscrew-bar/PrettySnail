@@ -17,7 +17,9 @@ export default function AdminBannersPage() {
     description: '',
     contentPosition: 'middle-left',
     titleColor: '#ffffff',
+    titleFontSize: 'h2',
     descriptionColor: '#e9c46a',
+    descriptionFontSize: 'h1',
     imageUrl: '',
     imageX: 50,
     imageY: 50,
@@ -31,6 +33,8 @@ export default function AdminBannersPage() {
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   useEffect(() => {
     // Initialize CSRF token before making any requests
@@ -67,14 +71,14 @@ export default function AdminBannersPage() {
     const url = editingId ? `/api/banners/${editingId}` : '/api/banners';
 
     try {
-      // 빈 문자열을 undefined로 변환하여 validation 통과
+      // showTitle/showDescription이 false이거나 빈 문자열이면 null로 설정
       const cleanedData = {
         ...formData,
-        title: formData.title?.trim() || undefined,
-        description: formData.description?.trim() || undefined,
-        linkUrl: formData.linkUrl?.trim() || undefined,
-        buttonText: formData.buttonText?.trim() || undefined,
-        buttonUrl: formData.buttonUrl?.trim() || undefined,
+        title: showTitle && formData.title?.trim() ? formData.title.trim() : null,
+        description: showDescription && formData.description?.trim() ? formData.description.trim() : null,
+        linkUrl: formData.linkUrl?.trim() || null,
+        buttonText: formData.buttonText?.trim() || null,
+        buttonUrl: formData.buttonUrl?.trim() || null,
       };
 
       await apiFetch(url, {
@@ -120,6 +124,8 @@ export default function AdminBannersPage() {
     setFormData(banner);
     setEditingId(banner.id);
     setShowForm(true);
+    setShowTitle(!!banner.title);
+    setShowDescription(!!banner.description);
   };
 
   const resetForm = () => {
@@ -129,7 +135,9 @@ export default function AdminBannersPage() {
       description: '',
       contentPosition: 'middle-left',
       titleColor: '#ffffff',
+      titleFontSize: 'h2',
       descriptionColor: '#e9c46a',
+      descriptionFontSize: 'h1',
       imageUrl: '',
       imageX: 50,
       imageY: 50,
@@ -141,6 +149,8 @@ export default function AdminBannersPage() {
       position: 1,
       isActive: true,
     });
+    setShowTitle(false);
+    setShowDescription(false);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,7 +182,7 @@ export default function AdminBannersPage() {
     return labels[position] || `위치 ${position}`;
   };
 
-  const mainBanner = banners.find(b => b.type === 'main');
+  const mainBanners = banners.filter(b => b.type === 'main').sort((a, b) => a.position - b.position);
   const promotionBanners = banners.filter(b => b.type === 'promotion').sort((a, b) => a.position - b.position);
 
   return (
@@ -233,57 +243,69 @@ export default function AdminBannersPage() {
                       />
                     </div>
                   </div>
-                  <div className={styles.previewOverlay} style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    display: 'flex',
-                    padding: '40px',
-                    alignItems: formData.contentPosition?.includes('top') ? 'flex-start' : formData.contentPosition?.includes('bottom') ? 'flex-end' : 'center',
-                    justifyContent: formData.contentPosition?.includes('left') ? 'flex-start' : formData.contentPosition?.includes('right') ? 'flex-end' : 'center'
-                  }}>
-                    <div className={styles.previewContent} style={{
-                      maxWidth: '600px',
-                      textAlign: formData.contentPosition?.includes('left') ? 'left' : formData.contentPosition?.includes('right') ? 'right' : 'center'
-                    }}>
-                      {formData.title && (
-                        <h4 style={{
-                          color: formData.titleColor || '#ffffff',
-                          fontSize: '1.5rem',
-                          fontWeight: 'bold',
-                          marginBottom: '10px'
+                  {((showTitle && formData.title) || (showDescription && formData.description) || (formData.showButton && formData.buttonText && formData.buttonUrl)) && (
+                    <>
+                      <div className={styles.previewOverlay} style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                      }}></div>
+                      <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        padding: '40px',
+                        alignItems: formData.contentPosition?.includes('top') ? 'flex-start' : formData.contentPosition?.includes('bottom') ? 'flex-end' : 'center',
+                        justifyContent: formData.contentPosition?.includes('left') ? 'flex-start' : formData.contentPosition?.includes('right') ? 'flex-end' : 'center',
+                        zIndex: 1
+                      }}>
+                        <div className={styles.previewContent} style={{
+                          maxWidth: '600px',
+                          textAlign: formData.contentPosition?.includes('left') ? 'left' : formData.contentPosition?.includes('right') ? 'right' : 'center'
                         }}>
-                          {formData.title}
-                        </h4>
-                      )}
-                      {formData.description && (
-                        <p style={{
-                          color: formData.descriptionColor || '#e9c46a',
-                          fontSize: '2.5rem',
-                          fontWeight: 'bold',
-                          marginBottom: '20px'
-                        }}>
-                          {formData.description}
-                        </p>
-                      )}
-                      {formData.showButton && formData.buttonText && formData.buttonUrl && (
-                        <div className={styles.previewButton} style={{
-                          display: 'inline-block',
-                          padding: '12px 24px',
-                          background: '#2ea100',
-                          color: '#ffffff',
-                          borderRadius: '8px',
-                          fontWeight: 'bold',
-                          cursor: 'pointer'
-                        }}>
-                          {formData.buttonText}
+                          {showTitle && formData.title && (
+                            <h4 style={{
+                              color: formData.titleColor || '#ffffff',
+                              fontSize: formData.titleFontSize?.endsWith('pt') ? formData.titleFontSize : formData.titleFontSize === 'h1' ? '2rem' : formData.titleFontSize === 'h2' ? '1.75rem' : formData.titleFontSize === 'h3' ? '1.5rem' : formData.titleFontSize === 'h4' ? '1.25rem' : formData.titleFontSize === 'h5' ? '1.1rem' : formData.titleFontSize === 'h6' ? '1rem' : '1.75rem',
+                              fontWeight: 'bold',
+                              marginBottom: '10px'
+                            }}>
+                              {formData.title}
+                            </h4>
+                          )}
+                          {showDescription && formData.description && (
+                            <p style={{
+                              color: formData.descriptionColor || '#e9c46a',
+                              fontSize: formData.descriptionFontSize?.endsWith('pt') ? formData.descriptionFontSize : formData.descriptionFontSize === 'h1' ? '2.5rem' : formData.descriptionFontSize === 'h2' ? '2.25rem' : formData.descriptionFontSize === 'h3' ? '2rem' : formData.descriptionFontSize === 'h4' ? '1.75rem' : formData.descriptionFontSize === 'h5' ? '1.5rem' : formData.descriptionFontSize === 'h6' ? '1.25rem' : '2.5rem',
+                              fontWeight: 'bold',
+                              marginBottom: '20px'
+                            }}>
+                              {formData.description}
+                            </p>
+                          )}
+                          {formData.showButton && formData.buttonText && formData.buttonUrl && (
+                            <div className={styles.previewButton} style={{
+                              display: 'inline-block',
+                              padding: '12px 24px',
+                              background: '#2ea100',
+                              color: '#ffffff',
+                              borderRadius: '8px',
+                              fontWeight: 'bold',
+                              cursor: 'pointer'
+                            }}>
+                              {formData.buttonText}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -303,23 +325,113 @@ export default function AdminBannersPage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label>제목</label>
-                <input
-                  type="text"
-                  value={formData.title || ''}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="배너 제목 (선택)"
-                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label style={{ margin: 0 }}>제목</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowTitle(!showTitle);
+                      if (!showTitle) {
+                        setFormData({ ...formData, title: '' });
+                      }
+                    }}
+                    style={{ padding: '4px 12px', fontSize: '0.85rem' }}
+                  >
+                    {showTitle ? '제목 제거' : '제목 추가'}
+                  </button>
+                </div>
+                {showTitle && (
+                  <>
+                    <input
+                      type="text"
+                      value={formData.title || ''}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="배너 제목"
+                    />
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.9rem', marginBottom: '4px', display: 'block' }}>폰트 크기</label>
+                        <select
+                          value={formData.titleFontSize || 'h2'}
+                          onChange={(e) => setFormData({ ...formData, titleFontSize: e.target.value })}
+                        >
+                          <option value="h1">H1 (가장 큼)</option>
+                          <option value="h2">H2</option>
+                          <option value="h3">H3</option>
+                          <option value="h4">H4</option>
+                          <option value="h5">H5</option>
+                          <option value="h6">H6 (가장 작음)</option>
+                        </select>
+                      </div>
+                      <div style={{ width: '100px' }}>
+                        <label style={{ fontSize: '0.9rem', marginBottom: '4px', display: 'block' }}>또는 pt</label>
+                        <input
+                          type="number"
+                          value={formData.titleFontSize?.replace('pt', '') || ''}
+                          onChange={(e) => setFormData({ ...formData, titleFontSize: e.target.value ? `${e.target.value}pt` : 'h2' })}
+                          placeholder="pt"
+                          min="8"
+                          max="200"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className={styles.formGroup}>
-                <label>설명</label>
-                <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="배너 설명 (선택)"
-                  rows={3}
-                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label style={{ margin: 0 }}>설명</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowDescription(!showDescription);
+                      if (!showDescription) {
+                        setFormData({ ...formData, description: '' });
+                      }
+                    }}
+                    style={{ padding: '4px 12px', fontSize: '0.85rem' }}
+                  >
+                    {showDescription ? '설명 제거' : '설명 추가'}
+                  </button>
+                </div>
+                {showDescription && (
+                  <>
+                    <textarea
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="배너 설명"
+                      rows={3}
+                    />
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.9rem', marginBottom: '4px', display: 'block' }}>폰트 크기</label>
+                        <select
+                          value={formData.descriptionFontSize || 'h1'}
+                          onChange={(e) => setFormData({ ...formData, descriptionFontSize: e.target.value })}
+                        >
+                          <option value="h1">H1 (가장 큼)</option>
+                          <option value="h2">H2</option>
+                          <option value="h3">H3</option>
+                          <option value="h4">H4</option>
+                          <option value="h5">H5</option>
+                          <option value="h6">H6 (가장 작음)</option>
+                        </select>
+                      </div>
+                      <div style={{ width: '100px' }}>
+                        <label style={{ fontSize: '0.9rem', marginBottom: '4px', display: 'block' }}>또는 pt</label>
+                        <input
+                          type="number"
+                          value={formData.descriptionFontSize?.replace('pt', '') || ''}
+                          onChange={(e) => setFormData({ ...formData, descriptionFontSize: e.target.value ? `${e.target.value}pt` : 'h1' })}
+                          placeholder="pt"
+                          min="8"
+                          max="200"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -340,43 +452,47 @@ export default function AdminBannersPage() {
                 </select>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>제목 색상</label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <input
-                    type="color"
-                    value={formData.titleColor || '#ffffff'}
-                    onChange={(e) => setFormData({ ...formData, titleColor: e.target.value })}
-                    style={{ width: '60px', height: '40px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                  />
-                  <input
-                    type="text"
-                    value={formData.titleColor || '#ffffff'}
-                    onChange={(e) => setFormData({ ...formData, titleColor: e.target.value })}
-                    placeholder="#ffffff"
-                    style={{ flex: 1 }}
-                  />
+              {showTitle && (
+                <div className={styles.formGroup}>
+                  <label>제목 색상</label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <input
+                      type="color"
+                      value={formData.titleColor || '#ffffff'}
+                      onChange={(e) => setFormData({ ...formData, titleColor: e.target.value })}
+                      style={{ width: '60px', height: '40px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.titleColor || '#ffffff'}
+                      onChange={(e) => setFormData({ ...formData, titleColor: e.target.value })}
+                      placeholder="#ffffff"
+                      style={{ flex: 1 }}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className={styles.formGroup}>
-                <label>설명 색상</label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <input
-                    type="color"
-                    value={formData.descriptionColor || '#e9c46a'}
-                    onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
-                    style={{ width: '60px', height: '40px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                  />
-                  <input
-                    type="text"
-                    value={formData.descriptionColor || '#e9c46a'}
-                    onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
-                    placeholder="#e9c46a"
-                    style={{ flex: 1 }}
-                  />
+              {showDescription && (
+                <div className={styles.formGroup}>
+                  <label>설명 색상</label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <input
+                      type="color"
+                      value={formData.descriptionColor || '#e9c46a'}
+                      onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
+                      style={{ width: '60px', height: '40px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.descriptionColor || '#e9c46a'}
+                      onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
+                      placeholder="#e9c46a"
+                      style={{ flex: 1 }}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {formData.type === 'promotion' && (
                 <div className={styles.formGroup}>
@@ -482,27 +598,34 @@ export default function AdminBannersPage() {
           <>
             {/* 메인 배너 섹션 */}
             <section className={styles.section}>
-              <h2>메인 히어로 배너</h2>
-              {mainBanner ? (
-                <div className={styles.bannerCard}>
-                  <div className={styles.bannerImage}>
-                    <img src={mainBanner.imageUrl} alt="메인 배너" />
-                    {!mainBanner.isActive && <div className={styles.inactiveBadge}>비활성</div>}
-                  </div>
-                  <div className={styles.bannerInfo}>
-                    <div className={styles.bannerMeta}>
-                      <span className={styles.bannerType}>메인 배너</span>
-                      {mainBanner.linkUrl && <span className={styles.bannerLink}>🔗 링크: {mainBanner.linkUrl}</span>}
-                      {mainBanner.showButton && <span className={styles.bannerLink}>✅ Hero 버튼 표시</span>}
-                    </div>
-                    <div className={styles.actions}>
-                      <button onClick={() => handleEdit(mainBanner)} className={styles.editButton}>수정</button>
-                      <button onClick={() => handleDelete(mainBanner.id)} className={styles.deleteButton}>삭제</button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
+              <h2>메인 히어로 배너 ({mainBanners.length}개)</h2>
+              {mainBanners.length === 0 ? (
                 <div className={styles.empty}>메인 배너가 없습니다. 배너를 추가하세요.</div>
+              ) : (
+                <div className={styles.bannersGrid}>
+                  {mainBanners.map((banner) => (
+                    <div key={banner.id} className={styles.bannerCard}>
+                      <div className={styles.bannerImage}>
+                        <img src={banner.imageUrl} alt={banner.title || '메인 배너'} />
+                        {!banner.isActive && <div className={styles.inactiveBadge}>비활성</div>}
+                      </div>
+                      <div className={styles.bannerInfo}>
+                        <h3>{banner.title || '제목 없음'}</h3>
+                        {banner.description && <p>{banner.description}</p>}
+                        <div className={styles.bannerMeta}>
+                          <span className={styles.bannerType}>메인 배너</span>
+                          <span className={styles.position}>순서: {banner.position}</span>
+                          {banner.linkUrl && <span className={styles.bannerLink}>🔗 링크</span>}
+                          {banner.showButton && <span className={styles.bannerLink}>✅ Hero 버튼</span>}
+                        </div>
+                        <div className={styles.actions}>
+                          <button onClick={() => handleEdit(banner)} className={styles.editButton}>수정</button>
+                          <button onClick={() => handleDelete(banner.id)} className={styles.deleteButton}>삭제</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </section>
 

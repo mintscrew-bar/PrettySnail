@@ -222,9 +222,11 @@ export async function updateBanner(id: string, updates: Partial<Banner>): Promis
             : null,
         }),
         ...(updates.titleColor !== undefined && { titleColor: updates.titleColor }),
+        ...(updates.titleFontSize !== undefined && { titleFontSize: updates.titleFontSize }),
         ...(updates.descriptionColor !== undefined && {
           descriptionColor: updates.descriptionColor,
         }),
+        ...(updates.descriptionFontSize !== undefined && { descriptionFontSize: updates.descriptionFontSize }),
         ...(updates.textColor !== undefined && { textColor: updates.textColor }),
         ...(updates.imageUrl !== undefined && { imageUrl: updates.imageUrl }),
         ...(updates.imagePosition !== undefined && { imagePosition: updates.imagePosition }),

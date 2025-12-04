@@ -39,7 +39,9 @@ model Banner {
   description        String?  @db.Text
   contentPosition    ContentPosition?
   titleColor         String?
+  titleFontSize      String?           // h1~h6 or pt value
   descriptionColor   String?
+  descriptionFontSize String?          // h1~h6 or pt value
   textColor          String?
   imageUrl           String
   imagePosition      String?

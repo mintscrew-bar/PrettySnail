@@ -19,7 +19,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
     setTimeout(() => setIsTransitioning(false), 500);
   }, [banners.length, isTransitioning]);
 
-  const prevSlide = useCallback(() => {
+  const _prevSlide = useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
@@ -43,6 +43,26 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
   const currentBanner = banners[currentIndex];
 
+  // 배너에 콘텐츠가 있는지 확인 (제목, 설명, 버튼)
+  const hasContent = currentBanner.title || currentBanner.description || (currentBanner.showButton && currentBanner.buttonText && currentBanner.buttonUrl);
+
+  // 폰트 크기 계산 함수
+  const getFontSize = (size?: string) => {
+    if (!size) return undefined;
+    if (size.endsWith('pt')) return size;
+
+    // h1~h6 매핑
+    const fontSizeMap: Record<string, string> = {
+      h1: 'clamp(2.5rem, 5vw, 3.5rem)',
+      h2: 'clamp(2rem, 4vw, 2.75rem)',
+      h3: 'clamp(1.75rem, 3.5vw, 2.25rem)',
+      h4: 'clamp(1.5rem, 3vw, 2rem)',
+      h5: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+      h6: 'clamp(1rem, 2vw, 1.5rem)',
+    };
+    return fontSizeMap[size] || fontSizeMap.h2;
+  };
+
   // 디버깅: 배너 데이터 로깅
   if (process.env.NODE_ENV === 'development') {
     console.log('Current Banner:', {
@@ -50,6 +70,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
       showButton: currentBanner.showButton,
       buttonText: currentBanner.buttonText,
       buttonUrl: currentBanner.buttonUrl,
+      hasContent,
     });
   }
 
@@ -82,25 +103,29 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
                 height: 'auto',
                 minHeight: '100%',
                 objectFit: 'cover',
-                filter: 'brightness(0.6)'
+                filter: hasContent ? 'brightness(0.6)' : 'none'
               }}
             />
           </div>
-          <div className={styles.heroOverlay}></div>
+          {hasContent && <div className={styles.heroOverlay}></div>}
         </div>
 
         {/* 콘텐츠 */}
-        <div className={styles.heroContainer} data-position={currentBanner.contentPosition || 'middle-left'}>
+        {hasContent && <div className={styles.heroContainer} data-position={currentBanner.contentPosition || 'middle-left'}>
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>
               {currentBanner.title && (
-                <span className={styles.heroTitleMain} style={{ color: currentBanner.titleColor || '#ffffff' }}>
+                <span className={styles.heroTitleMain} style={{
+                  color: currentBanner.titleColor || '#ffffff',
+                  fontSize: getFontSize(currentBanner.titleFontSize)
+                }}>
                   {currentBanner.title}
                 </span>
               )}
               {currentBanner.description && (
                 <span className={styles.heroTitleHighlight} style={{
-                  color: currentBanner.descriptionColor || '#e9c46a'
+                  color: currentBanner.descriptionColor || '#e9c46a',
+                  fontSize: getFontSize(currentBanner.descriptionFontSize)
                 }}>
                   {currentBanner.description}
                 </span>
@@ -133,7 +158,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
               </div>
             )}
           </div>
-        </div>
+        </div>}
       </BannerWrapper>
 
       {/* 인디케이터 (배너가 여러 개일 때만 표시) */}

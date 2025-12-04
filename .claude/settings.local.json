@@ -31,7 +31,9 @@
       "Bash(node scripts/add-credentials-to-fetch.js:*)",
       "Bash(echo:*)",
       "Bash(tasklist:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(openssl rand:*)",
+      "Bash(npx js-yaml:*)"
     ],
     "deny": [],
     "ask": []

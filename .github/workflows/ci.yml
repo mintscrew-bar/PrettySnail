@@ -1,5 +1,4 @@
 name: CI - Code Quality & Build Validation
-
 on:
   push:
     branches: [master, main, develop]
@@ -124,11 +123,3 @@ jobs:
           if [ "$critical" -gt 0 ]; then
             echo "⚠️  Warning: Found $critical critical vulnerabilities"
           fi
-
-summary: |
-  ✅ **All checks passed!**
-  - Windows reserved filenames: OK
-  - ESLint: OK
-  - TypeScript compilation: OK
-  - Next.js build: OK
-  - Dependencies: Checked

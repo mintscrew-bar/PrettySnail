@@ -20,8 +20,8 @@ export type ProductInput = z.infer<typeof ProductSchema>;
 // Banner Validation Schema
 export const BannerSchema = z.object({
   type: z.enum(['main', 'promotion']),
-  title: z.union([z.string().max(100), z.literal(''), z.undefined()]).optional(),
-  description: z.union([z.string().max(500), z.literal(''), z.undefined()]).optional(),
+  title: z.union([z.string().max(100), z.literal(''), z.null()]).optional().nullable(),
+  description: z.union([z.string().max(500), z.literal(''), z.null()]).optional().nullable(),
   contentPosition: z
     .enum([
       'top-left',
@@ -36,16 +36,18 @@ export const BannerSchema = z.object({
     ])
     .optional(),
   titleColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').optional(),
+  titleFontSize: z.string().max(20).optional(), // h1~h6 or pt value
   descriptionColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').optional(),
+  descriptionFontSize: z.string().max(20).optional(), // h1~h6 or pt value
   textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').optional(),
   imageUrl: z.string().min(1, 'Image URL is required'), // 상대 경로 허용
   imagePosition: z.string().max(50).optional(),
   imageX: z.number().min(0).max(100).optional(),
   imageY: z.number().min(0).max(100).optional(),
   imageScale: z.number().min(0.5).max(3).optional(),
-  linkUrl: z.union([z.string().url('Invalid link URL'), z.literal(''), z.undefined()]).optional(),
-  buttonText: z.union([z.string().max(50), z.literal(''), z.undefined()]).optional(),
-  buttonUrl: z.union([z.string().url('Invalid button URL'), z.literal(''), z.undefined()]).optional(),
+  linkUrl: z.union([z.string().url('Invalid link URL'), z.literal(''), z.null()]).optional().nullable(),
+  buttonText: z.union([z.string().max(50), z.literal(''), z.null()]).optional().nullable(),
+  buttonUrl: z.union([z.string().url('Invalid button URL'), z.literal(''), z.null()]).optional().nullable(),
   showButton: z.boolean().optional(),
   position: z.number().int().min(0),
   isActive: z.boolean().default(true),
