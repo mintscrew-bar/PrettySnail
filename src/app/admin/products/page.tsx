@@ -83,7 +83,7 @@ export default function AdminProductsPage() {
         imageUrl: formData.imageUrl?.trim() || undefined,
       };
 
-      const { data } = await apiFetch(url, {
+      await apiFetch(url, {
         method,
         body: cleanedData,
       });
