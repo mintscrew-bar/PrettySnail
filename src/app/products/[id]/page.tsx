@@ -93,6 +93,9 @@ export default function ProductDetailPage() {
             onMouseLeave={() => setIsHovered(false)}
           >
             <div className={styles.mainImage}>
+              {product.badge && (
+                <span className={styles.badge}>{product.badge}</span>
+              )}
               {product.thumbnails && product.thumbnails[selectedImage] ? (
                 <img src={product.thumbnails[selectedImage]} alt={product.name} />
               ) : (
@@ -116,36 +119,46 @@ export default function ProductDetailPage() {
 
           {/* 우측: 제품 정보 */}
           <div className={styles.infoSection}>
-            <div className={styles.category}>{product.category}</div>
             <h1 className={styles.productName}>{product.name}</h1>
+
+            <div>
+              <span className={styles.categoryTag}>{product.category}</span>
+            </div>
 
             {product.tags && product.tags.length > 0 && (
               <div className={styles.tags}>
                 {product.tags.map((tag, index) => (
-                  <span key={index} className={styles.tag}>#{tag}</span>
+                  <span
+                    key={index}
+                    className={styles.tag}
+                    style={{
+                      backgroundColor: tag.color + '15',
+                      color: tag.color,
+                      border: `1px solid ${tag.color}40`
+                    }}
+                  >
+                    {tag.name}
+                  </span>
                 ))}
               </div>
             )}
 
-            <p className={styles.description}>{product.description}</p>
+            <div className={styles.descriptionSection}>
+              <h3>제품 설명</h3>
+              <p className={styles.description}>{product.description}</p>
+            </div>
 
             {product.storeUrl && (
               <div className={styles.actionSection}>
-                <p className={styles.contactText}>제품 문의 및 구매는 아래 링크를 통해 진행해주세요</p>
                 <a
                   href={product.storeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.storeButton}
                 >
-                  구매 문의하기 →
+                  구매 문의하기
                 </a>
-              </div>
-            )}
-
-            {product.badge && (
-              <div className={styles.badge}>
-                <span>🏷️ {product.badge}</span>
+                <p className={styles.contactText}>네이버 스토어에서 구매 가능합니다</p>
               </div>
             )}
           </div>
@@ -171,6 +184,7 @@ export default function ProductDetailPage() {
               {otherProducts.map((p) => (
                 <Link key={p.id} href={`/products/${p.id}`} className={styles.productCard}>
                   <div className={styles.productImage}>
+                    {p.badge && <div className={styles.productBadge}>{p.badge}</div>}
                     {p.thumbnails?.[0] ? (
                       <img src={p.thumbnails[0]} alt={p.name} />
                     ) : (
@@ -178,9 +192,29 @@ export default function ProductDetailPage() {
                     )}
                   </div>
                   <div className={styles.productInfo}>
-                    <p className={styles.productCategory}>{p.category}</p>
                     <h3>{p.name}</h3>
-                    <p className={styles.productDescription}>{p.description?.substring(0, 60)}...</p>
+                    <div className={styles.productTags}>
+                      <span className={styles.productCategoryTag}>{p.category}</span>
+                      {p.tags && p.tags.slice(0, 2).map((tag, index) => (
+                        <span
+                          key={index}
+                          className={styles.productTag}
+                          style={{
+                            backgroundColor: tag.color + '15',
+                            color: tag.color,
+                            border: `1px solid ${tag.color}40`
+                          }}
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                    <p className={styles.productDescription}>
+                      {p.description?.length > 50
+                        ? `${p.description.substring(0, 50)}...`
+                        : p.description
+                      }
+                    </p>
                   </div>
                 </Link>
               ))}

@@ -288,6 +288,15 @@
     right: 0;
     background: linear-gradient(to left, $white, transparent);
   }
+
+  @media (max-width: 768px) {
+    overflow: visible;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
 }
 
 .processTrack {
@@ -297,6 +306,16 @@
 
   &:hover {
     animation-play-state: paused;
+  }
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    animation: none;
+    gap: $space-md;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 }
 
@@ -328,6 +347,16 @@
 
   @media (max-width: $breakpoint-md) {
     width: 280px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: none;
+
+    // 캐러셀 복제본 숨기기 (6번째 이후 항목)
+    &:nth-child(n + 6) {
+      display: none;
+    }
   }
 }
 
@@ -513,8 +542,8 @@
   }
 
   .certGridTwo {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }
 
@@ -724,28 +753,332 @@
   .footerContent {
     grid-template-columns: 1fr;
   }
+
+  .hero {
+    padding: 10rem 2rem 6rem;
+  }
+
+  .haccp,
+  .testing,
+  .certifications,
+  .traceability {
+    padding: 5rem 2rem;
+  }
 }
 
 @media (max-width: 768px) {
   .navContainer {
-    flex-direction: column;
-    gap: 1rem;
+    padding: 0 1.5rem;
   }
 
   .navLinks {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    gap: 2rem;
+    font-size: 0.95rem;
   }
 
-  .heroTitle,
+  .hero {
+    padding: 8rem 1.5rem 5rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .heroDescription {
+    font-size: 1.1rem;
+  }
+
+  .haccp,
+  .testing,
+  .certifications,
+  .traceability {
+    padding: 4rem 1.5rem;
+  }
+
   .haccpText h2,
   .testingText h2,
   .traceText h2 {
-    font-size: 2.2rem;
+    font-size: 2rem;
+  }
+
+  .haccpDescription,
+  .testingDescription,
+  .traceDescription {
+    font-size: 1.05rem;
+  }
+
+  .haccpFeature h4,
+  .testingItem h4,
+  .traceStep h4 {
+    font-size: 1.1rem;
   }
 
   .certGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .footerContent {
+    gap: 2rem;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .navContainer {
+    padding: 0 1rem;
+  }
+
+  .logo {
+    gap: 0.75rem;
+  }
+
+  .logoIcon {
+    font-size: 1.5rem;
+  }
+
+  .logoText h2 {
+    font-size: 1.4rem;
+  }
+
+  .logoSubtext {
+    font-size: 0.7rem;
+  }
+
+  .navLinks {
+    gap: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .hero {
+    padding: 7rem 1rem 4rem;
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .heroDescription {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .breadcrumb {
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .haccp,
+  .testing,
+  .certifications,
+  .traceability {
+    padding: 3rem 1rem;
+  }
+
+  .sectionBadge {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .haccpText h2,
+  .testingText h2,
+  .traceText h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .haccpDescription,
+  .testingDescription,
+  .traceDescription {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .haccpFeatures,
+  .testingItems,
+  .traceSteps {
+    gap: 1.25rem;
+  }
+
+  .haccpFeature,
+  .testingItem,
+  .traceStep {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .featureIcon {
+    font-size: 1.75rem;
+  }
+
+  .haccpFeature h4,
+  .testingItem h4,
+  .traceStep h4 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .haccpFeature p,
+  .testingItem p,
+  .traceStep p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .imagePlaceholder {
+    height: 300px;
+    max-width: 100%;
+  }
+
+  .placeholderIcon {
+    font-size: 3rem;
+  }
+
+  .imagePlaceholder p {
+    font-size: 0.9rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 2.5rem;
+  }
+
+  .sectionHeader h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .sectionHeader p {
+    font-size: 0.95rem;
+  }
+
+  .processStep {
+    width: 100%;
+  }
+
+  .stepImage {
+    height: 180px;
+  }
+
+  .stepNumber {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+
+  .stepContent {
+    padding: 1rem;
+
+    h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+  }
+
+  .certGrid,
+  .certGridTwo {
+    gap: 1.5rem;
+  }
+
+  .certCard {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .certIcon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .certCard h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .certCard p {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .certDate {
+    font-size: 0.8rem;
+  }
+
+  .certBadge {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .checkButton {
+    padding: 0.85rem 1.75rem;
+    font-size: 1rem;
+  }
+
+  .footer {
+    padding: 3rem 1rem 1.5rem;
+  }
+
+  .footerContent {
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .footerBrand {
+    padding-right: 0;
+  }
+
+  .footerLogo h3 {
+    font-size: 1.75rem;
+  }
+
+  .footerLogo span {
+    font-size: 0.8rem;
+  }
+
+  .footerDesc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .footerLinks {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footerColumn h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .footerColumn li {
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .footerBottom {
+    padding-top: 1.5rem;
+  }
+
+  .footerInfo,
+  .footerCopyright {
+    font-size: 0.85rem;
+  }
+
+  .footerInfo p {
+    margin-bottom: 0.25rem;
   }
 }

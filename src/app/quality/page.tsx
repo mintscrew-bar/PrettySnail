@@ -261,36 +261,16 @@ export default function QualityPage() {
         <div className={styles.container}>
           <div className={styles.testingContent}>
             <div className={styles.testingText}>
-              <h2>자체 품질검사실 운영</h2>
+              <h2>정기 품질 검사</h2>
               <p className={styles.testingDescription}>
-                농장 내 자체 품질검사실을 운영하여 모든 제품의 안전성을 사전에
-                검증합니다. 전문 검사 장비와 숙련된 검사원이 24시간
-                품질관리업무를 수행하고 있습니다.
+                공인된 전문 검사기관에 매년 3~5회 정기 검사를 의뢰하여
+                대장균, 유해균 등의 안전성을 검증받고 있습니다.
               </p>
-
-              <div className={styles.testingItems}>
-                <div className={styles.testingItem}>
-                  <h4>🧪 미생물 검사</h4>
-                  <p>대장균, 살모넬라 등 유해 미생물 검출 검사</p>
-                </div>
-                <div className={styles.testingItem}>
-                  <h4>🔬 화학 검사</h4>
-                  <p>중금속, 잔류농약, 항생제 잔류량 검사</p>
-                </div>
-                <div className={styles.testingItem}>
-                  <h4>📊 물리적 검사</h4>
-                  <p>크기, 중량, 외관 상태 등 물리적 품질 검사</p>
-                </div>
-                <div className={styles.testingItem}>
-                  <h4>🌡️ 온도 관리</h4>
-                  <p>저장, 운송 과정의 온도 이력 관리</p>
-                </div>
-              </div>
             </div>
             <div className={styles.testingImage}>
               <Image
                 src="/assets/1.jpg"
-                alt="품질검사실 및 생산 시설"
+                alt="생산 시설"
                 width={400}
                 height={300}
                 className={styles.testingImageContent}
@@ -305,7 +285,7 @@ export default function QualityPage() {
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <h2>인증 현황</h2>
-            <p>공신력 있는 기관으로부터 받은 각종 인증서</p>
+            <p>안전하고 깨끗한 우렁이 생산을 위한 인증</p>
           </div>
 
           <div className={styles.certGridTwo}>
@@ -313,16 +293,12 @@ export default function QualityPage() {
               <div className={styles.certIcon}>📜</div>
               <h3>HACCP 인증</h3>
               <p>위해요소중점관리기준</p>
-              <span className={styles.certDate}>2025년 취득</span>
-              <div className={styles.certBadge}>유효</div>
             </div>
 
             <div className={styles.certCard}>
               <div className={styles.certIcon}>💊</div>
               <h3>무항생제 인증</h3>
               <p>무항생제 사료 사용</p>
-              <span className={styles.certDate}>2025년 취득</span>
-              <div className={styles.certBadge}>유효</div>
             </div>
           </div>
         </div>

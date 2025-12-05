@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import PromotionBanner from "../components/PromotionBanner";
 import BannerCarousel from "../components/BannerCarousel";
 import styles from "./page.module.scss";
-import { Banner } from "@/types";
+import { Banner, Product } from "@/types";
 
 async function getBanners(): Promise<Banner[]> {
   try {
@@ -21,12 +21,32 @@ async function getBanners(): Promise<Banner[]> {
   }
 }
 
+async function getProducts(): Promise<Product[]> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+      cache: 'no-store'
+    });
+    if (!res.ok) return [];
+    const products: Product[] = await res.json();
+    // 활성화된 제품만 가져오고, featured 제품 우선 표시
+    return products
+      .filter(p => p.isActive)
+      .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
   const banners = await getBanners();
+  const products = await getProducts();
   const mainBanners = banners.filter(b => b.type === 'main');
   const bannersPosition1 = banners.filter(b => b.type === 'promotion' && b.position === 1);
   const bannersPosition2 = banners.filter(b => b.type === 'promotion' && b.position === 2);
   const bannersPosition3 = banners.filter(b => b.type === 'promotion' && b.position === 3);
+
+  // 메인 페이지에 표시할 제품 개수 제한 (최대 3개)
+  const displayProducts = products.slice(0, 3);
   return (
     <div className={styles.container}>
       {/* Skip link for accessibility */}
@@ -229,54 +249,26 @@ export default async function Home() {
               <p>3대째 이어온 전통 농법으로 정성껏 기른 우렁이 제품을 만나보세요</p>
             </div>
             <div className={styles.productGrid}>
-              <div className={styles.productCard}>
-                <div className={styles.productImage}>
-                  <Image
-                    src="/assets/원물.jpg"
-                    alt="생우렁이"
-                    width={200}
-                    height={200}
-                    className={styles.productImage}
-                  />
+              {displayProducts.map((product) => (
+                <div key={product.id} className={styles.productCard}>
+                  <div className={styles.productImage}>
+                    <Image
+                      src={product.thumbnails?.[0] || product.imageUrl || '/assets/default-product.jpg'}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                    {product.badge && (
+                      <span className={styles.productBadge}>{product.badge}</span>
+                    )}
+                  </div>
+                  <div className={styles.productInfo}>
+                    <h3>{product.name}</h3>
+                    <p>{product.description}</p>
+                  </div>
                 </div>
-                <div className={styles.productInfo}>
-                  <h3>생우렁이</h3>
-                  <p>신선하고 건강한 생우렁이로 다양한 요리에 활용하세요</p>
-                  <span className={styles.productBadge}>인기</span>
-                </div>
-              </div>
-              <div className={styles.productCard}>
-                <div className={styles.productImage}>
-                  <Image
-                    src="/assets/손질 완료.jpg"
-                    alt="우렁이 국거리"
-                    width={200}
-                    height={200}
-                    className={styles.productImage}
-                  />
-                </div>
-                <div className={styles.productInfo}>
-                  <h3>우렁이 국거리</h3>
-                  <p>간편하게 끓여먹는 우렁이 국거리용 제품</p>
-                  <span className={styles.productBadge}>추천</span>
-                </div>
-              </div>
-              <div className={styles.productCard}>
-                <div className={styles.productImage}>
-                  <Image
-                    src="/assets/멸균 공정 후.jpg"
-                    alt="냉동 우렁이"
-                    width={200}
-                    height={200}
-                    className={styles.productImage}
-                  />
-                </div>
-                <div className={styles.productInfo}>
-                  <h3>냉동 우렁이</h3>
-                  <p>언제나 간편하게 드실 수 있는 냉동 우렁이</p>
-                  <span className={styles.productBadge}>추천</span>
-                </div>
-              </div>
+              ))}
             </div>
             <div className={styles.productCTA}>
               <Link

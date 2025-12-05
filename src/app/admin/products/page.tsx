@@ -32,6 +32,7 @@ export default function AdminProductsPage() {
   const [existingBadges, setExistingBadges] = useState<string[]>([]);
   const [existingCategories, setExistingCategories] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
+  const [tagColor, setTagColor] = useState('#6B7280'); // 기본 회색
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [showBadgeSuggestions, setShowBadgeSuggestions] = useState(false);
   const [showCategorySuggestions, setShowCategorySuggestions] = useState(false);
@@ -54,7 +55,12 @@ export default function AdminProductsPage() {
       const badges = new Set<string>();
       const categories = new Set<string>();
       data.forEach((product: Product) => {
-        product.tags?.forEach(tag => tags.add(tag));
+        product.tags?.forEach(tag => {
+          // tags가 객체 배열이므로 name 추출
+          if (typeof tag === 'object' && tag.name) {
+            tags.add(tag.name);
+          }
+        });
         if (product.badge) badges.add(product.badge);
         if (product.category) categories.add(product.category);
       });
@@ -204,13 +210,17 @@ export default function AdminProductsPage() {
     setTagInput('');
   };
 
-  const addTag = (tag: string) => {
-    if (tag.trim() && !formData.tags?.includes(tag.trim())) {
+  const addTag = (tagName: string, color?: string) => {
+    const trimmedTag = tagName.trim();
+    const tagExists = formData.tags?.some(t => t.name === trimmedTag);
+
+    if (trimmedTag && !tagExists) {
       setFormData({
         ...formData,
-        tags: [...(formData.tags || []), tag.trim()],
+        tags: [...(formData.tags || []), { name: trimmedTag, color: color || tagColor }],
       });
       setTagInput('');
+      setTagColor('#6B7280'); // 리셋
       setShowTagSuggestions(false);
     }
   };
@@ -248,6 +258,10 @@ export default function AdminProductsPage() {
           <div className={styles.formCard}>
             <h2>{editingId ? '제품 수정' : '새 제품 추가'}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
+
+              {/* 기본 정보 섹션 */}
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>📝 기본 정보</h3>
 
               <div className={styles.formGroup}>
                 <label>카테고리*</label>
@@ -299,8 +313,12 @@ export default function AdminProductsPage() {
                 <div className={styles.tagContainer}>
                   <div className={styles.tags}>
                     {formData.tags?.map((tag, index) => (
-                      <span key={index} className={styles.tag}>
-                        {tag}
+                      <span
+                        key={index}
+                        className={styles.tag}
+                        style={{ backgroundColor: tag.color + '20', color: tag.color, border: `1px solid ${tag.color}` }}
+                      >
+                        {tag.name}
                         <button type="button" onClick={() => removeTag(index)} className={styles.tagRemove}>
                           ×
                         </button>
@@ -322,6 +340,14 @@ export default function AdminProductsPage() {
                         }
                       }}
                       placeholder="태그 입력 후 Enter"
+                      style={{ flex: 1 }}
+                    />
+                    <input
+                      type="color"
+                      value={tagColor}
+                      onChange={(e) => setTagColor(e.target.value)}
+                      title="태그 색상 선택"
+                      style={{ width: '50px', height: '38px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }}
                     />
                     {showTagSuggestions && filteredTagSuggestions.length > 0 && (
                       <div className={styles.suggestions}>
@@ -350,6 +376,11 @@ export default function AdminProductsPage() {
                   rows={4}
                 />
               </div>
+              </div>
+
+              {/* 태그 & 배지 섹션 */}
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>🏷️ 태그 & 배지</h3>
 
               <div className={styles.formGroup}>
                 <label>배지</label>
@@ -383,35 +414,15 @@ export default function AdminProductsPage() {
                   )}
                 </div>
               </div>
-
-              <div className={styles.formGroup}>
-                <label>추천 제품</label>
-                <div className={styles.checkboxGroup}>
-                  <input
-                    type="checkbox"
-                    id="featured"
-                    checked={formData.featured || false}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                  />
-                  <label htmlFor="featured">메인 페이지에 추천 제품으로 표시</label>
-                </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>활성화 상태</label>
-                <div className={styles.checkboxGroup}>
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    checked={formData.isActive !== false}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  />
-                  <label htmlFor="isActive">제품을 활성화하여 사이트에 표시</label>
-                </div>
-              </div>
+              {/* 이미지 섹션 */}
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>🖼️ 이미지</h3>
 
               <div className={styles.formGroup}>
                 <label>썸네일 이미지</label>
+                <p className={styles.fieldHelp}>제품 목록에 표시될 이미지입니다</p>
                 <div className={styles.imageUploadArea}>
                   {formData.thumbnails && formData.thumbnails.length > 0 && (
                     <div className={styles.imagePreviewGrid}>
@@ -444,6 +455,7 @@ export default function AdminProductsPage() {
 
               <div className={styles.formGroup}>
                 <label>상세 이미지</label>
+                <p className={styles.fieldHelp}>제품 상세 페이지에 표시될 이미지입니다</p>
                 <div className={styles.imageUploadArea}>
                   {formData.detailImages && formData.detailImages.length > 0 && (
                     <div className={styles.imagePreviewGrid}>
@@ -473,15 +485,48 @@ export default function AdminProductsPage() {
                   </label>
                 </div>
               </div>
+              </div>
+
+              {/* 추가 설정 섹션 */}
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>⚙️ 추가 설정</h3>
 
               <div className={styles.formGroup}>
                 <label>스토어 URL</label>
+                <p className={styles.fieldHelp}>네이버 스토어 등 외부 구매 링크 (선택사항)</p>
                 <input
                   type="url"
                   value={formData.storeUrl}
                   onChange={(e) => setFormData({ ...formData, storeUrl: e.target.value })}
-                  placeholder="네이버 스토어 등 외부 링크"
+                  placeholder="https://smartstore.naver.com/..."
                 />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>추천 제품</label>
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={formData.featured || false}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  />
+                  <label htmlFor="featured">메인 페이지에 추천 제품으로 표시</label>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>활성화 상태</label>
+                <div className={styles.checkboxGroup}>
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={formData.isActive !== false}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  />
+                  <label htmlFor="isActive">제품을 활성화하여 사이트에 표시</label>
+                </div>
+              </div>
               </div>
 
               <button type="submit" className={styles.submitButton}>

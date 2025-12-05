@@ -1,9 +1,15 @@
+// Tag Types
+export interface ProductTag {
+  name: string;
+  color: string; // hex color code (e.g., "#FF6B6B")
+}
+
 // Product Types
 export interface Product {
   id: string;
   category: string;
   name: string;
-  tags?: string[];
+  tags?: ProductTag[]; // 색상이 포함된 태그 배열
   description: string;
   badge?: string;
   thumbnails?: string[]; // 제품 썸네일 이미지 URLs

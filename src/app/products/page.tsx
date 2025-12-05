@@ -111,15 +111,23 @@ export default function ProductsPage() {
                     )}
                   </div>
                   <div className={styles.productInfo}>
-                    <p className={styles.productCategory}>{product.category}</p>
                     <h3>{product.name}</h3>
-                    {product.tags && product.tags.length > 0 && (
-                      <div className={styles.productTags}>
-                        {product.tags.slice(0, 3).map((tag, index) => (
-                          <span key={index} className={styles.tag}>{tag}</span>
-                        ))}
-                      </div>
-                    )}
+                    <div className={styles.productTags}>
+                      <span className={styles.categoryTag}>{product.category}</span>
+                      {product.tags && product.tags.slice(0, 2).map((tag, index) => (
+                        <span
+                          key={index}
+                          className={styles.tag}
+                          style={{
+                            backgroundColor: tag.color + '15',
+                            color: tag.color,
+                            border: `1px solid ${tag.color}40`
+                          }}
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
                     {product.description && (
                       <p className={styles.description}>
                         {product.description.length > 60

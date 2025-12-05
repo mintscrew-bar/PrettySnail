@@ -51,7 +51,35 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0;
+}
+
+.formSection {
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: #fafafa;
+
+  &:last-of-type {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 1.25rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.fieldHelp {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0.5rem 0;
+  font-style: italic;
 }
 
 .formRow {

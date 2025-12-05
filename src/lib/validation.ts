@@ -1,10 +1,16 @@
 import { z } from 'zod';
 
+// Product Tag Schema
+export const ProductTagSchema = z.object({
+  name: z.string().min(1).max(30),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color'),
+});
+
 // Product Validation Schema
 export const ProductSchema = z.object({
   category: z.string().min(1, 'Category is required').max(50),
   name: z.string().min(1, 'Name is required').max(100),
-  tags: z.array(z.string()).default([]),
+  tags: z.array(ProductTagSchema).default([]),
   description: z.string().min(1, 'Description is required').max(2000),
   badge: z.string().max(20).optional(),
   thumbnails: z.array(z.string().min(1)).optional(), // 상대 경로 허용
