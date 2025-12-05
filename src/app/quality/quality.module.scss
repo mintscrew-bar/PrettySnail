@@ -1,6 +1,7 @@
 @use "../../styles/variables" as *;
 @use "../../styles/mixins" as *;
 @use "../../styles/animations" as *;
+@use "../../styles/design-mixins" as *;
 
 .container {
   overflow-x: hidden;
@@ -621,18 +622,11 @@
 
 /* Footer - 기존과 동일 */
 .footer {
-  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-  color: white;
-  padding: 4rem 3rem 2rem;
+  @include footer-base;
 }
 
 .footerContent {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  margin-bottom: 3rem;
+  @include footer-content;
 }
 
 .footerBrand {
@@ -714,13 +708,7 @@
 }
 
 .footerBottom {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding-top: 2rem;
-  border-top: 1px solid #404040;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include footer-bottom;
 }
 
 .footerInfo {
