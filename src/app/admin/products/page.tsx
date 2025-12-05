@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
-import { Product } from '@/types';
+import { Product, ProductTag } from '@/types';
 import styles from './products.module.scss';
 import { initializeCsrfToken, uploadFile, apiFetch } from '@/lib/api';
 
@@ -210,9 +210,13 @@ export default function AdminProductsPage() {
     setTagInput('');
   };
 
+  // Helper to get tag name/color when tags can be `string` or `ProductTag`
+  const getTagName = (tag: string | ProductTag) => (typeof tag === 'string' ? tag : tag.name);
+  const getTagColor = (tag: string | ProductTag) => (typeof tag === 'string' ? '#6B7280' : tag.color);
+
   const addTag = (tagName: string, color?: string) => {
     const trimmedTag = tagName.trim();
-    const tagExists = formData.tags?.some(t => t.name === trimmedTag);
+    const tagExists = (formData.tags || []).some((t) => (typeof t === 'string' ? t : (t as ProductTag).name) === trimmedTag);
 
     if (trimmedTag && !tagExists) {
       setFormData({
@@ -232,8 +236,8 @@ export default function AdminProductsPage() {
   };
 
 
-  const filteredTagSuggestions = existingTags.filter(tag =>
-    tag.toLowerCase().includes(tagInput.toLowerCase()) && !formData.tags?.includes(tag)
+  const filteredTagSuggestions = existingTags.filter((tag) =>
+    tag.toLowerCase().includes(tagInput.toLowerCase()) && !(formData.tags || []).some((t) => (typeof t === 'string' ? t : (t as ProductTag).name) === tag)
   );
 
   const filteredBadgeSuggestions = existingBadges.filter(badge =>
@@ -312,18 +316,22 @@ export default function AdminProductsPage() {
                 <label>태그</label>
                 <div className={styles.tagContainer}>
                   <div className={styles.tags}>
-                    {formData.tags?.map((tag, index) => (
-                      <span
-                        key={index}
-                        className={styles.tag}
-                        style={{ backgroundColor: tag.color + '20', color: tag.color, border: `1px solid ${tag.color}` }}
-                      >
-                        {tag.name}
-                        <button type="button" onClick={() => removeTag(index)} className={styles.tagRemove}>
-                          ×
-                        </button>
-                      </span>
-                    ))}
+                    {formData.tags?.map((tag, index) => {
+                      const name = getTagName(tag as any);
+                      const color = getTagColor(tag as any);
+                      return (
+                        <span
+                          key={index}
+                          className={styles.tag}
+                          style={{ backgroundColor: color + '20', color: color, border: `1px solid ${color}` }}
+                        >
+                          {name}
+                          <button type="button" onClick={() => removeTag(index)} className={styles.tagRemove}>
+                            ×
+                          </button>
+                        </span>
+                      );
+                    })}
                   </div>
                   <div className={styles.tagInputWrapper}>
                     <input
@@ -554,7 +562,7 @@ export default function AdminProductsPage() {
                   <p className={styles.category}>{product.category}</p>
                   <div className={styles.productTags}>
                     {product.tags?.slice(0, 3).map((tag, idx) => (
-                      <span key={idx} className={styles.miniTag}>{tag}</span>
+                      <span key={idx} className={styles.miniTag}>{typeof tag === 'string' ? tag : tag.name}</span>
                     ))}
                     {product.featured && (
                       <span className={styles.featuredBadge}>⭐ 추천</span>

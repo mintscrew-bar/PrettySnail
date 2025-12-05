@@ -3,6 +3,7 @@
 
 .valueCard {
   @include card;
+  padding: 0;
   text-align: center;
   display: flex;
   flex-direction: column;

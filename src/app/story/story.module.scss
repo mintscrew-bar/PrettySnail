@@ -641,7 +641,7 @@
   }
 
   .infoGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
@@ -662,7 +662,7 @@
 
 @media (max-width: 480px) {
   .valuesGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .teamGrid {

@@ -121,7 +121,8 @@ export async function addProduct(
       name: product.name,
       description: product.description,
       category: product.category,
-      tags: product.tags || [],
+      // Prisma schema stores tags as string[], but the client may send ProductTag objects
+      tags: (product.tags || []).map((t) => (typeof t === 'string' ? t : (t as any).name)),
       badge: product.badge,
       thumbnails: product.thumbnails || [],
       detailImages: product.detailImages || [],
@@ -145,7 +146,9 @@ export async function updateProduct(
         ...(updates.name !== undefined && { name: updates.name }),
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.category !== undefined && { category: updates.category }),
-        ...(updates.tags !== undefined && { tags: updates.tags }),
+        ...(updates.tags !== undefined && {
+          tags: (updates.tags || []).map((t) => (typeof t === 'string' ? t : (t as any).name)),
+        }),
         ...(updates.badge !== undefined && { badge: updates.badge }),
         ...(updates.thumbnails !== undefined && { thumbnails: updates.thumbnails }),
         ...(updates.detailImages !== undefined && { detailImages: updates.detailImages }),

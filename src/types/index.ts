@@ -9,7 +9,9 @@ export interface Product {
   id: string;
   category: string;
   name: string;
-  tags?: ProductTag[]; // 색상이 포함된 태그 배열
+  // tags: DB에는 문자열 배열로 저장되지만 클라이언트에서는 색상까지 포함한 객체로 다룰 수 있으므로
+  // 문자열 또는 `ProductTag` 객체의 혼합 배열을 허용합니다.
+  tags?: Array<string | ProductTag>;
   description: string;
   badge?: string;
   thumbnails?: string[]; // 제품 썸네일 이미지 URLs
