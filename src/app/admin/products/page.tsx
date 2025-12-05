@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Product, ProductTag } from '@/types';
 import styles from './products.module.scss';
@@ -37,6 +37,7 @@ export default function AdminProductsPage() {
   const [showBadgeSuggestions, setShowBadgeSuggestions] = useState(false);
   const [showCategorySuggestions, setShowCategorySuggestions] = useState(false);
 
+   
   useEffect(() => {
     // Initialize CSRF token before making any requests
     initializeCsrfToken().then(() => {
@@ -44,10 +45,45 @@ export default function AdminProductsPage() {
     });
   }, []);
 
-  const fetchProducts = async () => {
+  // Fetch helper with retry and detailed error parsing
+  const fetchWithRetry = async (
+    url: string,
+    options: RequestInit = {},
+    retries = 2,
+    backoff = 500
+  ): Promise<Product[]> => {
     try {
-      const res = await fetch('/api/products', { credentials: 'include' });
-      const data = await res.json();
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let parsed: Record<string, unknown> | null = null;
+      try {
+        parsed = text ? JSON.parse(text) : null;
+      } catch {
+        parsed = text as unknown as Record<string, unknown>;
+      }
+
+      if (!res.ok) {
+        const errMsg = parsed && typeof parsed === 'object' && ('error' in parsed || 'message' in parsed)
+          ? (parsed.error || parsed.message)
+          : res.statusText || 'Unknown error';
+        const details = parsed && 'details' in parsed ? `\nDetails: ${JSON.stringify(parsed.details)}` : '';
+        throw new Error(`${res.status} ${errMsg}${details}`);
+      }
+
+      return (parsed || []) as Product[];
+    } catch (err) {
+      if (retries > 0) {
+        await new Promise((r) => setTimeout(r, backoff));
+        return fetchWithRetry(url, options, retries - 1, backoff * 2);
+      }
+      throw err;
+    }
+  };
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await fetchWithRetry('/api/products', { credentials: 'include' }, 2, 500);
       setProducts(data);
 
       // 기존 태그, 배지, 카테고리 추출
@@ -55,11 +91,9 @@ export default function AdminProductsPage() {
       const badges = new Set<string>();
       const categories = new Set<string>();
       data.forEach((product: Product) => {
-        product.tags?.forEach(tag => {
-          // tags가 객체 배열이므로 name 추출
-          if (typeof tag === 'object' && tag.name) {
-            tags.add(tag.name);
-          }
+        (product.tags || []).forEach((tag) => {
+          const tagName = typeof tag === 'string' ? tag : (tag as ProductTag).name;
+          tags.add(tagName);
         });
         if (product.badge) badges.add(product.badge);
         if (product.category) categories.add(product.category);
@@ -67,12 +101,18 @@ export default function AdminProductsPage() {
       setExistingTags(Array.from(tags));
       setExistingBadges(Array.from(badges));
       setExistingCategories(Array.from(categories));
-    } catch {
-      alert('제품을 불러오지 못했습니다');
+    } catch (error: unknown) {
+      console.error('Fetch products failed:', error);
+      const msg = error instanceof Error && error.message ? error.message : '제품을 불러오지 못했습니다';
+      // 사용자에게 재시도 옵션 제공
+      const retry = confirm(`제품을 불러오지 못했습니다:\n${msg}\n\n다시 시도하시겠습니까?`);
+      if (retry) {
+        fetchProducts();
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -317,8 +357,8 @@ export default function AdminProductsPage() {
                 <div className={styles.tagContainer}>
                   <div className={styles.tags}>
                     {formData.tags?.map((tag, index) => {
-                      const name = getTagName(tag as any);
-                      const color = getTagColor(tag as any);
+                      const name = getTagName(tag);
+                      const color = getTagColor(tag);
                       return (
                         <span
                           key={index}
