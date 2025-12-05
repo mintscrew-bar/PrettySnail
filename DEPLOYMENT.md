@@ -52,11 +52,31 @@ git push -u origin master
    - **Build Command**: `npm run build` (기본값)
    - **Output Directory**: `.next` (기본값)
 
-### Step 3: 환경 변수 설정
 
-Vercel 프로젝트 설정에서 다음 환경 변수 추가:
+### Step 3: 로컬 빌드, Prisma 마이그레이션 및 환경 변수 설정
 
-#### 필수 환경 변수
+배포 전에 로컬에서 빌드/마이그레이션/시드 과정을 먼저 확인하세요. Vercel에 환경 변수를 설정하면 런타임에서 사용됩니다.
+
+로컬에서 기본 검증 명령 (예시):
+
+```bash
+# 의존성 설치
+npm install
+
+# 타입 체크 + 린트(옵션)
+npm run build
+npm run lint
+
+# Prisma 마이그레이션 (프로덕션 DB에 적용 전 반드시 검토)
+npx prisma migrate deploy
+
+# 시드(프로젝트에 시드 스크립트가 있는 경우)
+node scripts/seed.ts
+```
+
+Vercel 프로젝트 설정에서 다음 환경 변수를 추가하세요:
+
+#### 권장 환경 변수
 
 ```env
 # 배포된 도메인 URL (Vercel이 자동 제공)
@@ -65,10 +85,18 @@ NEXT_PUBLIC_BASE_URL=https://your-project.vercel.app
 # JWT 비밀키 (강력한 랜덤 문자열 생성 필요!)
 JWT_SECRET=생성한_강력한_비밀키
 
-# 관리자 계정 정보
+# 관리자 계정 정보 (초기 로그인용 — 배포 후 변경 권장)
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=안전한_비밀번호
+
+# 데이터베이스 (Postgres 권장)
+DATABASE_URL=postgresql://user:pass@host:5432/dbname
+
+# (옵션) 마이그레이션이나 로컬 쉐도우 DB가 필요한 경우
+DATABASE_SHADOW_URL=postgresql://user:pass@host:5432/shadow_db
 ```
+
+※ 민감한 값은 `.env`에 직접 두지 말고 Vercel 환경 변수로 관리하세요.
 
 #### JWT_SECRET 생성 방법
 

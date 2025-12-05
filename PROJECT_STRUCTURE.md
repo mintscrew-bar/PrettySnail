@@ -18,6 +18,20 @@ prettysnail/
 └── [설정 파일들]
 ```
 
+### 루트의 주요 파일들 (추가 설명)
+
+```
+next-env.d.ts            # Next.js 타입 정의 (자동 생성)
+next.config.ts           # Next.js 구성
+prisma.config.ts         # Prisma 설정(개발/프로덕션 분기 등)
+package.json             # 스크립트 및 의존성
+vercel.json              # Vercel 배포 설정
+tsconfig.json            # TypeScript 설정
+README.md                # 프로젝트 개요
+DEPLOYMENT.md            # 배포 가이드
+PROJECT_STRUCTURE.md     # 현재 파일 (프로젝트 구조 설명)
+```
+
 ---
 
 ## 📂 주요 디렉토리 설명

@@ -16,6 +16,7 @@
 - [CLAUDE.md](../CLAUDE.md) - Claude Code 프로젝트 가이드
 - [README.md](../README.md) - 프로젝트 개요 및 시작 가이드
 - [DEPLOYMENT.md](../DEPLOYMENT.md) - 배포 가이드
+ - [TECHNICAL_GUIDE.md](../docs/TECHNICAL_GUIDE.md) - 코드베이스 구현 요약 및 운영 가이드 (자동 스캔 요약)
 
 ## 문서 작성 가이드
 
