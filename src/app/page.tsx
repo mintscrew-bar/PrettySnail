@@ -14,7 +14,9 @@ async function getBanners(): Promise<Banner[]> {
       cache: 'no-store'
     });
     if (!res.ok) return [];
-    const banners: Banner[] = await res.json();
+    const body = await res.json();
+    // API may return raw array or a wrapped object { success, data }
+    const banners: Banner[] = Array.isArray(body) ? body : (body && Array.isArray((body as any).data) ? (body as any).data : []);
     return banners.filter(b => b.isActive);
   } catch {
     return [];
