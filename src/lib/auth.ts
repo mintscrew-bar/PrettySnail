@@ -41,11 +41,22 @@ export function withAuth(
   ) => {
     // Verify CSRF token for state-changing requests
     if (!verifyCsrfToken(request)) {
-      logger.warn('CSRF token verification failed', {
-        method: request.method,
-        endpoint: request.url,
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
-      });
+      logger.error(
+        'CSRF token verification failed',
+        ErrorCode.AUTH005,
+        {
+          method: request.method,
+          endpoint: request.url,
+          userAgent: request.headers.get('user-agent'),
+          referer: request.headers.get('referer'),
+          cookieToken: request.cookies.get('csrf-token')?.value ? 'present' : 'missing',
+          headerToken: request.headers.get('x-csrf-token') ? 'present' : 'missing',
+        },
+        {
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+          endpoint: request.url,
+        }
+      );
 
       return NextResponse.json(
         {
@@ -68,10 +79,22 @@ export function withAuth(
     }
 
     if (!token) {
-      logger.warn('Authentication failed: No token found in cookie or header', {
-        endpoint: request.url,
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
-      });
+      logger.error(
+        'Authentication failed: No token found in cookie or header',
+        ErrorCode.AUTH001,
+        {
+          method: request.method,
+          endpoint: request.url,
+          userAgent: request.headers.get('user-agent'),
+          referer: request.headers.get('referer'),
+          hasCookie: request.cookies.has('auth-token'),
+          hasAuthHeader: !!request.headers.get('Authorization'),
+        },
+        {
+          endpoint: request.url,
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+        }
+      );
 
       return NextResponse.json(
         createErrorResponse(ErrorCode.AUTH001),
@@ -85,10 +108,16 @@ export function withAuth(
       logger.error(
         'Authentication failed: Invalid or expired token',
         ErrorCode.AUTH003,
-        undefined,
+        {
+          method: request.method,
+          endpoint: request.url,
+          userAgent: request.headers.get('user-agent'),
+          referer: request.headers.get('referer'),
+          tokenPrefix: token.substring(0, 10) + '...',
+        },
         {
           endpoint: request.url,
-          ip: request.headers.get('x-forwarded-for') || 'unknown',
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
         }
       );
 

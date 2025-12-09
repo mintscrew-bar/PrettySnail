@@ -22,6 +22,11 @@ export async function POST(request: NextRequest) {
       logger.warn('Login rate limit exceeded', {
         ip: clientIp,
         resetTime: resetDate.toISOString(),
+        userAgent: request.headers.get('user-agent'),
+        referer: request.headers.get('referer'),
+        limit: rateLimit.limit,
+        windowSeconds: 15 * 60,
+        retryAfterSeconds: Math.ceil((rateLimit.resetTime - Date.now()) / 1000),
       });
 
       return NextResponse.json(
@@ -50,11 +55,20 @@ export async function POST(request: NextRequest) {
     const validation = LoginSchema.safeParse(body);
 
     if (!validation.success) {
-      logger.warn('Login validation failed', {
-        errors: validation.error.issues,
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
-      });
-      // 유효성 검사 실패 응답
+      logger.error(
+        'Login validation failed',
+        ErrorCode.VALID001,
+        {
+          errors: validation.error.issues,
+          userAgent: request.headers.get('user-agent'),
+          referer: request.headers.get('referer'),
+          receivedFields: Object.keys(body),
+        },
+        {
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+          endpoint: '/api/auth/login',
+        }
+      );
 
       return NextResponse.json(
         {
@@ -64,11 +78,10 @@ export async function POST(request: NextRequest) {
             field: err.path.join('.'),
             message: err.message,
           })),
-          // 메시지: '입력한 정보를 다시 확인해주세요.',
         },
         { status: 400 }
       );
-    } // 유효성 검사 통과
+    }
 
     const { username, password } = validation.data;
 
@@ -76,17 +89,26 @@ export async function POST(request: NextRequest) {
     const user = await findAdminUser(username, password);
 
     if (!user) {
-      logger.warn('Login failed: Invalid credentials', {
-        username,
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
-      });
-      // 인증 실패 응답
+      logger.error(
+        'Login failed: Invalid credentials',
+        ErrorCode.AUTH006,
+        {
+          username,
+          userAgent: request.headers.get('user-agent'),
+          referer: request.headers.get('referer'),
+          attemptTime: new Date().toISOString(),
+        },
+        {
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+          endpoint: '/api/auth/login',
+        }
+      );
 
       return NextResponse.json(
-        { error: 'Invalid credentials', errorCode: ErrorCode.AUTH002 },
+        { error: 'Invalid credentials', errorCode: ErrorCode.AUTH006 },
         { status: 401 }
       );
-    } // 인증 성공
+    }
 
     // Generate JWT token
     const token = await generateToken({
@@ -114,7 +136,11 @@ export async function POST(request: NextRequest) {
     logger.info('User logged in successfully', {
       userId: user.id,
       username: user.username,
-      ip: request.headers.get('x-forwarded-for') || 'unknown',
+      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+      userAgent: request.headers.get('user-agent'),
+      referer: request.headers.get('referer'),
+      loginTime: new Date().toISOString(),
+      rateLimitRemaining: rateLimit.remaining,
     });
     // 성공 응답 반환
     return response;
@@ -122,11 +148,17 @@ export async function POST(request: NextRequest) {
     logger.error(
       'Login error',
       ErrorCode.AUTH001,
-      { error: error instanceof Error ? error.message : 'Unknown error' },
       {
-        ip: request.headers.get('x-forwarded-for') || 'unknown',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
+        userAgent: request.headers.get('user-agent'),
+        referer: request.headers.get('referer'),
+      },
+      {
+        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
         endpoint: '/api/auth/login',
-      } // 추가 컨텍스트
+      }
     );
 
     return NextResponse.json(
@@ -137,5 +169,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
-  }  // 에러 처리
-}// POST handler 끝
+  }
+}

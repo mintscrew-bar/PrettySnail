@@ -1,7 +1,10 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { getEnv } from './env';
+import { getEnv, isProd } from './env';
 
 const SECRET_KEY = new TextEncoder().encode(getEnv('JWT_SECRET'));
+
+// 개발 환경: 30일, 프로덕션: 7일
+const TOKEN_EXPIRATION = isProd ? '7d' : '30d';
 
 export interface JWTPayload {
   userId: string;
@@ -11,12 +14,20 @@ export interface JWTPayload {
 
 /**
  * Generate a JWT token
+ * @param payload - User information to encode
+ * @param rememberMe - Optional: if true, extends token to 90 days
  */
-export async function generateToken(payload: JWTPayload): Promise<string> {
+export async function generateToken(
+  payload: JWTPayload,
+  rememberMe = false
+): Promise<string> {
+  // Use extended expiration for "remember me"
+  const expiration = rememberMe ? '90d' : TOKEN_EXPIRATION;
+
   const token = await new SignJWT({ ...payload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d') // 7일 유효
+    .setExpirationTime(expiration)
     .sign(SECRET_KEY);
 
   return token;

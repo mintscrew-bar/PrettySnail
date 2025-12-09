@@ -1,6 +1,7 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .header {
@@ -22,29 +23,42 @@
   color: white;
   padding: 0.6rem 1.25rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.9rem;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
   &:hover {
     background: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
 .formCard {
   background: white;
   border: 1px solid #e5e5e5;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 1.75rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
   h2 {
     margin: 0 0 1.5rem 0;
     color: #1a1a1a;
     font-size: 1.25rem;
     font-weight: 600;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
   }
 }
 
@@ -56,10 +70,16 @@
 
 .formSection {
   border: 1px solid #e5e5e5;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   background: #fafafa;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
 
   &:last-of-type {
     margin-bottom: 1.5rem;
@@ -105,15 +125,18 @@
     border: 1px solid #d4d4d4;
     border-radius: 4px;
     font-size: 0.9rem;
+    min-height: 44px;
 
     &:focus {
       outline: none;
+      border-color: #1a1a1a;
     }
   }
 
   textarea {
     resize: vertical;
     font-family: inherit;
+    min-height: 100px;
   }
 }
 
@@ -242,15 +265,23 @@
   color: white;
   padding: 0.7rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.9rem;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
   margin-top: 1rem;
+  min-height: 48px;
+  width: 100%;
 
   &:hover {
     background: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -265,6 +296,176 @@
   border-radius: 6px;
 }
 
+.productsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sortControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sortLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.sortSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: white;
+  min-height: 36px;
+
+  &:focus {
+    outline: none;
+    border-color: #1a1a1a;
+  }
+}
+
+.sortOrderButton {
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    border-color: #999;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.selectAllCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 2px solid #d4d4d4;
+    border-radius: 4px;
+    background: transparent;
+    position: relative;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: #1a1a1a;
+    }
+
+    &:checked {
+      background: transparent;
+      border-color: #1a1a1a;
+    }
+
+    &:checked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 5px;
+      height: 10px;
+      border: solid #1a1a1a;
+      border-width: 0 2px 2px 0;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+    }
+  }
+}
+
+.batchActionsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #1a1a1a;
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.batchCount {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.batchButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.batchButton {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 36px;
+
+  &:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+  }
+
+  &.batchDelete {
+    background: #e63946;
+    color: white;
+
+    &:hover {
+      background: #d32f2f;
+    }
+  }
+}
+
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -274,12 +475,74 @@
 .productCard {
   background: white;
   border: 1px solid #e5e5e5;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+
+  &.selected {
+    border-color: #1a1a1a;
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.2);
+  }
 
   &:hover {
     border-color: #ccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.productCheckbox {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 5;
+  background: white;
+  border-radius: 4px;
+  padding: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 2px solid #d4d4d4;
+    border-radius: 4px;
+    background: transparent;
+    position: relative;
+    transition: all 0.15s ease;
+    margin: 0;
+
+    &:hover {
+      border-color: #1a1a1a;
+    }
+
+    &:checked {
+      background: transparent;
+      border-color: #1a1a1a;
+    }
+
+    &:checked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 5px;
+      height: 10px;
+      border: solid #1a1a1a;
+      border-width: 0 2px 2px 0;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+    }
   }
 }
 
@@ -362,11 +625,12 @@
   flex: 1;
   padding: 0.6rem;
   border: 1px solid #d4d4d4;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.85rem;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  min-height: 44px;
 }
 
 .editButton {
@@ -375,15 +639,20 @@
 
   &:hover {
     background: #f5f5f5;
+    border-color: #999;
+    transform: translateY(-1px);
   }
 }
 
 .deleteButton {
   background: white;
   color: #e63946;
+  border-color: #ffcdd2;
 
   &:hover {
     background: #fff5f5;
+    border-color: #ef9a9a;
+    transform: translateY(-1px);
   }
 }
 
@@ -406,11 +675,42 @@
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid #d4d4d4;
+  cursor: move;
+  transition: all 0.2s ease;
 
-  img {
+  &.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .imageNumber {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+  }
+
+  .previewImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 }
 
@@ -465,17 +765,261 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .addButton {
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    min-height: 48px;
   }
 
   .formCard {
     padding: 1.5rem;
   }
 
+  .formSection {
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.95rem;
+  }
+
+  .formGroup {
+    label {
+      font-size: 0.9rem;
+    }
+
+    input,
+    textarea {
+      font-size: 16px;
+      padding: 0.75rem;
+    }
+  }
+
+  .submitButton {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+
   .productsGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .productCard {
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .actions {
+    gap: 0.75rem;
+  }
+
+  .editButton,
+  .deleteButton {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    min-height: 48px;
   }
 
   .imagePreviewGrid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.875rem;
+  }
+
+  .uploadButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  .tag {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .batchActionsBar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+
+    .batchButtons {
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .batchButton {
+        width: 100%;
+      }
+    }
+  }
+
+  .productsHeader {
+    padding: 0.625rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    .sortControls {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+.imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+
+.imageModalContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+}
+
+.imageModalClose {
+  position: absolute;
+  top: -2.5rem;
+  right: 0;
+  background: white;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .header {
+    margin-bottom: 1.25rem;
+
+    h1 {
+      font-size: 1.35rem;
+    }
+  }
+
+  .formCard {
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .formSection {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.95rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .imagePreviewGrid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .checkboxGroup {
+    label {
+      font-size: 0.95rem;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 2px solid #d4d4d4;
+      border-radius: 4px;
+      background: transparent;
+      position: relative;
+      transition: all 0.15s ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: #1a1a1a;
+      }
+
+      &:checked {
+        background: transparent;
+        border-color: #1a1a1a;
+      }
+
+      &:checked::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+        width: 4px;
+        height: 8px;
+        border: solid #1a1a1a;
+        border-width: 0 2px 2px 0;
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+      }
+    }
+  }
+
+  .tagInputWrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    input[type="color"] {
+      width: 100%;
+      height: 44px;
+    }
   }
 }

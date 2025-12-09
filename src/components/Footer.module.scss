@@ -1,8 +1,9 @@
-@use '../styles/variables' as *;
-@use '../styles/mixins' as *;
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
 
 .footer {
-  background: $footer-bg;
+  /* 단색 배경: 사용자 요청 계열(딥 그린) */
+  background: #2a3f09;
   color: $footer-text;
   padding: $space-3xl $space-lg $space-xl;
 }
@@ -73,38 +74,38 @@
 
 .footerLinks {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: $space-xl;
-}
 
-.footerColumn {
-  h4 {
-    color: $footer-text;
-    margin-bottom: $space-md;
-    font-size: $text-lg;
-    font-weight: $font-semibold;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    margin-bottom: $space-sm;
-    color: $footer-muted;
-    font-size: $text-sm;
-    line-height: $leading-relaxed;
-  }
-
-  a {
-    color: $footer-muted;
-    text-decoration: none;
-    transition: $transition-fast;
-
-    &:hover {
+  .footerColumn {
+    h4 {
       color: $footer-text;
+      margin-bottom: $space-md;
+      font-size: $text-lg;
+      font-weight: $font-semibold;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      margin-bottom: $space-sm;
+      color: $footer-muted;
+      font-size: $text-sm;
+      line-height: $leading-relaxed;
+    }
+
+    a {
+      color: $footer-muted;
+      text-decoration: none;
+      transition: $transition-fast;
+
+      &:hover {
+        color: $footer-text;
+      }
     }
   }
 }
@@ -126,16 +127,49 @@
 
   p {
     margin-bottom: $space-xs;
+    /* 하단 정보는 백색으로 덮어씌워 가독성 확보 */
+    color: #b3b3b3; /* 사용자 요청: 더 옅은 중간 회색 */
+    font-weight: 300;
   }
 }
 
 .footerCopyright {
-  color: $footer-muted;
+  /* 더 높은 특이도로 다른 모듈의 스타일을 덮어씁니다 */
+  color: #b3b3b3;
   font-size: $text-sm;
   text-align: right;
+  font-weight: 300;
+}
+
+.footerCopyright p {
+  color: #b3b3b3;
+  margin: 0;
+  font-weight: 300;
 }
 
 // Responsive design
+@media (max-width: 968px) {
+  .footerContent {
+    grid-template-columns: 1fr;
+    gap: $space-2xl;
+  }
+
+  .footerLinks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-lg;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    gap: $space-md;
+    text-align: left;
+  }
+
+  .footerCopyright {
+    text-align: left;
+  }
+}
+
 @include respond-to(md) {
   .footerContent {
     grid-template-columns: 1fr;
@@ -159,7 +193,8 @@
   }
 
   .footerLinks {
-    grid-template-columns: 1fr;
+    /* 모바일에서도 2열을 유지하도록 수정 (사용자 요청) */
+    grid-template-columns: repeat(2, 1fr);
     gap: $space-lg;
   }
 

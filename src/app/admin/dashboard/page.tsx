@@ -41,8 +41,11 @@ export default function AdminDashboard() {
         fetch('/api/banners', { credentials: 'include' }),
       ]);
 
-      const products: Product[] = await productsRes.json();
-      const banners: Banner[] = await bannersRes.json();
+      const productsData = await productsRes.json();
+      const bannersData = await bannersRes.json();
+
+      const products: Product[] = productsData.data || [];
+      const banners: Banner[] = bannersData.data || [];
 
       // Calculate statistics
       const activeProducts = products.filter(p => p.isActive);
@@ -92,6 +95,33 @@ export default function AdminDashboard() {
           <div className={styles.loading}>로딩중...</div>
         ) : (
           <>
+            {/* Quick Actions */}
+            <div className={styles.quickActions}>
+              <h2>빠른 작업</h2>
+              <div className={styles.actionGrid}>
+                <Link href="/admin/products" className={styles.actionCard}>
+                  <span className={styles.actionIcon}>➕</span>
+                  <span>제품 추가</span>
+                </Link>
+                <Link href="/admin/banners" className={styles.actionCard}>
+                  <span className={styles.actionIcon}>➕</span>
+                  <span>배너 추가</span>
+                </Link>
+                <Link href="/admin/logs" className={styles.actionCard}>
+                  <span className={styles.actionIcon}>📋</span>
+                  <span>시스템 로그 보기</span>
+                </Link>
+                <Link href="/products" className={styles.actionCard}>
+                  <span className={styles.actionIcon}>👁️</span>
+                  <span>제품 페이지 보기</span>
+                </Link>
+                <Link href="/" className={styles.actionCard}>
+                  <span className={styles.actionIcon}>🏠</span>
+                  <span>메인 페이지 보기</span>
+                </Link>
+              </div>
+            </div>
+
             {/* Statistics Grid */}
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
@@ -215,33 +245,6 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className={styles.quickActions}>
-              <h2>빠른 작업</h2>
-              <div className={styles.actionGrid}>
-                <Link href="/admin/products" className={styles.actionCard}>
-                  <span className={styles.actionIcon}>➕</span>
-                  <span>제품 추가</span>
-                </Link>
-                <Link href="/admin/banners" className={styles.actionCard}>
-                  <span className={styles.actionIcon}>➕</span>
-                  <span>배너 추가</span>
-                </Link>
-                <Link href="/admin/logs" className={styles.actionCard}>
-                  <span className={styles.actionIcon}>📋</span>
-                  <span>시스템 로그 보기</span>
-                </Link>
-                <Link href="/products" className={styles.actionCard}>
-                  <span className={styles.actionIcon}>👁️</span>
-                  <span>제품 페이지 보기</span>
-                </Link>
-                <Link href="/" className={styles.actionCard}>
-                  <span className={styles.actionIcon}>🏠</span>
-                  <span>메인 페이지 보기</span>
-                </Link>
               </div>
             </div>
           </>

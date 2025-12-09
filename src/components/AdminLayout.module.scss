@@ -2,6 +2,7 @@
   display: flex;
   min-height: 100vh;
   background: #fafafa;
+  position: relative;
 }
 
 .loading {
@@ -13,29 +14,146 @@
   color: #999;
 }
 
+.mobileHeader {
+  display: none;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+}
+
+.mobileHeaderContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 44px;
+}
+
+.mobileLogo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+
+  img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  gap: 5px;
+
+  span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: #1a1a1a;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.hamburgerOpen {
+    span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+  }
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+}
+
 .sidebar {
   width: 220px;
   background: white;
   border-right: 1px solid #e5e5e5;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 99;
 }
 
 .logo {
   padding: 1.5rem 1.25rem;
   border-bottom: 1px solid #e5e5e5;
-
-  h2 {
-    font-size: 1.1rem;
-    margin: 0;
-    font-weight: 600;
-    color: #1a1a1a;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 
   p {
-    margin: 0.25rem 0 0 0;
+    margin: 0;
     font-size: 0.75rem;
     color: #999;
+    text-align: center;
+  }
+}
+
+.logoImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 }
 
@@ -117,21 +235,102 @@
     flex-direction: column;
   }
 
+  .mobileHeader {
+    display: block;
+  }
+
+  .overlay {
+    display: block;
+  }
+
   .sidebar {
-    width: 100%;
-    min-height: auto;
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+
+    &.sidebarOpen {
+      left: 0;
+    }
+  }
+
+  .logo {
+    padding: 1.5rem 1.5rem;
   }
 
   .nav {
     padding: 1rem 0;
 
     a {
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 1.5rem;
       font-size: 1rem;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
     }
+  }
+
+  .user {
+    padding: 1.5rem;
+  }
+
+  .logoutButton {
+    padding: 0.75rem;
+    font-size: 1rem;
+    min-height: 48px;
   }
 
   .main {
     padding: 1.5rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobileHeader {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .mobileHeaderContent {
+    min-height: 40px;
+  }
+
+  .mobileLogo {
+    height: 40px;
+  }
+
+  .hamburger {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    gap: 4px;
+
+    span {
+      width: 22px;
+      height: 2.5px;
+    }
+
+    &.hamburgerOpen {
+      span:nth-child(1) {
+        transform: rotate(45deg) translateY(6.5px);
+      }
+
+      span:nth-child(3) {
+        transform: rotate(-45deg) translateY(-6.5px);
+      }
+    }
+  }
+
+  .main {
+    padding: 1rem;
+  }
+
+  .sidebar {
+    width: 280px;
+    left: -280px;
   }
 }

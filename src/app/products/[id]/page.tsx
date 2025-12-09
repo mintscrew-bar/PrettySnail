@@ -39,15 +39,19 @@ export default function ProductDetailPage() {
     try {
       const res = await fetch(`/api/products/${id}`);
       if (res.ok) {
-        const data = await res.json();
-        setProduct(data);
+        const response = await res.json();
+        // API returns wrapped response: { success: true, data: {...} }
+        const productData = response.data || response;
+        setProduct(productData);
       }
 
       // 다른 제품들도 가져오기
       const allRes = await fetch('/api/products');
       if (allRes.ok) {
-        const allProducts = await allRes.json();
-        setOtherProducts(allProducts.filter((p: Product) => p.id !== id).slice(0, 4));
+        const response = await allRes.json();
+        // API returns wrapped response: { success: true, data: [...] }
+        const products: Product[] = response.data || response;
+        setOtherProducts(products.filter((p: Product) => p.id !== id).slice(0, 4));
       }
     } catch (error) {
       console.error('Failed to fetch product:', error);
@@ -127,19 +131,22 @@ export default function ProductDetailPage() {
 
             {product.tags && product.tags.length > 0 && (
               <div className={styles.tags}>
-                {product.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className={styles.tag}
-                    style={{
-                      backgroundColor: tag.color + '15',
-                      color: tag.color,
-                      border: `1px solid ${tag.color}40`
-                    }}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
+                {product.tags.map((tag, index) => {
+                  const tagObj = typeof tag === 'string' ? { name: tag, color: '#547416' } : tag;
+                  return (
+                    <span
+                      key={index}
+                      className={styles.tag}
+                      style={{
+                        backgroundColor: tagObj.color + '15',
+                        color: tagObj.color,
+                        border: `1px solid ${tagObj.color}40`
+                      }}
+                    >
+                      {tagObj.name}
+                    </span>
+                  );
+                })}
               </div>
             )}
 
@@ -195,19 +202,22 @@ export default function ProductDetailPage() {
                     <h3>{p.name}</h3>
                     <div className={styles.productTags}>
                       <span className={styles.productCategoryTag}>{p.category}</span>
-                      {p.tags && p.tags.slice(0, 2).map((tag, index) => (
-                        <span
-                          key={index}
-                          className={styles.productTag}
-                          style={{
-                            backgroundColor: tag.color + '15',
-                            color: tag.color,
-                            border: `1px solid ${tag.color}40`
-                          }}
-                        >
-                          {tag.name}
-                        </span>
-                      ))}
+                      {p.tags && p.tags.slice(0, 2).map((tag, index) => {
+                        const tagObj = typeof tag === 'string' ? { name: tag, color: '#547416' } : tag;
+                        return (
+                          <span
+                            key={index}
+                            className={styles.productTag}
+                            style={{
+                              backgroundColor: tagObj.color + '15',
+                              color: tagObj.color,
+                              border: `1px solid ${tagObj.color}40`
+                            }}
+                          >
+                            {tagObj.name}
+                          </span>
+                        );
+                      })}
                     </div>
                     <p className={styles.productDescription}>
                       {p.description?.length > 50

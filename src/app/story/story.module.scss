@@ -54,7 +54,7 @@
 }
 
 .logoSubtext {
-  color: #8B9A7E;
+  color: #8b9a7e;
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -85,7 +85,7 @@
 }
 
 .navLinks a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -183,7 +183,7 @@
 }
 
 .timelineContainer::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   top: 0;
@@ -482,7 +482,7 @@
 }
 
 .footerLogo span {
-  color: #8B9A7E;
+  color: #8b9a7e;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -547,17 +547,19 @@
 }
 
 .footerInfo {
-  color: #999999;
+  color: #b3b3b3;
   font-size: 0.9rem;
 }
 
 .footerInfo p {
   margin-bottom: 0.3rem;
+  font-weight: 300;
 }
 
 .footerCopyright {
-  color: #999999;
+  color: #b3b3b3;
   font-size: 0.9rem;
+  font-weight: 300;
 }
 
 /* Responsive Design */
@@ -569,11 +571,15 @@
 
 @media (max-width: 968px) {
   .navLinks {
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   .heroTitle {
-    font-size: 2.8rem;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+  }
+
+  .heroDescription {
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
   }
 
   .timelineContainer::before {
@@ -583,6 +589,7 @@
   .timelineItem {
     flex-direction: column !important;
     text-align: center;
+    padding: $space-lg;
   }
 
   .timelineContent {
@@ -591,12 +598,16 @@
 
   .infoGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
   .footerContent {
     grid-template-columns: 1fr;
     gap: 3rem;
+  }
+
+  .sectionContainer {
+    padding: $space-3xl $space-lg;
   }
 }
 
@@ -659,6 +670,6 @@
   }
 
   .footerLinks {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }

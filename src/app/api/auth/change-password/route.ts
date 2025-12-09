@@ -1,14 +1,23 @@
+/**
+ * 비밀번호 변경 API 라우트
+ * - POST: 관리자 비밀번호 변경 (인증 필요)
+ */
+
 import { NextResponse } from 'next/server';
 import { changeAdminPassword } from '@/lib/db';
 import { ChangePasswordSchema } from '@/lib/validation';
 import { withAuth, AuthContext } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { ErrorCode } from '@/lib/errorCodes';
+import {
+  handleApiError,
+  createValidationErrorResponse,
+  createSuccessResponse,
+} from '@/lib/apiHelpers';
 
 /**
  * POST /api/auth/change-password
- * Change admin user password
- * Requires authentication
+ * 관리자 비밀번호 변경 (인증 필요)
  */
 export const POST = withAuth(async (request, context: AuthContext) => {
   try {
@@ -20,18 +29,7 @@ export const POST = withAuth(async (request, context: AuthContext) => {
         errors: validation.error.issues,
         userId: context.user.userId,
       });
-
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          errorCode: ErrorCode.VALID001,
-          details: validation.error.issues.map(err => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
-      );
+      return createValidationErrorResponse(validation);
     }
 
     const { currentPassword, newPassword } = validation.data;
@@ -54,6 +52,7 @@ export const POST = withAuth(async (request, context: AuthContext) => {
         {
           error: result.error || 'Failed to change password',
           errorCode: ErrorCode.AUTH002,
+          timestamp: new Date().toISOString(),
         },
         { status: 400 }
       );
@@ -64,27 +63,8 @@ export const POST = withAuth(async (request, context: AuthContext) => {
       username: context.user.username,
     });
 
-    return NextResponse.json({
-      message: 'Password changed successfully',
-    });
+    return createSuccessResponse({ success: true }, 'Password changed successfully');
   } catch (error) {
-    logger.error(
-      'Password change error',
-      ErrorCode.AUTH001,
-      { error: error instanceof Error ? error.message : 'Unknown error' },
-      {
-        userId: context.user.userId,
-        endpoint: '/api/auth/change-password',
-      }
-    );
-
-    return NextResponse.json(
-      {
-        error: 'Failed to change password',
-        errorCode: ErrorCode.AUTH001,
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleApiError(error, 'change password', 500, ErrorCode.AUTH001);
   }
 });

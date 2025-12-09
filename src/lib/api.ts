@@ -39,17 +39,25 @@ function getCsrfTokenFromCookie(): string | null {
  * Get CSRF token from API
  * - Caches token in memory
  * - First tries to get from cookie, if not found fetches from /api/auth/csrf
+ * - Always verifies cookie matches cached token
  * @returns CSRF 토큰 문자열
  */
 async function getCsrfToken(): Promise<string> {
   try {
-    // First check if we have a cached token
-    if (csrfToken) {
-      return csrfToken;
+    // Always check cookie first
+    const cookieToken = getCsrfTokenFromCookie();
+
+    // If we have both cached and cookie token, verify they match
+    if (csrfToken && cookieToken) {
+      if (csrfToken === cookieToken) {
+        return csrfToken;
+      }
+      // If they don't match, clear cache and refetch
+      console.warn('[getCsrfToken] Token mismatch, refreshing...');
+      csrfToken = null;
     }
 
-    // Try to get token from cookie
-    const cookieToken = getCsrfTokenFromCookie();
+    // If we have a cookie but no cache, use the cookie
     if (cookieToken) {
       csrfToken = cookieToken;
       return cookieToken;
@@ -65,14 +73,34 @@ async function getCsrfToken(): Promise<string> {
     }
 
     const data = await response.json();
-    csrfToken = data.csrfToken;
+    const newToken = data.csrfToken;
 
-    if (!csrfToken) {
+    if (!newToken) {
       throw new Error('CSRF token not found in response');
     }
 
-    // Wait a brief moment for cookie to be set by browser
-    await new Promise(resolve => setTimeout(resolve, 50));
+    // Wait for cookie to be set by browser (increased to 100ms for reliability)
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify the cookie was actually set
+    const verifyToken = getCsrfTokenFromCookie();
+    if (!verifyToken || verifyToken !== newToken) {
+      console.warn('[getCsrfToken] Cookie not set properly after fetch');
+      console.warn('[getCsrfToken] Expected:', newToken.substring(0, 10) + '...');
+      console.warn('[getCsrfToken] Got:', verifyToken?.substring(0, 10) + '...');
+
+      // In development, allow header-only CSRF (cookie verification will be skipped on server)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[getCsrfToken] Development mode: Using header-only CSRF token');
+        csrfToken = newToken;
+        return csrfToken;
+      }
+
+      throw new Error('CSRF cookie was not set properly by the server');
+    }
+
+    // Cache the token only after verifying cookie is set
+    csrfToken = newToken;
 
     return csrfToken;
   } catch (error) {

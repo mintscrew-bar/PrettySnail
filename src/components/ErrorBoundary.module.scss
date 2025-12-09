@@ -1,0 +1,107 @@
+@use '@/styles/design-system' as *;
+
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $spacing-component-lg;
+  background-color: $color-background-page;
+}
+
+.errorCard {
+  max-width: 600px;
+  padding: $spacing-component-xl;
+  background: $color-background-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  text-align: center;
+}
+
+.errorTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-error;
+  margin-bottom: $spacing-component-md;
+}
+
+.errorMessage {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-component-lg;
+}
+
+.errorDetails {
+  text-align: left;
+  margin: $spacing-component-lg 0;
+  padding: $spacing-component-md;
+  background: $color-background-muted;
+  border-radius: $radius-md;
+  border: 1px solid $color-border-subtle;
+
+  summary {
+    cursor: pointer;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-component-sm;
+
+    &:hover {
+      color: $color-brand-primary;
+    }
+  }
+
+  pre {
+    margin-top: $spacing-component-sm;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
+.errorActions {
+  display: flex;
+  gap: $spacing-component-md;
+  justify-content: center;
+}
+
+.retryButton,
+.homeButton {
+  padding: $spacing-component-sm $spacing-component-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-normal;
+  border: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.retryButton {
+  background: $color-brand-primary;
+  color: $color-text-inverse;
+
+  &:hover {
+    background: $color-brand-primary-hover;
+  }
+}
+
+.homeButton {
+  background: $color-background-subtle;
+  color: $color-text-primary;
+  border: 1px solid $color-border-default;
+
+  &:hover {
+    background: $color-background-muted;
+  }
+}

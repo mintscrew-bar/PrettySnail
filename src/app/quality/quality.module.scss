@@ -1,7 +1,6 @@
-@use "../../styles/variables" as *;
-@use "../../styles/mixins" as *;
-@use "../../styles/animations" as *;
+@use "../../styles/design-system" as *;
 @use "../../styles/design-mixins" as *;
+@use "../../styles/animations" as *;
 
 .container {
   overflow-x: hidden;
@@ -271,7 +270,7 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -731,11 +730,12 @@
   .testingContent,
   .traceContent {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.5rem;
   }
 
   .processFlow {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-lg;
   }
 
   .footerContent {
@@ -743,14 +743,26 @@
   }
 
   .hero {
-    padding: 10rem 2rem 6rem;
+    padding: 9rem 2rem 5.5rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(2rem, 4vw, 2.5rem);
   }
 
   .haccp,
   .testing,
   .certifications,
   .traceability {
-    padding: 5rem 2rem;
+    padding: 4rem 2rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: $space-3xl;
+
+    h2 {
+      font-size: clamp($text-2xl, 4vw, $text-3xl);
+    }
   }
 }
 
@@ -1043,7 +1055,7 @@
   }
 
   .footerLinks {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
   }
 

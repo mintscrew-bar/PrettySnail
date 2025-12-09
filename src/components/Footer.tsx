@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from 'next/link';
+import Link from "next/link";
 import styles from "./Footer.module.scss";
 
 export default function Footer() {
@@ -10,15 +10,9 @@ export default function Footer() {
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo}>
               <div className={styles.logoIcon}>
-                <Image
-                  src="/assets/logo_no.1.png"
-                  alt="이쁜우렁이 로고"
-                  width={200}
-                  height={50}
-                />
+                <Image src="/assets/Asset_15.png" alt="이쁜우렁이 로고" width={200} height={50} />
               </div>
-              <div className={styles.logoText}>
-              </div>
+              <div className={styles.logoText}></div>
             </div>
             <p className={styles.footerDesc}>
               우렁이 전문 농장
@@ -56,16 +50,23 @@ export default function Footer() {
               <h4>고객센터</h4>
               <ul>
                 <li>팩스번호: 051-980-0598</li>
-                <li><a  href="http://pf.kakao.com/_이쁜우렁이"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >카카오톡 채널</a>
+                <li>
+                  <a
+                    href="http://pf.kakao.com/_이쁜우렁이"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    카카오톡 채널
+                  </a>
                 </li>
                 <li>
-                  <a  href="https://talk.naver.com/이쁜우렁이"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >네이버 톡톡</a>
+                  <a
+                    href="https://talk.naver.com/이쁜우렁이"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    네이버 톡톡
+                  </a>
                 </li>
                 <li>평일 09:00 - 17:00</li>
               </ul>
@@ -75,12 +76,8 @@ export default function Footer() {
 
         <div className={styles.footerBottom}>
           <div className={styles.footerInfo}>
-            <p>
-              영어조합법인 이쁜우렁이 | 대표: 김선하 | 사업자등록번호: 189-86-02061
-            </p>
-            <p>
-              주소: 부산광역시 강서구 입소정관길 134-78 (대저2동)
-            </p>
+            <p>영어조합법인 이쁜우렁이 | 대표: 김선하 | 사업자등록번호: 189-86-02061</p>
+            <p>주소: 부산광역시 강서구 입소정관길 134-78 (대저2동)</p>
           </div>
           <div className={styles.footerCopyright}>
             <p>&copy; 2025 영어조합법인 이쁜우렁이. All rights reserved.</p>

@@ -41,7 +41,10 @@
       "Bash(powershell -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }\")",
       "Bash(powershell -Command \"if (Test-Path node_modules\\.cache) { Remove-Item -Recurse -Force node_modules\\.cache }\")",
       "Bash(powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force\")",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run test:run:*)",
+      "Bash(python3:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

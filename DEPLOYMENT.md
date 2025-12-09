@@ -5,6 +5,7 @@
 ## 사전 준비
 
 ### 1. GitHub 계정 및 레포지토리
+
 1. [GitHub](https://github.com)에 가입 (무료)
 2. 새 레포지토리 생성:
    - Repository name: `prettysnail` (또는 원하는 이름)
@@ -12,6 +13,7 @@
    - **README 추가 안함** (이미 있음)
 
 ### 2. Vercel 계정
+
 1. [Vercel](https://vercel.com)에 가입 (무료)
 2. GitHub 계정으로 로그인 권장
 
@@ -51,7 +53,6 @@ git push -u origin master
    - **Root Directory**: `./` (기본값)
    - **Build Command**: `npm run build` (기본값)
    - **Output Directory**: `.next` (기본값)
-
 
 ### Step 3: 로컬 빌드, Prisma 마이그레이션 및 환경 변수 설정
 
@@ -101,14 +102,17 @@ DATABASE_SHADOW_URL=postgresql://user:pass@host:5432/shadow_db
 #### JWT_SECRET 생성 방법
 
 **옵션 1: 온라인 생성기 사용**
+
 - https://generate-secret.vercel.app/32
 
 **옵션 2: 로컬에서 생성 (Git Bash 또는 WSL)**
+
 ```bash
 openssl rand -base64 32
 ```
 
 **옵션 3: Node.js로 생성**
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
@@ -144,11 +148,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 #### 해결 방법
 
 **즉시 사용 가능한 방법:**
+
 1. 로컬에서 `data/` 폴더에 초기 데이터 파일 생성
 2. GitHub에 커밋 (`.gitignore`에서 `data/*.json` 제거 필요)
 3. 재배포
 
 **장기적 해결책:**
+
 1. **Vercel Postgres** 사용 (Vercel 제공, 무료 티어 있음)
 2. **Supabase** 사용 (무료 PostgreSQL 데이터베이스)
 3. **MongoDB Atlas** 사용 (무료 클라우드 MongoDB)
@@ -161,6 +167,7 @@ Vercel의 `/tmp` 디렉토리는 임시 저장소입니다:
 - 서버 재시작 시 모든 파일 삭제됨
 
 **해결 방법:**
+
 1. **Vercel Blob Storage** 사용 (추천)
 2. **Cloudinary** 또는 **AWS S3** 사용
 3. **Uploadthing** 사용
@@ -194,15 +201,18 @@ git push
 ## 문제 해결
 
 ### 배포는 성공했지만 페이지가 로드되지 않음
+
 - Vercel Dashboard → Functions 탭에서 에러 로그 확인
 - 환경 변수가 올바르게 설정되었는지 확인
 
 ### 관리자 로그인 실패
+
 - `JWT_SECRET` 환경 변수 확인
 - `ADMIN_USERNAME`, `ADMIN_PASSWORD` 확인
 - 브라우저 콘솔에서 에러 메시지 확인
 
 ### 이미지가 표시되지 않음
+
 - `public/assets/` 폴더가 GitHub에 커밋되었는지 확인
 - 이미지 경로가 올바른지 확인 (`/assets/` 로 시작)
 

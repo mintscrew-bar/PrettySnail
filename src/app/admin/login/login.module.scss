@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   background: #fafafa;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .loginBox {
@@ -67,6 +67,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     font-size: 1rem;
+    min-height: 48px;
 
     &:focus {
       outline: none;
@@ -90,6 +91,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 0.5rem;
+  min-height: 52px;
 
   &:hover:not(:disabled) {
     background: #2d2d2d;
@@ -116,12 +118,58 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
   .loginBox {
-    padding: 2rem;
+    padding: 2.5rem 2rem;
   }
 
   .logoSection h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+
+  .form {
+    gap: 1.75rem;
+  }
+
+  .inputGroup {
+    input {
+      font-size: 16px;
+    }
+  }
+
+  .submitButton {
+    font-size: 1rem;
+    padding: 1.125rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  .loginBox {
+    padding: 2rem 1.5rem;
+  }
+
+  .logoSection {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .error {
+    padding: 0.875rem;
+    font-size: 0.9rem;
   }
 }

@@ -1,9 +1,11 @@
 # Mobile Optimization & Minimalist Design Guide
 
 ## 개요
+
 이 문서는 Next.js 15 + SCSS 프로젝트에서 모바일 최적화와 미니멀 디자인을 구현한 과정을 정리한 기술 가이드입니다.
 
 ## 목차
+
 1. [태그 및 배지 레이아웃 최적화](#태그-및-배지-레이아웃-최적화)
 2. [모바일 반응형 그리드 시스템](#모바일-반응형-그리드-시스템)
 3. [캐러셀 모바일 최적화](#캐러셀-모바일-최적화)
@@ -19,17 +21,19 @@
 **원인**: 블록 레벨 요소 또는 width 설정 문제
 
 **해결 방법**:
+
 ```scss
 .tag {
-  display: inline-flex;        // 인라인 플렉스로 콘텐츠 크기에 맞춤
+  display: inline-flex; // 인라인 플렉스로 콘텐츠 크기에 맞춤
   align-items: center;
-  white-space: nowrap;         // 줄바꿈 방지
-  max-width: fit-content;      // 콘텐츠에 맞는 너비
-  padding: 0.25rem 0.6rem;     // 일관된 패딩
+  white-space: nowrap; // 줄바꿈 방지
+  max-width: fit-content; // 콘텐츠에 맞는 너비
+  padding: 0.25rem 0.6rem; // 일관된 패딩
 }
 ```
 
 **HTML 요소 선택**:
+
 ```tsx
 // ❌ 나쁜 예: div는 기본적으로 블록 레벨
 <div className={styles.badge}>{badge}</div>
@@ -41,17 +45,18 @@
 ### 배지를 이미지 위에 오버레이
 
 **방법**:
+
 ```scss
 .mainImage {
-  position: relative;  // 부모를 relative로
+  position: relative; // 부모를 relative로
 }
 
 .badge {
-  position: absolute;  // 절대 위치
+  position: absolute; // 절대 위치
   top: 0.75rem;
   right: 0.75rem;
-  z-index: 2;          // 이미지 위에 표시
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);  // 가독성 향상
+  z-index: 2; // 이미지 위에 표시
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); // 가독성 향상
 }
 ```
 
@@ -62,6 +67,7 @@
 ### 2열 그리드 유지 (데스크톱 + 모바일)
 
 **기본 구조**:
+
 ```scss
 // 데스크톱
 .certGridTwo {
@@ -75,8 +81,8 @@
 // 모바일 (768px 이하)
 @media (max-width: 768px) {
   .certGridTwo {
-    grid-template-columns: repeat(2, 1fr);  // 2열 유지
-    gap: 1.5rem;                             // 간격 축소
+    grid-template-columns: repeat(2, 1fr); // 2열 유지
+    gap: 1.5rem; // 간격 축소
   }
 }
 ```
@@ -86,15 +92,15 @@
 ```scss
 .productsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);  // 데스크톱: 4열
+  grid-template-columns: repeat(4, 1fr); // 데스크톱: 4열
   gap: 1.5rem;
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);  // 태블릿: 3열
+    grid-template-columns: repeat(3, 1fr); // 태블릿: 3열
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);  // 모바일: 2열
+    grid-template-columns: repeat(2, 1fr); // 모바일: 2열
     gap: 1rem;
   }
 }
@@ -111,6 +117,7 @@
 **해결 방법**:
 
 #### 1. 데스크톱: 무한 스크롤 캐러셀
+
 ```scss
 .processFlow {
   overflow: hidden;
@@ -119,7 +126,7 @@
   // 그라디언트 오버레이
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -136,27 +143,32 @@
 }
 
 @keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 ```
 
 #### 2. 모바일: 2열 그리드
+
 ```scss
 @media (max-width: 768px) {
   .processFlow {
-    overflow: visible;  // 오버플로우 해제
+    overflow: visible; // 오버플로우 해제
 
     &::before,
     &::after {
-      display: none;    // 그라디언트 숨김
+      display: none; // 그라디언트 숨김
     }
   }
 
   .processTrack {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    animation: none;    // 애니메이션 비활성화
+    animation: none; // 애니메이션 비활성화
     gap: $space-md;
     max-width: 100%;
     margin: 0 auto;
@@ -176,6 +188,7 @@
 ```
 
 #### 3. HTML 구조
+
 ```tsx
 <div className={styles.processTrack}>
   {/* 원본 항목 (1-5) */}
@@ -197,6 +210,7 @@
 ### 1. 콘텐츠 간소화
 
 **변경 전**:
+
 ```tsx
 <div className={styles.sectionHeader}>
   <h2>인증 현황</h2>
@@ -213,6 +227,7 @@
 ```
 
 **변경 후**:
+
 ```tsx
 <div className={styles.sectionHeader}>
   <h2>인증 현황</h2>
@@ -227,6 +242,7 @@
 ```
 
 **원칙**:
+
 - 날짜, 상태 등 부가 정보 제거
 - 핵심 메시지만 유지
 - 설명은 간결하고 구체적으로
@@ -235,14 +251,14 @@
 
 ```scss
 // 모바일 간격 체계
-$space-sm: 0.5rem;   // 8px
-$space-md: 1rem;     // 16px
-$space-lg: 1.5rem;   // 24px
-$space-xl: 2rem;     // 32px
+$space-sm: 0.5rem; // 8px
+$space-md: 1rem; // 16px
+$space-lg: 1.5rem; // 24px
+$space-xl: 2rem; // 32px
 
 @media (max-width: 768px) {
   .section {
-    padding: $space-lg $space-md;  // 일관된 간격 사용
+    padding: $space-lg $space-md; // 일관된 간격 사용
   }
 }
 ```
@@ -258,7 +274,7 @@ $space-xl: 2rem;     // 32px
 // 모바일
 @media (max-width: 480px) {
   .productName {
-    font-size: 1.5rem;  // 고정 크기로 명확하게
+    font-size: 1.5rem; // 고정 크기로 명확하게
   }
 }
 ```
@@ -272,6 +288,7 @@ $space-xl: 2rem;     // 32px
 **증상**: 요소가 화면 너비를 넘어감
 
 **해결**:
+
 ```scss
 .element {
   max-width: 100%;
@@ -284,16 +301,18 @@ $space-xl: 2rem;     // 32px
 **증상**: 그리드 아이템이 균등하지 않음
 
 **해결**:
+
 ```scss
 .gridItem {
-  width: 100%;           // 그리드 셀에 맞춤
-  max-width: none;       // 최대 너비 제한 제거
+  width: 100%; // 그리드 셀에 맞춤
+  max-width: none; // 최대 너비 제한 제거
 }
 ```
 
 ### 3. Flexbox vs Grid 선택
 
 **Flexbox 사용**:
+
 - 1차원 레이아웃 (가로 또는 세로)
 - 콘텐츠 크기에 따라 유연하게 배치
 - 예: 태그 목록, 네비게이션
@@ -307,6 +326,7 @@ $space-xl: 2rem;     // 32px
 ```
 
 **Grid 사용**:
+
 - 2차원 레이아웃 (가로 + 세로)
 - 균등한 크기의 아이템
 - 예: 제품 카드, 인증서 카드
@@ -326,19 +346,19 @@ $space-xl: 2rem;     // 32px
 ```scss
 // ✅ 좋은 예: 모바일 우선
 .container {
-  padding: 1rem;  // 모바일 기본값
+  padding: 1rem; // 모바일 기본값
 
   @media (min-width: 768px) {
-    padding: 2rem;  // 데스크톱 확장
+    padding: 2rem; // 데스크톱 확장
   }
 }
 
 // ❌ 나쁜 예: 데스크톱 우선
 .container {
-  padding: 2rem;  // 데스크톱 기본값
+  padding: 2rem; // 데스크톱 기본값
 
   @media (max-width: 768px) {
-    padding: 1rem;  // 모바일 축소
+    padding: 1rem; // 모바일 축소
   }
 }
 ```
@@ -349,10 +369,10 @@ $space-xl: 2rem;     // 32px
 
 ```scss
 // 권장 브레이크포인트
-$breakpoint-sm: 480px;   // 스마트폰
-$breakpoint-md: 768px;   // 태블릿
-$breakpoint-lg: 1024px;  // 작은 데스크톱
-$breakpoint-xl: 1280px;  // 큰 데스크톱
+$breakpoint-sm: 480px; // 스마트폰
+$breakpoint-md: 768px; // 태블릿
+$breakpoint-lg: 1024px; // 작은 데스크톱
+$breakpoint-xl: 1280px; // 큰 데스크톱
 
 // 사용 예
 @media (max-width: $breakpoint-sm) {
@@ -383,15 +403,15 @@ $breakpoint-xl: 1280px;  // 큰 데스크톱
 ### 2. 이미지 최적화
 
 ```tsx
-import Image from 'next/image';
+import Image from "next/image";
 
 <Image
   src="/image.jpg"
   alt="설명"
   width={400}
   height={300}
-  sizes="(max-width: 768px) 100vw, 400px"  // 반응형 크기
-/>
+  sizes="(max-width: 768px) 100vw, 400px" // 반응형 크기
+/>;
 ```
 
 ### 3. 불필요한 DOM 요소 제거
@@ -400,14 +420,16 @@ import Image from 'next/image';
 // CSS로 숨기기보다 조건부 렌더링
 @media (max-width: 768px) {
   .desktopOnly {
-    display: none;  // DOM에는 존재
+    display: none; // DOM에는 존재
   }
 }
 ```
 
 ```tsx
 // ✅ 더 나은 방법
-{!isMobile && <DesktopComponent />}
+{
+  !isMobile && <DesktopComponent />;
+}
 ```
 
 ---
@@ -441,6 +463,7 @@ import Image from 'next/image';
 ## 결론
 
 이 가이드에서 다룬 최적화 기법들은:
+
 - **사용자 경험 향상**: 모바일에서 더 빠르고 깔끔한 UI
 - **유지보수성**: 일관된 패턴으로 코드 가독성 향상
 - **성능**: 불필요한 요소와 애니메이션 제거로 성능 개선
@@ -469,4 +492,6 @@ import Image from 'next/image';
 - 실제 기기(안드로이드/아이폰)에서 터치와 렌더링 테스트를 수행하세요.
 - 저사양 기기에서 렌더링 성능과 이미지 로드 시간을 확인하세요.
 
-````
+```
+
+```

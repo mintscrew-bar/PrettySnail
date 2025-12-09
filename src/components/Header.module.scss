@@ -178,6 +178,22 @@
   }
 }
 
+@media (max-width: 968px) {
+  .navLinks {
+    gap: $space-md;
+
+    a {
+      font-size: $text-sm;
+      padding: $space-xs $space-sm;
+    }
+  }
+
+  .logoIcon {
+    width: 180px;
+    height: 72px;
+  }
+}
+
 @include respond-to(md) {
   .navLinks {
     gap: $space-lg;

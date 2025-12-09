@@ -4,6 +4,10 @@ import { getAuthToken } from './lib/cookies';
 /**
  * Middleware to protect admin routes
  * Ensures users must be authenticated to access admin pages (except login)
+ *
+ * Note: We only check if the token EXISTS here, not if it's valid.
+ * The actual token validation is done by the API routes (withAuth middleware).
+ * This prevents unnecessary redirects during page navigation.
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,7 +24,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // User is authenticated, allow access
+    // Token exists - allow access
+    // Note: Token validity will be checked by API routes when needed
     return NextResponse.next();
   }
 

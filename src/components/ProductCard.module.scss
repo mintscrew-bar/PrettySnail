@@ -1,5 +1,5 @@
-@use '../styles/variables' as *;
-@use '../styles/mixins' as *;
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
 
 .productCard {
   @include card;
@@ -73,7 +73,7 @@
     padding-left: 1rem;
 
     &::before {
-      content: '✓';
+      content: "✓";
       position: absolute;
       left: 0;
       color: $light-green;

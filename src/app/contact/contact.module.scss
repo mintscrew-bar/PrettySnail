@@ -61,6 +61,10 @@
   grid-template-columns: repeat(2, 1fr);
   gap: $space-2xl;
 
+  @media (max-width: 968px) {
+    gap: $space-xl;
+  }
+
   @media (max-width: $breakpoint-sm) {
     grid-template-columns: 1fr;
     gap: $space-lg;
@@ -152,6 +156,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $space-3xl;
+
+  @media (max-width: 968px) {
+    gap: $space-2xl;
+  }
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;

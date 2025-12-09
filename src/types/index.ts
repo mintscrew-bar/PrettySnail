@@ -25,11 +25,20 @@ export interface Product {
 }
 
 // Banner Types
-export type ContentPosition = 'top-left' | 'top-center' | 'top-right' | 'middle-left' | 'middle-center' | 'middle-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+export type ContentPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "middle-left"
+  | "middle-center"
+  | "middle-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
 
 export interface Banner {
   id: string;
-  type: 'main' | 'promotion'; // main: 메인 히어로 배너, promotion: 섹션 사이 프로모션 배너
+  type: "main" | "promotion"; // main: 메인 히어로 배너, promotion: 섹션 사이 프로모션 배너
   title?: string | null; // 배너 타이틀
   description?: string | null; // 배너 설명
   contentPosition?: ContentPosition; // 타이틀/버튼 위치 (9개 위치)
@@ -58,6 +67,6 @@ export interface AdminUser {
   id: string;
   username: string;
   password: string; // In production, this should be hashed
-  role: 'admin' | 'editor';
+  role: "admin" | "editor";
   createdAt: string;
 }

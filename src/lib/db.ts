@@ -1,18 +1,18 @@
-import { Product, Banner, AdminUser, ContentPosition } from '@/types';
-import { hashPassword, comparePassword } from './password';
-import prisma from './prisma';
-import { getEnv } from './env';
+import { AdminUser, Banner, ContentPosition, Product, ProductTag } from "@/types";
+import { getEnv } from "./env";
+import { comparePassword, hashPassword } from "./password";
+import prisma from "./prisma";
 
 // Helper to convert snake_case to kebab-case for ContentPosition
 function toKebabCase(str: string | null): ContentPosition | undefined {
   if (!str) return undefined;
-  return str.replace(/_/g, '-') as ContentPosition;
+  return str.replace(/_/g, "-") as ContentPosition;
 }
 
 // Helper to convert kebab-case to snake_case for ContentPosition
 function toSnakeCase(str: string | undefined): string | undefined {
   if (!str) return undefined;
-  return str.replace(/-/g, '_');
+  return str.replace(/-/g, "_");
 }
 
 // Helper to convert Prisma Product to API Product
@@ -45,7 +45,7 @@ function toPrismaProduct(product: {
 // Helper to convert Prisma Banner to API Banner
 function toPrismaBanner(banner: {
   id: string;
-  type: 'main' | 'promotion';
+  type: "main" | "promotion";
   title: string | null;
   description: string | null;
   contentPosition: string | null;
@@ -96,7 +96,7 @@ function toPrismaAdminUser(user: {
   id: string;
   username: string;
   password: string;
-  role: 'admin' | 'editor';
+  role: "admin" | "editor";
   createdAt: Date;
 }): AdminUser {
   return {
@@ -108,13 +108,13 @@ function toPrismaAdminUser(user: {
 // Products
 export async function getProducts(): Promise<Product[]> {
   const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
   return products.map(toPrismaProduct);
 }
 
 export async function addProduct(
-  product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>
+  product: Omit<Product, "id" | "createdAt" | "updatedAt">
 ): Promise<Product> {
   const newProduct = await prisma.product.create({
     data: {
@@ -122,7 +122,7 @@ export async function addProduct(
       description: product.description,
       category: product.category,
       // Prisma schema stores tags as string[], but the client may send ProductTag objects
-      tags: (product.tags || []).map((t) => (typeof t === 'string' ? t : (t as any).name)),
+      tags: (product.tags || []).map(t => (typeof t === "string" ? t : (t as ProductTag).name)),
       badge: product.badge,
       thumbnails: product.thumbnails || [],
       detailImages: product.detailImages || [],
@@ -147,7 +147,7 @@ export async function updateProduct(
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.category !== undefined && { category: updates.category }),
         ...(updates.tags !== undefined && {
-          tags: (updates.tags || []).map((t) => (typeof t === 'string' ? t : (t as any).name)),
+          tags: (updates.tags || []).map(t => (typeof t === "string" ? t : (t as ProductTag).name)),
         }),
         ...(updates.badge !== undefined && { badge: updates.badge }),
         ...(updates.thumbnails !== undefined && { thumbnails: updates.thumbnails }),
@@ -176,13 +176,13 @@ export async function deleteProduct(id: string): Promise<boolean> {
 // Banners
 export async function getBanners(): Promise<Banner[]> {
   const banners = await prisma.banner.findMany({
-    orderBy: { position: 'asc' },
+    orderBy: { position: "asc" },
   });
   return banners.map(toPrismaBanner);
 }
 
 export async function addBanner(
-  banner: Omit<Banner, 'id' | 'createdAt' | 'updatedAt'>
+  banner: Omit<Banner, "id" | "createdAt" | "updatedAt">
 ): Promise<Banner> {
   const newBanner = await prisma.banner.create({
     data: {
@@ -190,7 +190,16 @@ export async function addBanner(
       title: banner.title,
       description: banner.description,
       contentPosition: banner.contentPosition
-        ? (toSnakeCase(banner.contentPosition) as 'top_left' | 'top_center' | 'top_right' | 'middle_left' | 'middle_center' | 'middle_right' | 'bottom_left' | 'bottom_center' | 'bottom_right')
+        ? (toSnakeCase(banner.contentPosition) as
+            | "top_left"
+            | "top_center"
+            | "top_right"
+            | "middle_left"
+            | "middle_center"
+            | "middle_right"
+            | "bottom_left"
+            | "bottom_center"
+            | "bottom_right")
         : undefined,
       titleColor: banner.titleColor,
       descriptionColor: banner.descriptionColor,
@@ -221,7 +230,16 @@ export async function updateBanner(id: string, updates: Partial<Banner>): Promis
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.contentPosition !== undefined && {
           contentPosition: updates.contentPosition
-            ? (toSnakeCase(updates.contentPosition) as 'top_left' | 'top_center' | 'top_right' | 'middle_left' | 'middle_center' | 'middle_right' | 'bottom_left' | 'bottom_center' | 'bottom_right')
+            ? (toSnakeCase(updates.contentPosition) as
+                | "top_left"
+                | "top_center"
+                | "top_right"
+                | "middle_left"
+                | "middle_center"
+                | "middle_right"
+                | "bottom_left"
+                | "bottom_center"
+                | "bottom_right")
             : null,
         }),
         ...(updates.titleColor !== undefined && { titleColor: updates.titleColor }),
@@ -229,7 +247,9 @@ export async function updateBanner(id: string, updates: Partial<Banner>): Promis
         ...(updates.descriptionColor !== undefined && {
           descriptionColor: updates.descriptionColor,
         }),
-        ...(updates.descriptionFontSize !== undefined && { descriptionFontSize: updates.descriptionFontSize }),
+        ...(updates.descriptionFontSize !== undefined && {
+          descriptionFontSize: updates.descriptionFontSize,
+        }),
         ...(updates.textColor !== undefined && { textColor: updates.textColor }),
         ...(updates.imageUrl !== undefined && { imageUrl: updates.imageUrl }),
         ...(updates.imagePosition !== undefined && { imagePosition: updates.imagePosition }),
@@ -274,12 +294,12 @@ export async function initializeDefaultAdmin(): Promise<void> {
 
   // Only create if no users exist
   if (usersCount === 0) {
-    const hashedPassword = await hashPassword(getEnv('ADMIN_PASSWORD'));
+    const hashedPassword = await hashPassword(getEnv("ADMIN_PASSWORD"));
     await prisma.adminUser.create({
       data: {
-        username: getEnv('ADMIN_USERNAME'),
+        username: getEnv("ADMIN_USERNAME"),
         password: hashedPassword,
-        role: 'admin',
+        role: "admin",
       },
     });
   }
@@ -288,10 +308,7 @@ export async function initializeDefaultAdmin(): Promise<void> {
 /**
  * Find admin user by username and verify password
  */
-export async function findAdminUser(
-  username: string,
-  password: string
-): Promise<AdminUser | null> {
+export async function findAdminUser(username: string, password: string): Promise<AdminUser | null> {
   const user = await prisma.adminUser.findUnique({
     where: { username },
   });
@@ -330,13 +347,13 @@ export async function changeAdminPassword(
     });
 
     if (!user) {
-      return { success: false, error: 'User not found' };
+      return { success: false, error: "User not found" };
     }
 
     // Verify current password
     const isCurrentPasswordValid = await comparePassword(currentPassword, user.password);
     if (!isCurrentPasswordValid) {
-      return { success: false, error: 'Current password is incorrect' };
+      return { success: false, error: "Current password is incorrect" };
     }
 
     // Hash new password
@@ -350,7 +367,7 @@ export async function changeAdminPassword(
 
     return { success: true };
   } catch (error) {
-    console.error('Error changing password:', error);
-    return { success: false, error: 'Failed to change password' };
+    console.error("Error changing password:", error);
+    return { success: false, error: "Failed to change password" };
   }
 }

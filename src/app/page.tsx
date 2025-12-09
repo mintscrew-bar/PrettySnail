@@ -1,22 +1,29 @@
+import { Banner, Product } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
+import BannerCarousel from "../components/BannerCarousel";
 import FeatureCard from "../components/FeatureCard";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import PromotionBanner from "../components/PromotionBanner";
-import BannerCarousel from "../components/BannerCarousel";
 import styles from "./page.module.scss";
-import { Banner, Product } from "@/types";
 
 async function getBanners(): Promise<Banner[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/banners`, {
-      cache: 'no-store'
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/banners`,
+      {
+        cache: "no-store",
+      }
+    );
     if (!res.ok) return [];
     const body = await res.json();
     // API may return raw array or a wrapped object { success, data }
-    const banners: Banner[] = Array.isArray(body) ? body : (body && Array.isArray((body as any).data) ? (body as any).data : []);
+    const banners: Banner[] = Array.isArray(body)
+      ? body
+      : body && Array.isArray((body as any).data)
+        ? (body as any).data
+        : [];
     return banners.filter(b => b.isActive);
   } catch {
     return [];
@@ -25,11 +32,20 @@ async function getBanners(): Promise<Banner[]> {
 
 async function getProducts(): Promise<Product[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
-      cache: 'no-store'
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/products`,
+      {
+        cache: "no-store",
+      }
+    );
     if (!res.ok) return [];
-    const products: Product[] = await res.json();
+    const body = await res.json();
+    // API may return raw array or a wrapped object { success, data }
+    const products: Product[] = Array.isArray(body)
+      ? body
+      : body && Array.isArray((body as any).data)
+        ? (body as any).data
+        : [];
     // 활성화된 제품만 가져오고, featured 제품 우선 표시
     return products
       .filter(p => p.isActive)
@@ -42,13 +58,15 @@ async function getProducts(): Promise<Product[]> {
 export default async function Home() {
   const banners = await getBanners();
   const products = await getProducts();
-  const mainBanners = banners.filter(b => b.type === 'main');
-  const bannersPosition1 = banners.filter(b => b.type === 'promotion' && b.position === 1);
-  const bannersPosition2 = banners.filter(b => b.type === 'promotion' && b.position === 2);
-  const bannersPosition3 = banners.filter(b => b.type === 'promotion' && b.position === 3);
+  const mainBanners = banners.filter(b => b.type === "main");
+  const bannersPosition1 = banners.filter(b => b.type === "promotion" && b.position === 1);
+  const bannersPosition2 = banners.filter(b => b.type === "promotion" && b.position === 2);
+  const bannersPosition3 = banners.filter(b => b.type === "promotion" && b.position === 3);
 
-  // 메인 페이지에 표시할 제품 개수 제한 (최대 3개)
-  const displayProducts = products.slice(0, 3);
+  // 메인 페이지에 표시할 제품: 어드민에서 'featured' 체크한 제품을 우선으로 보여줍니다 (최대 3개)
+  const featuredProducts = products.filter(p => p.featured);
+  const displayProducts =
+    featuredProducts.length > 0 ? featuredProducts.slice(0, 3) : products.slice(0, 3);
   return (
     <div className={styles.container}>
       {/* Skip link for accessibility */}
@@ -78,18 +96,11 @@ export default async function Home() {
               <div className={styles.heroContainer} data-position="middle-left">
                 <div className={styles.heroContent}>
                   <h1 id="hero-title" className={styles.heroTitle}>
-                    <span className={styles.heroTitleMain}>
-                      자연이 키운 건강함,
-                    </span>
-                    <span className={styles.heroTitleHighlight}>
-                      이쁜우렁이와 함께
-                    </span>
+                    <span className={styles.heroTitleMain}>자연이 키운 건강함,</span>
+                    <span className={styles.heroTitleHighlight}>이쁜우렁이와 함께</span>
                   </h1>
                   <div className={styles.heroCTA}>
-                    <Link
-                      href="/products"
-                      className={styles.ctaButtonPrimary}
-                    >
+                    <Link href="/products" className={styles.ctaButtonPrimary}>
                       <span>스토어 바로가기</span>
                       <svg
                         width="20"
@@ -107,11 +118,7 @@ export default async function Home() {
                         />
                       </svg>
                     </Link>
-                    <Link
-                      href="/contact"
-                      className={styles.secondaryButton}
-                      aria-label="문의하기"
-                    >
+                    <Link href="/contact" className={styles.secondaryButton} aria-label="문의하기">
                       <span>문의하기</span>
                     </Link>
                   </div>
@@ -122,27 +129,16 @@ export default async function Home() {
         </section>
 
         {/* Brand Values Section */}
-        <section
-          className={styles.brandValues}
-          aria-labelledby="brand-values-title"
-        >
+        <section className={styles.brandValues} aria-labelledby="brand-values-title">
           <div className={styles.sectionContainer}>
             <div className={styles.sectionHeader}>
               <h2 id="brand-values-title">이쁜우렁이만의 특별함</h2>
-              <p>
-                믿을 수 있는 경험과 차별화된 공정으로 생산된 특별한 우렁이를 만나보세요
-              </p>
+              <p>믿을 수 있는 경험과 차별화된 공정으로 생산된 특별한 우렁이를 만나보세요</p>
             </div>
             <div className={styles.valuesGrid}>
               <div className={styles.valueCard}>
                 <div className={styles.valueIcon}>
-                  <svg
-                    width="48"
-                    height="48"
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    aria-hidden="true"
-                  >
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                     <path
                       d="M24 4L30 18L44 20L34 30L36 44L24 38L12 44L14 30L4 20L18 18L24 4Z"
                       fill="#f4a261"
@@ -153,19 +149,11 @@ export default async function Home() {
                   </svg>
                 </div>
                 <h3>건강한 우렁이</h3>
-                <p>
-                  깨끗한 양식장에서 무항생제 사료를 사용하여 건강하게 키운 우렁이입니다.
-                </p>
+                <p>깨끗한 양식장에서 무항생제 사료를 사용하여 건강하게 키운 우렁이입니다.</p>
               </div>
               <div className={styles.valueCard}>
                 <div className={styles.valueIcon}>
-                  <svg
-                    width="48"
-                    height="48"
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    aria-hidden="true"
-                  >
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                     <circle
                       cx="24"
                       cy="24"
@@ -186,19 +174,13 @@ export default async function Home() {
                 </div>
                 <h3>전문적 품질관리</h3>
                 <p>
-                  HACCP 인증 시설에서 엄격한 품질관리와 안전한 생산 과정을 거쳐
-                  안심하고 드실 수 있습니다.
+                  HACCP 인증 시설에서 엄격한 품질관리와 안전한 생산 과정을 거쳐 안심하고 드실 수
+                  있습니다.
                 </p>
               </div>
               <div className={styles.valueCard}>
                 <div className={styles.valueIcon}>
-                  <svg
-                    width="48"
-                    height="48"
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    aria-hidden="true"
-                  >
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                     <path
                       d="M24 8C20 8 16 12 16 16V32C16 36 20 40 24 40C28 40 32 36 32 32V16C32 12 28 8 24 8Z"
                       fill="#e9c46a"
@@ -215,16 +197,14 @@ export default async function Home() {
                   </svg>
                 </div>
                 <h3>차별화된 공정</h3>
-                <p>
-                  차별화된 공정으로 최고 품질의 우렁이를 생산합니다.
-                </p>
+                <p>차별화된 공정으로 최고 품질의 우렁이를 생산합니다.</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* 프로모션 배너 - 브랜드 가치 섹션 후 */}
-        {bannersPosition1.map((banner) => (
+        {bannersPosition1.map(banner => (
           <PromotionBanner
             key={banner.id}
             imageUrl={banner.imageUrl}
@@ -241,29 +221,26 @@ export default async function Home() {
         ))}
 
         {/* Product Showcase Section */}
-        <section
-          className={styles.productShowcase}
-          aria-labelledby="products-title"
-        >
+        <section className={styles.productShowcase} aria-labelledby="products-title">
           <div className={styles.sectionContainer}>
             <div className={styles.sectionHeader}>
               <h2 id="products-title">자연이 키운 프리미엄 우렁이</h2>
-              <p>3대째 이어온 전통 농법으로 정성껏 기른 우렁이 제품을 만나보세요</p>
+              <p>신선하고 건강한 우렁이를 엄선하여 제공합니다</p>
             </div>
             <div className={styles.productGrid}>
-              {displayProducts.map((product) => (
+              {displayProducts.map(product => (
                 <div key={product.id} className={styles.productCard}>
                   <div className={styles.productImage}>
                     <Image
-                      src={product.thumbnails?.[0] || product.imageUrl || '/assets/default-product.jpg'}
+                      src={
+                        product.thumbnails?.[0] || product.imageUrl || "/assets/default-product.jpg"
+                      }
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      style={{ objectFit: 'cover' }}
+                      style={{ objectFit: "cover" }}
                     />
-                    {product.badge && (
-                      <span className={styles.productBadge}>{product.badge}</span>
-                    )}
+                    {product.badge && <span className={styles.productBadge}>{product.badge}</span>}
                   </div>
                   <div className={styles.productInfo}>
                     <h3>{product.name}</h3>
@@ -273,18 +250,9 @@ export default async function Home() {
               ))}
             </div>
             <div className={styles.productCTA}>
-              <Link
-                href="/products"
-                className={styles.ctaButton}
-              >
+              <Link href="/products" className={styles.ctaButton}>
                 <span>전체 제품 보기</span>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  aria-hidden="true"
-                >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path
                     d="M7 3L14 10L7 17"
                     stroke="currentColor"
@@ -299,7 +267,7 @@ export default async function Home() {
         </section>
 
         {/* 프로모션 배너 - 제품 쇼케이스 섹션 후 */}
-        {bannersPosition2.map((banner) => (
+        {bannersPosition2.map(banner => (
           <PromotionBanner
             key={banner.id}
             imageUrl={banner.imageUrl}
@@ -316,10 +284,7 @@ export default async function Home() {
         ))}
 
         {/* Quality Process Section */}
-        <section
-          className={styles.qualityProcess}
-          aria-labelledby="process-title"
-        >
+        <section className={styles.qualityProcess} aria-labelledby="process-title">
           <div className={styles.sectionContainer}>
             <div className={styles.sectionHeader}>
               <h2 id="process-title">엄격한 품질 관리 프로세스</h2>
@@ -328,35 +293,20 @@ export default async function Home() {
             <div className={styles.processGrid}>
               <div className={styles.processCard}>
                 <div className={styles.processImage}>
-                  <Image
-                    src="/assets/원물.jpg"
-                    alt="원물 검수"
-                    width={300}
-                    height={200}
-                  />
+                  <Image src="/assets/원물.jpg" alt="원물 검수" width={300} height={200} />
                 </div>
                 <div className={styles.processInfo}>
                   <h3>1. 원물 검수</h3>
-                  <p>
-                    신선한 원물을 엄격한 기준으로 검수하여 최상의 품질을
-                    보장합니다
-                  </p>
+                  <p>신선한 원물을 엄격한 기준으로 검수하여 최상의 품질을 보장합니다</p>
                 </div>
               </div>
               <div className={styles.processCard}>
                 <div className={styles.processImage}>
-                  <Image
-                    src="/assets/탈각 전.jpg"
-                    alt="탈각 전 처리"
-                    width={300}
-                    height={200}
-                  />
+                  <Image src="/assets/탈각 전.jpg" alt="탈각 전 처리" width={300} height={200} />
                 </div>
                 <div className={styles.processInfo}>
                   <h3>2. 전처리 과정</h3>
-                  <p>
-                    깨끗한 물로 세척하고 이물질을 제거하여 안전성을 확보합니다
-                  </p>
+                  <p>깨끗한 물로 세척하고 이물질을 제거하여 안전성을 확보합니다</p>
                 </div>
               </div>
               <div className={styles.processCard}>
@@ -370,19 +320,12 @@ export default async function Home() {
                 </div>
                 <div className={styles.processInfo}>
                   <h3>3. 탈각 및 정제</h3>
-                  <p>
-                    전문 장비를 사용하여 껍질을 제거하고 정제 과정을 거칩니다
-                  </p>
+                  <p>전문 장비를 사용하여 껍질을 제거하고 정제 과정을 거칩니다</p>
                 </div>
               </div>
               <div className={styles.processCard}>
                 <div className={styles.processImage}>
-                  <Image
-                    src="/assets/손질 완료.jpg"
-                    alt="손질 완료"
-                    width={300}
-                    height={200}
-                  />
+                  <Image src="/assets/손질 완료.jpg" alt="손질 완료" width={300} height={200} />
                 </div>
                 <div className={styles.processInfo}>
                   <h3>4. 최종 검수</h3>
@@ -408,19 +351,12 @@ export default async function Home() {
         </section>
 
         {/* Navigation Cards Section */}
-        <section
-          className={styles.navigationCards}
-          aria-labelledby="navigation-title"
-        >
+        <section className={styles.navigationCards} aria-labelledby="navigation-title">
           <div className={styles.sectionContainer}>
             <h2 id="navigation-title" className="sr-only">
               주요 서비스 메뉴
             </h2>
-            <div
-              className={styles.navGrid}
-              role="navigation"
-              aria-label="주요 페이지 링크"
-            >
+            <div className={styles.navGrid} role="navigation" aria-label="주요 페이지 링크">
               <FeatureCard
                 icon="📖"
                 title="브랜드 스토리"
@@ -447,7 +383,7 @@ export default async function Home() {
         </section>
 
         {/* 프로모션 배너 - 하단 */}
-        {bannersPosition3.map((banner) => (
+        {bannersPosition3.map(banner => (
           <PromotionBanner
             key={banner.id}
             imageUrl={banner.imageUrl}

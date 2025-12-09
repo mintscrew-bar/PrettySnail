@@ -1,89 +1,67 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { Product, ProductTag } from '@/types';
-import styles from './products.module.scss';
-import { initializeCsrfToken, uploadFile, apiFetch } from '@/lib/api';
+import AdminLayout from "@/components/AdminLayout";
+import { API_ROUTES } from "@/constants/apiRoutes";
+import { TIMING } from "@/constants/timing";
+import { apiFetch, initializeCsrfToken, uploadFile } from "@/lib/api";
+import { fetchWithRetry } from "@/lib/apiClient";
+import { getTagDisplay, normalizeTags, tagExists } from "@/lib/tagHelpers";
+import { showConfirm, showError, showSuccess } from "@/lib/toast";
+import { Product } from "@/types";
+import { useCallback, useEffect, useState } from "react";
+import styles from "./products.module.scss";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({
-    category: '',
-    name: '',
+    category: "",
+    name: "",
     tags: [],
-    description: '',
-    badge: '',
+    description: "",
+    badge: "",
     thumbnails: [],
     detailImages: [],
-    imageUrl: '',
-    storeUrl: '',
+    imageUrl: "",
+    storeUrl: "",
     featured: false,
     isActive: true,
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const [uploadingDetail, setUploadingDetail] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [showBatchActions, setShowBatchActions] = useState(false);
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"name" | "category" | "createdAt" | "updatedAt">(
+    "updatedAt"
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // 자동완성용 기존 태그/배지/카테고리 목록
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [existingBadges, setExistingBadges] = useState<string[]>([]);
   const [existingCategories, setExistingCategories] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
-  const [tagColor, setTagColor] = useState('#6B7280'); // 기본 회색
+  const [tagInput, setTagInput] = useState("");
+  const [tagColor, setTagColor] = useState("#6B7280"); // 기본 회색
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [showBadgeSuggestions, setShowBadgeSuggestions] = useState(false);
   const [showCategorySuggestions, setShowCategorySuggestions] = useState(false);
 
-   
-  useEffect(() => {
-    // Initialize CSRF token before making any requests
-    initializeCsrfToken().then(() => {
-      fetchProducts();
-    });
-  }, []);
-
-  // Fetch helper with retry and detailed error parsing
-  const fetchWithRetry = async (
-    url: string,
-    options: RequestInit = {},
-    retries = 2,
-    backoff = 500
-  ): Promise<Product[]> => {
-    try {
-      const res = await fetch(url, options);
-      const text = await res.text();
-      let parsed: Record<string, unknown> | null = null;
-      try {
-        parsed = text ? JSON.parse(text) : null;
-      } catch {
-        parsed = text as unknown as Record<string, unknown>;
-      }
-
-      if (!res.ok) {
-        const errMsg = parsed && typeof parsed === 'object' && ('error' in parsed || 'message' in parsed)
-          ? (parsed.error || parsed.message)
-          : res.statusText || 'Unknown error';
-        const details = parsed && 'details' in parsed ? `\nDetails: ${JSON.stringify(parsed.details)}` : '';
-        throw new Error(`${res.status} ${errMsg}${details}`);
-      }
-
-      return (parsed || []) as Product[];
-    } catch (err) {
-      if (retries > 0) {
-        await new Promise((r) => setTimeout(r, backoff));
-        return fetchWithRetry(url, options, retries - 1, backoff * 2);
-      }
-      throw err;
-    }
-  };
-
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchWithRetry('/api/products', { credentials: 'include' }, 2, 500);
+      const response = await fetchWithRetry<{ success: boolean; data: Product[] }>(
+        API_ROUTES.PRODUCTS.BASE,
+        {
+          credentials: "include",
+          retries: TIMING.MAX_RETRIES,
+          backoff: TIMING.RETRY_DELAY,
+        }
+      );
+      const data = response.data;
       setProducts(data);
 
       // 기존 태그, 배지, 카테고리 추출
@@ -91,10 +69,7 @@ export default function AdminProductsPage() {
       const badges = new Set<string>();
       const categories = new Set<string>();
       data.forEach((product: Product) => {
-        (product.tags || []).forEach((tag) => {
-          const tagName = typeof tag === 'string' ? tag : (tag as ProductTag).name;
-          tags.add(tagName);
-        });
+        normalizeTags(product.tags || []).forEach(tagName => tags.add(tagName));
         if (product.badge) badges.add(product.badge);
         if (product.category) categories.add(product.category);
       });
@@ -102,10 +77,14 @@ export default function AdminProductsPage() {
       setExistingBadges(Array.from(badges));
       setExistingCategories(Array.from(categories));
     } catch (error: unknown) {
-      console.error('Fetch products failed:', error);
-      const msg = error instanceof Error && error.message ? error.message : '제품을 불러오지 못했습니다';
+      console.error("Fetch products failed:", error);
+      const msg =
+        error instanceof Error && error.message ? error.message : "제품을 불러오지 못했습니다";
+      showError(`제품을 불러오지 못했습니다: ${msg}`);
       // 사용자에게 재시도 옵션 제공
-      const retry = confirm(`제품을 불러오지 못했습니다:\n${msg}\n\n다시 시도하시겠습니까?`);
+      const retry = await showConfirm(
+        `제품을 불러오지 못했습니다:\n${msg}\n\n다시 시도하시겠습니까?`
+      );
       if (retry) {
         fetchProducts();
       }
@@ -114,11 +93,18 @@ export default function AdminProductsPage() {
     }
   }, []);
 
+  useEffect(() => {
+    // Initialize CSRF token before making any requests
+    initializeCsrfToken().then(() => {
+      fetchProducts();
+    });
+  }, [fetchProducts]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `/api/products/${editingId}` : '/api/products';
+    const method = editingId ? "PUT" : "POST";
+    const url = editingId ? API_ROUTES.PRODUCTS.BY_ID(editingId) : API_ROUTES.PRODUCTS.BASE;
 
     try {
       // 빈 문자열을 undefined로 변환하여 validation 통과
@@ -134,29 +120,29 @@ export default function AdminProductsPage() {
         body: cleanedData,
       });
 
-      alert(editingId ? '제품이 수정되었습니다' : '제품이 추가되었습니다');
+      showSuccess(editingId ? "제품이 수정되었습니다" : "제품이 추가되었습니다");
       setShowForm(false);
       setEditingId(null);
       resetForm();
       fetchProducts();
     } catch (error: unknown) {
-      console.error('Submit error:', error);
+      console.error("Submit error:", error);
 
       // Handle API errors
-      if (error && typeof error === 'object' && 'data' in error) {
-        const errorData = (error as { data: { details?: Array<{ field: string; message: string }>; error?: string } }).data;
+      if (error && typeof error === "object" && "data" in error) {
+        const errorData = (
+          error as { data: { details?: Array<{ field: string; message: string }>; error?: string } }
+        ).data;
 
         if (errorData.details) {
-          console.error('Validation details:', JSON.stringify(errorData.details, null, 2));
-          const errorMessages = errorData.details
-            .map(d => `${d.field}: ${d.message}`)
-            .join('\n');
-          alert(`Validation 오류:\n${errorMessages}`);
+          console.error("Validation details:", JSON.stringify(errorData.details, null, 2));
+          const errorMessages = errorData.details.map(d => `${d.field}: ${d.message}`).join(", ");
+          showError(`입력값 오류: ${errorMessages}`);
         } else {
-          alert(`오류: ${errorData.error || '제품 저장에 실패했습니다'}`);
+          showError(errorData.error || "제품 저장에 실패했습니다");
         }
       } else {
-        alert('오류가 발생했습니다');
+        showError("오류가 발생했습니다");
       }
     }
   };
@@ -173,8 +159,8 @@ export default function AdminProductsPage() {
         thumbnails: [...(formData.thumbnails || []), data.url],
       });
     } catch (error) {
-      console.error('Thumbnail upload failed:', error);
-      alert('이미지 업로드에 실패했습니다');
+      console.error("Thumbnail upload failed:", error);
+      showError("이미지 업로드에 실패했습니다");
     } finally {
       setUploadingThumbnail(false);
     }
@@ -192,8 +178,8 @@ export default function AdminProductsPage() {
         detailImages: [...(formData.detailImages || []), data.url],
       });
     } catch (error) {
-      console.error('Detail image upload failed:', error);
-      alert('이미지 업로드에 실패했습니다');
+      console.error("Detail image upload failed:", error);
+      showError("이미지 업로드에 실패했습니다");
     } finally {
       setUploadingDetail(false);
     }
@@ -211,19 +197,115 @@ export default function AdminProductsPage() {
     setFormData({ ...formData, detailImages: newDetailImages });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+  const handleImageReorder = (
+    fromIndex: number,
+    toIndex: number,
+    type: "thumbnails" | "detailImages"
+  ) => {
+    const images = [...(formData[type] || [])];
+    const [moved] = images.splice(fromIndex, 1);
+    images.splice(toIndex, 0, moved);
+    setFormData({ ...formData, [type]: images });
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedImageIndex(index);
+  };
+
+  const handleDragOver = (
+    e: React.DragEvent,
+    index: number,
+    type: "thumbnails" | "detailImages"
+  ) => {
+    e.preventDefault();
+    if (draggedImageIndex === null || draggedImageIndex === index) return;
+    handleImageReorder(draggedImageIndex, index, type);
+    setDraggedImageIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedImageIndex(null);
+  };
+
+  const toggleProductSelection = (productId: string) => {
+    const newSelected = new Set(selectedProducts);
+    if (newSelected.has(productId)) {
+      newSelected.delete(productId);
+    } else {
+      newSelected.add(productId);
+    }
+    setSelectedProducts(newSelected);
+    setShowBatchActions(newSelected.size > 0);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedProducts.size === products.length) {
+      setSelectedProducts(new Set());
+      setShowBatchActions(false);
+    } else {
+      setSelectedProducts(new Set(products.map(p => p.id)));
+      setShowBatchActions(true);
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    const confirmed = await showConfirm(
+      `선택한 ${selectedProducts.size}개의 제품을 삭제하시겠습니까?`
+    );
+    if (!confirmed) return;
 
     try {
-      await apiFetch(`/api/products/${id}`, {
-        method: 'DELETE',
-      });
-
-      alert('제품이 삭제되었습니다');
+      await Promise.all(
+        Array.from(selectedProducts).map(id =>
+          apiFetch(API_ROUTES.PRODUCTS.BY_ID(id), { method: "DELETE" })
+        )
+      );
+      showSuccess(`${selectedProducts.size}개의 제품이 삭제되었습니다`);
+      setSelectedProducts(new Set());
+      setShowBatchActions(false);
       fetchProducts();
     } catch (error) {
-      console.error('Delete error:', error);
-      alert('삭제 중 오류가 발생했습니다');
+      console.error("Batch delete error:", error);
+      showError("일괄 삭제 중 오류가 발생했습니다");
+    }
+  };
+
+  const handleBatchToggleActive = async (isActive: boolean) => {
+    try {
+      await Promise.all(
+        Array.from(selectedProducts).map(id =>
+          apiFetch(API_ROUTES.PRODUCTS.BY_ID(id), {
+            method: "PUT",
+            body: { isActive },
+          })
+        )
+      );
+      showSuccess(
+        `${selectedProducts.size}개의 제품이 ${isActive ? "활성화" : "비활성화"}되었습니다`
+      );
+      setSelectedProducts(new Set());
+      setShowBatchActions(false);
+      fetchProducts();
+    } catch (error) {
+      console.error("Batch toggle error:", error);
+      showError("일괄 변경 중 오류가 발생했습니다");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmed = await showConfirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
+
+    try {
+      await apiFetch(API_ROUTES.PRODUCTS.BY_ID(id), {
+        method: "DELETE",
+      });
+
+      showSuccess("제품이 삭제되었습니다");
+      fetchProducts();
+    } catch (error) {
+      console.error("Delete error:", error);
+      showError("삭제 중 오류가 발생했습니다");
     }
   };
 
@@ -235,36 +317,31 @@ export default function AdminProductsPage() {
 
   const resetForm = () => {
     setFormData({
-      category: '',
-      name: '',
+      category: "",
+      name: "",
       tags: [],
-      description: '',
-      badge: '',
+      description: "",
+      badge: "",
       thumbnails: [],
       detailImages: [],
-      imageUrl: '',
-      storeUrl: '',
+      imageUrl: "",
+      storeUrl: "",
       featured: false,
       isActive: true,
     });
-    setTagInput('');
+    setTagInput("");
   };
-
-  // Helper to get tag name/color when tags can be `string` or `ProductTag`
-  const getTagName = (tag: string | ProductTag) => (typeof tag === 'string' ? tag : tag.name);
-  const getTagColor = (tag: string | ProductTag) => (typeof tag === 'string' ? '#6B7280' : tag.color);
 
   const addTag = (tagName: string, color?: string) => {
     const trimmedTag = tagName.trim();
-    const tagExists = (formData.tags || []).some((t) => (typeof t === 'string' ? t : (t as ProductTag).name) === trimmedTag);
 
-    if (trimmedTag && !tagExists) {
+    if (trimmedTag && !tagExists(trimmedTag, formData.tags || [])) {
       setFormData({
         ...formData,
         tags: [...(formData.tags || []), { name: trimmedTag, color: color || tagColor }],
       });
-      setTagInput('');
-      setTagColor('#6B7280'); // 리셋
+      setTagInput("");
+      setTagColor("#6B7280"); // 리셋
       setShowTagSuggestions(false);
     }
   };
@@ -275,137 +352,237 @@ export default function AdminProductsPage() {
     setFormData({ ...formData, tags: newTags });
   };
 
-
-  const filteredTagSuggestions = existingTags.filter((tag) =>
-    tag.toLowerCase().includes(tagInput.toLowerCase()) && !(formData.tags || []).some((t) => (typeof t === 'string' ? t : (t as ProductTag).name) === tag)
+  const filteredTagSuggestions = existingTags.filter(
+    tag =>
+      tag.toLowerCase().includes(tagInput.toLowerCase()) && !tagExists(tag, formData.tags || [])
   );
 
   const filteredBadgeSuggestions = existingBadges.filter(badge =>
-    badge.toLowerCase().includes((formData.badge || '').toLowerCase())
+    badge.toLowerCase().includes((formData.badge || "").toLowerCase())
   );
 
   const filteredCategorySuggestions = existingCategories.filter(category =>
-    category.toLowerCase().includes((formData.category || '').toLowerCase())
+    category.toLowerCase().includes((formData.category || "").toLowerCase())
   );
+
+  const sortedProducts = [...products].sort((a, b) => {
+    let comparison = 0;
+
+    switch (sortBy) {
+      case "name":
+        comparison = (a.name || "").localeCompare(b.name || "", "ko");
+        break;
+      case "category":
+        comparison = (a.category || "").localeCompare(b.category || "", "ko");
+        break;
+      case "createdAt":
+        comparison = new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+        break;
+      case "updatedAt":
+        comparison = new Date(a.updatedAt || 0).getTime() - new Date(b.updatedAt || 0).getTime();
+        break;
+    }
+
+    return sortOrder === "asc" ? comparison : -comparison;
+  });
 
   return (
     <AdminLayout>
       <div className={styles.container}>
         <header className={styles.header}>
           <h1>제품 관리</h1>
-          <button onClick={() => { setShowForm(!showForm); resetForm(); setEditingId(null); }} className={styles.addButton}>
-            {showForm ? '취소' : '+ 제품 추가'}
+          <button
+            onClick={() => {
+              setShowForm(!showForm);
+              resetForm();
+              setEditingId(null);
+            }}
+            className={styles.addButton}
+          >
+            {showForm ? "취소" : "+ 제품 추가"}
           </button>
         </header>
 
         {showForm && (
           <div className={styles.formCard}>
-            <h2>{editingId ? '제품 수정' : '새 제품 추가'}</h2>
+            <h2>{editingId ? "제품 수정" : "새 제품 추가"}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
-
               {/* 기본 정보 섹션 */}
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>📝 기본 정보</h3>
 
-              <div className={styles.formGroup}>
-                <label>카테고리*</label>
-                <div className={styles.categoryInputWrapper}>
-                  <input
-                    type="text"
-                    value={formData.category}
-                    onChange={(e) => {
-                      setFormData({ ...formData, category: e.target.value });
-                      setShowCategorySuggestions(e.target.value.length > 0);
-                    }}
-                    onFocus={() => setShowCategorySuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowCategorySuggestions(false), 200)}
-                    placeholder="예: 생물, 손질, 냉동"
-                    required
-                  />
-                  {showCategorySuggestions && filteredCategorySuggestions.length > 0 && (
-                    <div className={styles.suggestions}>
-                      {filteredCategorySuggestions.map((category, index) => (
-                        <div
-                          key={index}
-                          className={styles.suggestion}
-                          onClick={() => {
-                            setFormData({ ...formData, category });
-                            setShowCategorySuggestions(false);
-                          }}
-                        >
-                          {category}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>제품명*</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="제품명을 입력하세요"
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>태그</label>
-                <div className={styles.tagContainer}>
-                  <div className={styles.tags}>
-                    {formData.tags?.map((tag, index) => {
-                      const name = getTagName(tag);
-                      const color = getTagColor(tag);
-                      return (
-                        <span
-                          key={index}
-                          className={styles.tag}
-                          style={{ backgroundColor: color + '20', color: color, border: `1px solid ${color}` }}
-                        >
-                          {name}
-                          <button type="button" onClick={() => removeTag(index)} className={styles.tagRemove}>
-                            ×
-                          </button>
-                        </span>
-                      );
-                    })}
-                  </div>
-                  <div className={styles.tagInputWrapper}>
+                <div className={styles.formGroup}>
+                  <label>카테고리*</label>
+                  <div className={styles.categoryInputWrapper}>
                     <input
                       type="text"
-                      value={tagInput}
-                      onChange={(e) => {
-                        setTagInput(e.target.value);
-                        setShowTagSuggestions(e.target.value.length > 0);
+                      value={formData.category}
+                      onChange={e => {
+                        setFormData({ ...formData, category: e.target.value });
+                        setShowCategorySuggestions(e.target.value.length > 0);
                       }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addTag(tagInput);
-                        }
-                      }}
-                      placeholder="태그 입력 후 Enter"
-                      style={{ flex: 1 }}
+                      onFocus={() => setShowCategorySuggestions(true)}
+                      onBlur={() =>
+                        setTimeout(
+                          () => setShowCategorySuggestions(false),
+                          TIMING.SUGGESTION_HIDE_DELAY
+                        )
+                      }
+                      placeholder="예: 생물, 손질, 냉동"
+                      required
                     />
-                    <input
-                      type="color"
-                      value={tagColor}
-                      onChange={(e) => setTagColor(e.target.value)}
-                      title="태그 색상 선택"
-                      style={{ width: '50px', height: '38px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }}
-                    />
-                    {showTagSuggestions && filteredTagSuggestions.length > 0 && (
+                    {showCategorySuggestions && filteredCategorySuggestions.length > 0 && (
                       <div className={styles.suggestions}>
-                        {filteredTagSuggestions.map((tag, index) => (
+                        {filteredCategorySuggestions.map((category, index) => (
                           <div
                             key={index}
                             className={styles.suggestion}
-                            onClick={() => addTag(tag)}
+                            onClick={() => {
+                              setFormData({ ...formData, category });
+                              setShowCategorySuggestions(false);
+                            }}
                           >
-                            {tag}
+                            {category}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>제품명*</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="제품명을 입력하세요"
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>태그</label>
+                  <div className={styles.tagContainer}>
+                    <div className={styles.tags}>
+                      {formData.tags?.map((tag, index) => {
+                        const displayTag = getTagDisplay(tag);
+                        return (
+                          <span
+                            key={index}
+                            className={styles.tag}
+                            style={{
+                              backgroundColor: displayTag.color + "20",
+                              color: displayTag.color,
+                              border: `1px solid ${displayTag.color}`,
+                            }}
+                          >
+                            {displayTag.name}
+                            <button
+                              type="button"
+                              onClick={() => removeTag(index)}
+                              className={styles.tagRemove}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <div className={styles.tagInputWrapper}>
+                      <input
+                        type="text"
+                        value={tagInput}
+                        onChange={e => {
+                          setTagInput(e.target.value);
+                          setShowTagSuggestions(e.target.value.length > 0);
+                        }}
+                        onKeyDown={e => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTag(tagInput);
+                          }
+                        }}
+                        placeholder="태그 입력 후 Enter"
+                        style={{ flex: 1 }}
+                      />
+                      <input
+                        type="color"
+                        value={tagColor}
+                        onChange={e => setTagColor(e.target.value)}
+                        title="태그 색상 선택"
+                        style={{
+                          width: "50px",
+                          height: "38px",
+                          border: "1px solid #ddd",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      />
+                      {showTagSuggestions && filteredTagSuggestions.length > 0 && (
+                        <div className={styles.suggestions}>
+                          {filteredTagSuggestions.map((tag, index) => (
+                            <div
+                              key={index}
+                              className={styles.suggestion}
+                              onClick={() => addTag(tag)}
+                            >
+                              {tag}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>설명*</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="제품 설명을 입력하세요"
+                    required
+                    rows={4}
+                  />
+                </div>
+              </div>
+
+              {/* 태그 & 배지 섹션 */}
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>🏷️ 태그 & 배지</h3>
+
+                <div className={styles.formGroup}>
+                  <label>배지</label>
+                  <div className={styles.badgeInputWrapper}>
+                    <input
+                      type="text"
+                      value={formData.badge}
+                      onChange={e => {
+                        setFormData({ ...formData, badge: e.target.value });
+                        setShowBadgeSuggestions(e.target.value.length > 0);
+                      }}
+                      onFocus={() => setShowBadgeSuggestions(true)}
+                      onBlur={() =>
+                        setTimeout(
+                          () => setShowBadgeSuggestions(false),
+                          TIMING.SUGGESTION_HIDE_DELAY
+                        )
+                      }
+                      placeholder="예: 베스트, 인기, NEW"
+                    />
+                    {showBadgeSuggestions && filteredBadgeSuggestions.length > 0 && (
+                      <div className={styles.suggestions}>
+                        {filteredBadgeSuggestions.map((badge, index) => (
+                          <div
+                            key={index}
+                            className={styles.suggestion}
+                            onClick={() => {
+                              setFormData({ ...formData, badge });
+                              setShowBadgeSuggestions(false);
+                            }}
+                          >
+                            {badge}
                           </div>
                         ))}
                       </div>
@@ -414,171 +591,159 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>설명*</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="제품 설명을 입력하세요"
-                  required
-                  rows={4}
-                />
-              </div>
-              </div>
-
-              {/* 태그 & 배지 섹션 */}
-              <div className={styles.formSection}>
-                <h3 className={styles.sectionTitle}>🏷️ 태그 & 배지</h3>
-
-              <div className={styles.formGroup}>
-                <label>배지</label>
-                <div className={styles.badgeInputWrapper}>
-                  <input
-                    type="text"
-                    value={formData.badge}
-                    onChange={(e) => {
-                      setFormData({ ...formData, badge: e.target.value });
-                      setShowBadgeSuggestions(e.target.value.length > 0);
-                    }}
-                    onFocus={() => setShowBadgeSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowBadgeSuggestions(false), 200)}
-                    placeholder="예: 베스트, 인기, NEW"
-                  />
-                  {showBadgeSuggestions && filteredBadgeSuggestions.length > 0 && (
-                    <div className={styles.suggestions}>
-                      {filteredBadgeSuggestions.map((badge, index) => (
-                        <div
-                          key={index}
-                          className={styles.suggestion}
-                          onClick={() => {
-                            setFormData({ ...formData, badge });
-                            setShowBadgeSuggestions(false);
-                          }}
-                        >
-                          {badge}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              </div>
-
               {/* 이미지 섹션 */}
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>🖼️ 이미지</h3>
 
-              <div className={styles.formGroup}>
-                <label>썸네일 이미지</label>
-                <p className={styles.fieldHelp}>제품 목록에 표시될 이미지입니다</p>
-                <div className={styles.imageUploadArea}>
-                  {formData.thumbnails && formData.thumbnails.length > 0 && (
-                    <div className={styles.imagePreviewGrid}>
-                      {formData.thumbnails.map((url, index) => (
-                        <div key={index} className={styles.imagePreviewItem}>
-                          <img src={url} alt={`썸네일 ${index + 1}`} />
-                          <button
-                            type="button"
-                            onClick={() => removeThumbnail(index)}
-                            className={styles.removeImageButton}
+                <div className={styles.formGroup}>
+                  <label>썸네일 이미지</label>
+                  <p className={styles.fieldHelp}>
+                    제품 목록에 표시될 이미지입니다. 드래그하여 순서를 변경할 수 있습니다.
+                    <br />
+                    <small style={{ color: "#999" }}>
+                      💡 최적화 팁: 이미지는 800x800px 크기, JPG/WebP 형식 권장 (용량: 200KB 이하)
+                    </small>
+                  </p>
+                  <div className={styles.imageUploadArea}>
+                    {formData.thumbnails && formData.thumbnails.length > 0 && (
+                      <div className={styles.imagePreviewGrid}>
+                        {formData.thumbnails.map((url, index) => (
+                          <div
+                            key={index}
+                            className={`${styles.imagePreviewItem} ${draggedImageIndex === index ? styles.dragging : ""}`}
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragOver={e => handleDragOver(e, index, "thumbnails")}
+                            onDragEnd={handleDragEnd}
                           >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <label className={styles.uploadButton}>
-                    {uploadingThumbnail ? '업로드 중...' : '+ 썸네일 추가'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailUpload}
-                      disabled={uploadingThumbnail}
-                      style={{ display: 'none' }}
-                    />
-                  </label>
+                            <div className={styles.imageNumber}>{index + 1}</div>
+                            <img
+                              src={url}
+                              alt={`썸네일 ${index + 1}`}
+                              onClick={() => setExpandedImage(url)}
+                              className={styles.previewImage}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeThumbnail(index)}
+                              className={styles.removeImageButton}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <label className={styles.uploadButton}>
+                      {uploadingThumbnail ? "업로드 중..." : "+ 썸네일 추가"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailUpload}
+                        disabled={uploadingThumbnail}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles.formGroup}>
-                <label>상세 이미지</label>
-                <p className={styles.fieldHelp}>제품 상세 페이지에 표시될 이미지입니다</p>
-                <div className={styles.imageUploadArea}>
-                  {formData.detailImages && formData.detailImages.length > 0 && (
-                    <div className={styles.imagePreviewGrid}>
-                      {formData.detailImages.map((url, index) => (
-                        <div key={index} className={styles.imagePreviewItem}>
-                          <img src={url} alt={`상세 ${index + 1}`} />
-                          <button
-                            type="button"
-                            onClick={() => removeDetailImage(index)}
-                            className={styles.removeImageButton}
+                <div className={styles.formGroup}>
+                  <label>상세 이미지</label>
+                  <p className={styles.fieldHelp}>
+                    제품 상세 페이지에 표시될 이미지입니다. 드래그하여 순서를 변경할 수 있습니다.
+                    <br />
+                    <small style={{ color: "#999" }}>
+                      💡 최적화 팁: 이미지는 1200x1200px 크기, JPG/WebP 형식 권장 (용량: 500KB 이하)
+                    </small>
+                  </p>
+                  <div className={styles.imageUploadArea}>
+                    {formData.detailImages && formData.detailImages.length > 0 && (
+                      <div className={styles.imagePreviewGrid}>
+                        {formData.detailImages.map((url, index) => (
+                          <div
+                            key={index}
+                            className={`${styles.imagePreviewItem} ${draggedImageIndex === index ? styles.dragging : ""}`}
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragOver={e => handleDragOver(e, index, "detailImages")}
+                            onDragEnd={handleDragEnd}
                           >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <label className={styles.uploadButton}>
-                    {uploadingDetail ? '업로드 중...' : '+ 상세 이미지 추가'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleDetailImageUpload}
-                      disabled={uploadingDetail}
-                      style={{ display: 'none' }}
-                    />
-                  </label>
+                            <div className={styles.imageNumber}>{index + 1}</div>
+                            <img
+                              src={url}
+                              alt={`상세 ${index + 1}`}
+                              onClick={() => setExpandedImage(url)}
+                              className={styles.previewImage}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeDetailImage(index)}
+                              className={styles.removeImageButton}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <label className={styles.uploadButton}>
+                      {uploadingDetail ? "업로드 중..." : "+ 상세 이미지 추가"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDetailImageUpload}
+                        disabled={uploadingDetail}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  </div>
                 </div>
-              </div>
               </div>
 
               {/* 추가 설정 섹션 */}
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>⚙️ 추가 설정</h3>
 
-              <div className={styles.formGroup}>
-                <label>스토어 URL</label>
-                <p className={styles.fieldHelp}>네이버 스토어 등 외부 구매 링크 (선택사항)</p>
-                <input
-                  type="url"
-                  value={formData.storeUrl}
-                  onChange={(e) => setFormData({ ...formData, storeUrl: e.target.value })}
-                  placeholder="https://smartstore.naver.com/..."
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>추천 제품</label>
-                <div className={styles.checkboxGroup}>
+                <div className={styles.formGroup}>
+                  <label>스토어 URL</label>
+                  <p className={styles.fieldHelp}>네이버 스토어 등 외부 구매 링크 (선택사항)</p>
                   <input
-                    type="checkbox"
-                    id="featured"
-                    checked={formData.featured || false}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    type="url"
+                    value={formData.storeUrl}
+                    onChange={e => setFormData({ ...formData, storeUrl: e.target.value })}
+                    placeholder="https://smartstore.naver.com/..."
                   />
-                  <label htmlFor="featured">메인 페이지에 추천 제품으로 표시</label>
                 </div>
-              </div>
 
-              <div className={styles.formGroup}>
-                <label>활성화 상태</label>
-                <div className={styles.checkboxGroup}>
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    checked={formData.isActive !== false}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  />
-                  <label htmlFor="isActive">제품을 활성화하여 사이트에 표시</label>
+                <div className={styles.formGroup}>
+                  <label>추천 제품</label>
+                  <div className={styles.checkboxGroup}>
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      checked={formData.featured || false}
+                      onChange={e => setFormData({ ...formData, featured: e.target.checked })}
+                    />
+                    <label htmlFor="featured">메인 페이지에 추천 제품으로 표시</label>
+                  </div>
                 </div>
-              </div>
+
+                <div className={styles.formGroup}>
+                  <label>활성화 상태</label>
+                  <div className={styles.checkboxGroup}>
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={formData.isActive !== false}
+                      onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
+                    />
+                    <label htmlFor="isActive">제품을 활성화하여 사이트에 표시</label>
+                  </div>
+                </div>
               </div>
 
               <button type="submit" className={styles.submitButton}>
-                {editingId ? '수정하기' : '추가하기'}
+                {editingId ? "수정하기" : "추가하기"}
               </button>
             </form>
           </div>
@@ -589,40 +754,136 @@ export default function AdminProductsPage() {
         ) : products.length === 0 ? (
           <div className={styles.empty}>등록된 제품이 없습니다</div>
         ) : (
-          <div className={styles.productsGrid}>
-            {products.map((product) => (
-              <div key={product.id} className={styles.productCard}>
-                {product.thumbnails?.[0] ? (
-                  <img src={product.thumbnails[0]} alt={product.name} className={styles.productThumb} />
-                ) : (
-                  <div className={styles.productPlaceholder}>📦</div>
-                )}
-                <div className={styles.productBody}>
-                  <h3>{product.name}</h3>
-                  <p className={styles.category}>{product.category}</p>
-                  <div className={styles.productTags}>
-                    {product.tags?.slice(0, 3).map((tag, idx) => (
-                      <span key={idx} className={styles.miniTag}>{typeof tag === 'string' ? tag : tag.name}</span>
-                    ))}
-                    {product.featured && (
-                      <span className={styles.featuredBadge}>⭐ 추천</span>
-                    )}
-                    {!product.isActive && (
-                      <span className={styles.inactiveBadge}>비활성</span>
-                    )}
-                  </div>
-                  <p className={styles.description}>{product.description?.substring(0, 80)}...</p>
-                  <div className={styles.actions}>
-                    <button onClick={() => handleEdit(product)} className={styles.editButton}>
-                      수정
-                    </button>
-                    <button onClick={() => handleDelete(product.id)} className={styles.deleteButton}>
-                      삭제
-                    </button>
-                  </div>
+          <>
+            {showBatchActions && (
+              <div className={styles.batchActionsBar}>
+                <span className={styles.batchCount}>{selectedProducts.size}개 선택됨</span>
+                <div className={styles.batchButtons}>
+                  <button
+                    onClick={() => handleBatchToggleActive(true)}
+                    className={styles.batchButton}
+                  >
+                    활성화
+                  </button>
+                  <button
+                    onClick={() => handleBatchToggleActive(false)}
+                    className={styles.batchButton}
+                  >
+                    비활성화
+                  </button>
+                  <button
+                    onClick={handleBatchDelete}
+                    className={`${styles.batchButton} ${styles.batchDelete}`}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProducts(new Set());
+                      setShowBatchActions(false);
+                    }}
+                    className={styles.batchButton}
+                  >
+                    취소
+                  </button>
                 </div>
               </div>
-            ))}
+            )}
+            <div className={styles.productsHeader}>
+              <label className={styles.selectAllCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={selectedProducts.size === products.length && products.length > 0}
+                  onChange={toggleSelectAll}
+                />
+                <span>전체 선택</span>
+              </label>
+              <div className={styles.sortControls}>
+                <label className={styles.sortLabel}>
+                  정렬:
+                  <select
+                    value={sortBy}
+                    onChange={e =>
+                      setSortBy(e.target.value as "name" | "category" | "createdAt" | "updatedAt")
+                    }
+                    className={styles.sortSelect}
+                  >
+                    <option value="name">이름</option>
+                    <option value="category">카테고리</option>
+                    <option value="createdAt">생성일</option>
+                    <option value="updatedAt">수정일</option>
+                  </select>
+                </label>
+                <button
+                  onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                  className={styles.sortOrderButton}
+                  title={sortOrder === "asc" ? "오름차순" : "내림차순"}
+                >
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </button>
+              </div>
+            </div>
+            <div className={styles.productsGrid}>
+              {sortedProducts.map(product => (
+                <div
+                  key={product.id}
+                  className={`${styles.productCard} ${selectedProducts.has(product.id) ? styles.selected : ""}`}
+                >
+                  <div className={styles.productCheckbox}>
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.has(product.id)}
+                      onChange={() => toggleProductSelection(product.id)}
+                    />
+                  </div>
+                  {product.thumbnails?.[0] ? (
+                    <img
+                      src={product.thumbnails[0]}
+                      alt={product.name}
+                      className={styles.productThumb}
+                    />
+                  ) : (
+                    <div className={styles.productPlaceholder}>📦</div>
+                  )}
+                  <div className={styles.productBody}>
+                    <h3>{product.name}</h3>
+                    <p className={styles.category}>{product.category}</p>
+                    <div className={styles.productTags}>
+                      {product.tags?.slice(0, 3).map((tag, idx) => (
+                        <span key={idx} className={styles.miniTag}>
+                          {typeof tag === "string" ? tag : tag.name}
+                        </span>
+                      ))}
+                      {product.featured && <span className={styles.featuredBadge}>⭐ 추천</span>}
+                      {!product.isActive && <span className={styles.inactiveBadge}>비활성</span>}
+                    </div>
+                    <p className={styles.description}>{product.description?.substring(0, 80)}...</p>
+                    <div className={styles.actions}>
+                      <button onClick={() => handleEdit(product)} className={styles.editButton}>
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className={styles.deleteButton}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {expandedImage && (
+          <div className={styles.imageModal} onClick={() => setExpandedImage(null)}>
+            <div className={styles.imageModalContent} onClick={e => e.stopPropagation()}>
+              <button className={styles.imageModalClose} onClick={() => setExpandedImage(null)}>
+                ×
+              </button>
+              <img src={expandedImage} alt="확대 이미지" />
+            </div>
           </div>
         )}
       </div>

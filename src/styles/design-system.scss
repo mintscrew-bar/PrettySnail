@@ -12,6 +12,15 @@ $color-brand-primary-hover: #3d5610;
 $color-brand-secondary: #8b4513;    // Saddle Brown
 $color-brand-accent: #d2691e;       // Chocolate Orange
 
+// Legacy aliases for backward compatibility
+$primary: $color-brand-primary;
+$primary-dark: $color-brand-primary-hover;
+$primary-light: #e7e7e7;
+$secondary: $color-brand-secondary;
+$accent: $color-brand-accent;
+$accent-light: #00a00d;
+$white: #ffffff;
+
 // Neutral Colors (Gray Scale)
 $color-neutral-50: #f9fafb;
 $color-neutral-100: #f3f4f6;
@@ -24,6 +33,13 @@ $color-neutral-700: #374151;
 $color-neutral-800: #1f2937;
 $color-neutral-900: #111827;
 
+// Legacy neutral color aliases
+$neutral-100: $color-neutral-50;
+$neutral-200: $color-neutral-200;
+$neutral-300: $color-neutral-300;
+$neutral-400: $color-neutral-400;
+$neutral-500: $color-neutral-500;
+
 // ========== SEMANTIC COLORS ==========
 // Text Colors (WCAG AA compliant)
 $color-text-primary: #0f0f0f;          // 19.2:1 contrast (AAA)
@@ -31,11 +47,21 @@ $color-text-secondary: #4b5563;        // 8.5:1 contrast (AAA)
 $color-text-tertiary: #6b7280;         // 5.7:1 contrast (AA)
 $color-text-inverse: #ffffff;
 
+// Legacy text color aliases
+$text-primary: $color-text-primary;
+$text-secondary: $color-text-secondary;
+$text-tertiary: $color-text-tertiary;
+$text-inverse: $color-text-inverse;
+
 // Background Colors
 $color-bg-primary: #ffffff;
 $color-bg-secondary: $color-neutral-50;
 $color-bg-tertiary: $color-neutral-100;
 $color-bg-dark: $color-neutral-800;
+
+// Legacy background color aliases
+$background: #fdfdfd;
+$background-alt: $color-bg-secondary;
 
 // Interactive Colors
 $color-interactive-primary: $color-brand-primary;
@@ -81,16 +107,38 @@ $font-size-4xl: 2.25rem;     // 36px
 $font-size-5xl: 3rem;        // 48px
 $font-size-6xl: 3.75rem;     // 60px
 
+// Legacy font size aliases
+$text-xs: $font-size-xs;
+$text-sm: $font-size-sm;
+$text-base: $font-size-base;
+$text-lg: $font-size-lg;
+$text-xl: $font-size-xl;
+$text-2xl: $font-size-2xl;
+$text-3xl: $font-size-3xl;
+$text-4xl: $font-size-4xl;
+$text-5xl: $font-size-5xl;
+
 // Font Weights
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 
+// Legacy font weight aliases
+$font-normal: $font-weight-regular;
+$font-medium: $font-weight-medium;
+$font-semibold: $font-weight-semibold;
+$font-bold: $font-weight-bold;
+
 // Line Heights (한글 최적화)
 $line-height-tight: 1.375;    // 제목용
 $line-height-normal: 1.625;   // 본문용
 $line-height-relaxed: 1.875;  // 긴 본문용
+
+// Legacy line height aliases
+$leading-tight: $line-height-tight;
+$leading-normal: $line-height-normal;
+$leading-relaxed: $line-height-relaxed;
 
 // Letter Spacing (한글 최적화)
 $letter-spacing-tight: -0.02em;   // 큰 제목
@@ -114,6 +162,17 @@ $space-20: 5rem;      // 80px
 $space-24: 6rem;      // 96px
 $space-32: 8rem;      // 128px
 
+// Legacy spacing aliases
+$space-xs: $space-1;
+$space-sm: $space-2;
+$space-md: $space-4;
+$space-lg: $space-6;
+$space-xl: $space-8;
+$space-2xl: $space-12;
+$space-3xl: $space-16;
+$space-4xl: $space-24;
+$space-5xl: $space-32;
+
 // Semantic Spacing
 $spacing-component-xs: $space-2;    // 8px
 $spacing-component-sm: $space-4;    // 16px
@@ -132,6 +191,12 @@ $spacing-grid-lg: $space-8;         // 32px
 // ========== LAYOUT ==========
 $container-max-width: 1200px;
 $content-max-width: 800px;
+
+// Legacy layout variables
+$container-padding: $space-8;
+$container-padding-mobile: $space-6;
+$hero-margin-top: 80px;
+$hero-margin-top-mobile: 120px;
 
 // ========== BORDER RADIUS ==========
 $radius-xs: 3px;
@@ -162,12 +227,19 @@ $gradient-hero: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-se
 $gradient-accent: linear-gradient(90deg, $color-brand-accent 0%, color.adjust($color-brand-accent, $lightness: -10%) 100%);
 $gradient-subtle: linear-gradient(to bottom, $color-bg-primary, $color-neutral-200);
 $gradient-card: linear-gradient(135deg, rgba($color-brand-secondary, 0.1) 0%, rgba($color-brand-primary, 0.05) 100%);
+$gradient-primary: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-primary-hover 100%);
 
 // ========== BREAKPOINTS ==========
 $breakpoint-mobile: 480px;    // Small phones
 $breakpoint-tablet: 768px;    // Tablets
 $breakpoint-desktop: 968px;   // Small desktops
 $breakpoint-wide: 1200px;     // Wide screens
+
+// Legacy breakpoint aliases
+$breakpoint-xs: $breakpoint-mobile;
+$breakpoint-sm: $breakpoint-tablet;
+$breakpoint-md: $breakpoint-desktop;
+$breakpoint-lg: $breakpoint-wide;
 
 // ========== Z-INDEX ==========
 $z-nav: 1000;

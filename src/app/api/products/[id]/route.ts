@@ -1,7 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
+/**
+ * 상품 상세 API 라우트
+ * - GET: 특정 상품 조회
+ * - PUT: 상품 업데이트 (인증 필요)
+ * - DELETE: 상품 삭제 (인증 필요)
+ */
+
+import { NextRequest } from 'next/server';
 import { updateProduct, deleteProduct, getProducts } from '@/lib/db';
 import { ProductSchema } from '@/lib/validation';
 import { withAuth, AuthContext } from '@/lib/auth';
+import {
+  handleApiError,
+  createValidationErrorResponse,
+  createSuccessResponse,
+  createNotFoundResponse,
+} from '@/lib/apiHelpers';
+import { ErrorCode } from '@/lib/errorCodes';
 
 export async function GET(
   request: NextRequest,
@@ -13,19 +27,12 @@ export async function GET(
     const product = products.find(p => p.id === id);
 
     if (!product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      return createNotFoundResponse('Product', id);
     }
 
-    return NextResponse.json(product);
+    return createSuccessResponse(product);
   } catch (error) {
-    console.error('Failed to fetch product:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to fetch product',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleApiError(error, 'fetch product', 500, ErrorCode.PROD001);
   }
 }
 
@@ -38,34 +45,18 @@ export const PUT = withAuth(async (request: NextRequest, context: AuthContext) =
     const validation = ProductSchema.partial().safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          details: validation.error.issues.map(err => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
-      );
+      return createValidationErrorResponse(validation);
     }
 
     const updatedProduct = await updateProduct(params.id, validation.data);
 
     if (!updatedProduct) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      return createNotFoundResponse('Product', params.id);
     }
 
-    return NextResponse.json(updatedProduct);
+    return createSuccessResponse(updatedProduct, 'Product updated successfully');
   } catch (error) {
-    console.error('Failed to update product:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to update product',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleApiError(error, 'update product', 500, ErrorCode.PROD003);
   }
 });
 
@@ -75,18 +66,11 @@ export const DELETE = withAuth(async (request: NextRequest, context: AuthContext
     const success = await deleteProduct(params.id);
 
     if (!success) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      return createNotFoundResponse('Product', params.id);
     }
 
-    return NextResponse.json({ message: 'Product deleted successfully' });
+    return createSuccessResponse({ id: params.id }, 'Product deleted successfully');
   } catch (error) {
-    console.error('Failed to delete product:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to delete product',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return handleApiError(error, 'delete product', 500, ErrorCode.PROD004);
   }
 });

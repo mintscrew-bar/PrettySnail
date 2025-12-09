@@ -1,50 +1,57 @@
-@use "variables" as *;
+// ========================================
+// MIXINS - LEGACY COMPATIBILITY
+// ========================================
+// This file forwards all mixins from the new design-mixins.scss
+// for backward compatibility with existing code.
+// Gradually migrate imports to use design-mixins.scss directly.
 
-// Container mixin
+@forward "design-mixins";
+@use "design-system" as *;
+
+// Legacy mixin wrappers for backward compatibility
+// These use the new design-mixins internally
+
 @mixin container {
   max-width: $container-max-width;
   margin: 0 auto;
-  padding: 0 $space-lg;
+  padding: 0 $spacing-component-md;
 
-  @media (max-width: $breakpoint-sm) {
-    padding: 0 $space-sm;
+  @media (max-width: $breakpoint-tablet) {
+    padding: 0 $spacing-component-sm;
   }
 }
 
-// Section mixin
 @mixin section {
-  padding: $section-padding;
+  padding: $spacing-section-lg 0;
 
-  @media (max-width: $breakpoint-sm) {
-    padding: $section-padding-mobile;
+  @media (max-width: $breakpoint-tablet) {
+    padding: $spacing-section-md 0;
   }
 }
 
-// Minimal card mixin
 @mixin card {
-  background: $white;
+  background: $color-bg-primary;
   border-radius: 8px;
   box-shadow: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid $color-border-light;
   transition: all 0.2s ease;
-  padding: $space-xl;
+  padding: $spacing-component-lg;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #d1d5db;
+    border-color: $color-border-medium;
   }
 }
 
-// Button mixins
 @mixin button-primary {
   background: #1a1a1a;
-  color: $white;
-  padding: $space-md $space-xl;
+  color: $color-text-inverse;
+  padding: $spacing-component-sm $spacing-component-lg;
   border: none;
   border-radius: 6px;
-  font-size: $text-base;
-  font-weight: $font-medium;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
@@ -66,11 +73,11 @@
 @mixin button-secondary {
   background: transparent;
   color: #1a1a1a;
-  border: 1px solid #e5e7eb;
-  padding: $space-md $space-xl;
+  border: 1px solid $color-border-light;
+  padding: $spacing-component-sm $spacing-component-lg;
   border-radius: 6px;
-  font-size: $text-base;
-  font-weight: $font-medium;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
@@ -79,8 +86,8 @@
   text-decoration: none;
 
   &:hover {
-    background: #f5f5f5;
-    border-color: #d1d5db;
+    background: $color-bg-secondary;
+    border-color: $color-border-medium;
   }
 
   &:focus {
@@ -88,82 +95,78 @@
   }
 }
 
-// Minimal section header
 @mixin section-header {
   text-align: center;
-  margin-bottom: $space-3xl;
+  margin-bottom: $spacing-section-md;
   max-width: $content-max-width;
   margin-left: auto;
   margin-right: auto;
 
   h2 {
-    font-size: $text-4xl;
-    font-weight: $font-semibold;
-    margin-bottom: $space-lg;
-    color: $text-primary;
-    line-height: $leading-tight;
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-component-md;
+    color: $color-text-primary;
+    line-height: $line-height-tight;
 
-    @media (max-width: $breakpoint-sm) {
-      font-size: $text-3xl;
+    @media (max-width: $breakpoint-tablet) {
+      font-size: $font-size-3xl;
     }
   }
 
   p {
-    font-size: $text-lg;
-    color: $text-secondary;
-    line-height: $leading-relaxed;
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    line-height: $line-height-relaxed;
     max-width: 600px;
     margin: 0 auto;
   }
 }
 
-// Minimal badge
 @mixin badge {
   display: inline-block;
-  background: $neutral-200;
-  color: $text-secondary;
-  padding: $space-xs $space-md;
+  background: $color-neutral-200;
+  color: $color-text-secondary;
+  padding: $spacing-component-xs $spacing-component-sm;
   border-radius: $radius-xl;
-  font-size: $text-sm;
-  font-weight: $font-medium;
-  border: 1px solid $neutral-300;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border: 1px solid $color-neutral-300;
 }
 
-// Minimal grid responsive mixin
 @mixin grid-responsive($min-width: 280px) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
-  gap: $space-xl;
+  gap: $spacing-grid-lg;
 
-  @media (max-width: $breakpoint-md) {
-    gap: $space-lg;
+  @media (max-width: $breakpoint-desktop) {
+    gap: $spacing-grid-md;
   }
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-tablet) {
     grid-template-columns: 1fr;
-    gap: $space-lg;
+    gap: $spacing-grid-md;
   }
 }
 
-// Responsive breakpoints
 @mixin respond-to($breakpoint) {
   @if $breakpoint == xs {
-    @media (max-width: $breakpoint-xs) {
+    @media (max-width: $breakpoint-mobile) {
       @content;
     }
   }
-  @if $breakpoint == sm {
-    @media (max-width: $breakpoint-sm) {
+  @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-tablet) {
       @content;
     }
   }
-  @if $breakpoint == md {
-    @media (max-width: $breakpoint-md) {
+  @else if $breakpoint == md {
+    @media (max-width: $breakpoint-desktop) {
       @content;
     }
   }
-  @if $breakpoint == lg {
-    @media (max-width: $breakpoint-lg) {
+  @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-wide) {
       @content;
     }
   }

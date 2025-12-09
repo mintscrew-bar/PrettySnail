@@ -271,6 +271,11 @@
   }
 }
 
+// Legacy section alias
+@mixin section {
+  @include section-base;
+}
+
 @mixin section-light {
   @include section-base;
   background: $color-bg-primary;
@@ -380,18 +385,15 @@
     @media (max-width: $breakpoint-mobile) {
       @content;
     }
-  }
-  @else if $breakpoint == sm {
+  } @else if $breakpoint == sm {
     @media (max-width: $breakpoint-tablet) {
       @content;
     }
-  }
-  @else if $breakpoint == md {
+  } @else if $breakpoint == md {
     @media (max-width: $breakpoint-desktop) {
       @content;
     }
-  }
-  @else if $breakpoint == lg {
+  } @else if $breakpoint == lg {
     @media (max-width: $breakpoint-wide) {
       @content;
     }
@@ -465,7 +467,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -520,4 +523,94 @@
   -webkit-line-clamp: $lines;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+// ========================================
+// FOOTER MIXINS
+// ========================================
+
+@mixin footer-base {
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+  color: white;
+  padding: 4rem 3rem 2rem;
+}
+
+@mixin footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@mixin footer-column-heading {
+  color: #547416;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+@mixin footer-link {
+  color: #cccccc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #547416;
+  }
+}
+
+@mixin footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid #404040;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: $breakpoint-tablet) {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+// ========================================
+// GRID MIXINS
+// ========================================
+
+@mixin grid-three-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: $breakpoint-desktop) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@mixin grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+
+  @media (max-width: $breakpoint-tablet) {
+    gap: 1.5rem;
+  }
 }

@@ -5,6 +5,7 @@
 ## 문서 목록
 
 ### 개발 가이드
+
 - [모바일 최적화 & 미니멀 디자인 가이드](./MOBILE_OPTIMIZATION_GUIDE.md)
   - 모바일 반응형 디자인 구현 방법
   - 태그/배지 레이아웃 최적화
@@ -12,11 +13,13 @@
   - 미니멀 디자인 원칙
 
 ### 프로젝트 문서
+
 루트 디렉토리의 문서들:
+
 - [CLAUDE.md](../CLAUDE.md) - Claude Code 프로젝트 가이드
 - [README.md](../README.md) - 프로젝트 개요 및 시작 가이드
 - [DEPLOYMENT.md](../DEPLOYMENT.md) - 배포 가이드
- - [TECHNICAL_GUIDE.md](../docs/TECHNICAL_GUIDE.md) - 코드베이스 구현 요약 및 운영 가이드 (자동 스캔 요약)
+- [TECHNICAL_GUIDE.md](../docs/TECHNICAL_GUIDE.md) - 코드베이스 구현 요약 및 운영 가이드 (자동 스캔 요약)
 
 ## 문서 작성 가이드
 

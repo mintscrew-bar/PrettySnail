@@ -27,16 +27,18 @@
 ## 프로젝트 개요
 
 ### 소개
+
 이쁜우렁이는 전통적인 우렁이 농장 사업을 위한 현대적인 웹사이트입니다. 3대에 걸친 가업을 계승하며 프리미엄 우렁이 제품을 선보입니다.
 
-
 ### 주요 기능
+
 - **제품 카탈로그**: 우렁이 제품 소개 및 상세 정보
 - **품질관리**: HACCP 인증 및 품질 관리 프로세스 소개
 - **관리자 대시보드**: 제품, 배너, 콘텐츠 관리
 - **반응형 디자인**: 모바일/태블릿/데스크톱 최적화
 
 ### 기술적 특징
+
 - Server-Side Rendering (SSR)
 - 파일 기반 데이터베이스 (개발) / Prisma ORM (프로덕션)
 - JWT 기반 인증
@@ -48,38 +50,42 @@
 ## 기술 스택
 
 ### Frontend
-| 기술 | 버전 | 용도 |
-|------|------|------|
-| Next.js | 15.5.3 | React 프레임워크 (App Router) |
-| React | 19.0.0 | UI 라이브러리 |
-| TypeScript | Latest | 타입 안정성 |
-| SCSS | Latest | 스타일링 |
-| Noto Sans KR | - | 한글 폰트 |
+
+| 기술         | 버전   | 용도                          |
+| ------------ | ------ | ----------------------------- |
+| Next.js      | 15.5.3 | React 프레임워크 (App Router) |
+| React        | 19.0.0 | UI 라이브러리                 |
+| TypeScript   | Latest | 타입 안정성                   |
+| SCSS         | Latest | 스타일링                      |
+| Noto Sans KR | -      | 한글 폰트                     |
 
 ### Backend
-| 기술 | 버전 | 용도 |
-|------|------|------|
-| Next.js API Routes | 15.5.3 | RESTful API |
-| Prisma | Latest | ORM |
-| PostgreSQL | - | 데이터베이스 (프로덕션) |
-| bcrypt | Latest | 비밀번호 해싱 |
-| jose | Latest | JWT 처리 |
-| Zod | Latest | 입력 검증 |
+
+| 기술               | 버전   | 용도                    |
+| ------------------ | ------ | ----------------------- |
+| Next.js API Routes | 15.5.3 | RESTful API             |
+| Prisma             | Latest | ORM                     |
+| PostgreSQL         | -      | 데이터베이스 (프로덕션) |
+| bcrypt             | Latest | 비밀번호 해싱           |
+| jose               | Latest | JWT 처리                |
+| Zod                | Latest | 입력 검증               |
 
 ### DevOps
-| 도구 | 용도 |
-|------|------|
-| Turbopack | 빌드 도구 |
-| ESLint | 코드 품질 |
-| Prettier | 코드 포맷팅 |
+
+| 도구      | 용도         |
+| --------- | ------------ |
+| Turbopack | 빌드 도구    |
+| ESLint    | 코드 품질    |
+| Prettier  | 코드 포맷팅  |
 | Git Hooks | 커밋 전 검증 |
-| Vercel | 배포 플랫폼 |
+| Vercel    | 배포 플랫폼  |
 
 ---
 
 ## 개발 환경 설정
 
 ### 필수 요구사항
+
 - Node.js 18.17 이상
 - npm 9.0 이상
 - Git
@@ -87,17 +93,20 @@
 ### 초기 설정
 
 #### 1. 저장소 클론
+
 ```bash
 git clone https://github.com/mintscrew-bar/PrettySnail.git
 cd PrettySnail
 ```
 
 #### 2. 의존성 설치
+
 ```bash
 npm install
 ```
 
 #### 3. 환경 변수 설정
+
 ```bash
 # .env.example을 .env.local로 복사
 cp .env.example .env.local
@@ -113,6 +122,7 @@ DATABASE_URL=your-database-url  # 프로덕션용
 **중요**: 프로덕션 환경에서는 반드시 안전한 값으로 변경!
 
 #### 4. Git Hooks 설치
+
 ```bash
 # Windows
 scripts\install-hooks.cmd
@@ -122,12 +132,14 @@ scripts\install-hooks.cmd
 ```
 
 #### 5. 데이터베이스 초기화 (개발)
+
 ```bash
 # 파일 기반 DB 사용 (개발 환경)
 npm run dev  # 자동으로 data/ 폴더에 JSON 파일 생성
 ```
 
 #### 6. 데이터베이스 초기화 (프로덕션)
+
 ```bash
 # Prisma 마이그레이션
 npm run db:generate
@@ -138,6 +150,7 @@ npm run db:seed
 ```
 
 #### 7. 개발 서버 실행
+
 ```bash
 npm run dev
 ```
@@ -254,6 +267,7 @@ master (main)              → 프로덕션 브랜치
 ```
 
 **타입**:
+
 - `feat`: 새 기능
 - `fix`: 버그 수정
 - `docs`: 문서 변경
@@ -263,6 +277,7 @@ master (main)              → 프로덕션 브랜치
 - `chore`: 빌드/도구 변경
 
 **예시**:
+
 ```
 feat: add product image gallery
 
@@ -282,6 +297,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### TypeScript
 
 #### 타입 정의
+
 ```typescript
 // ✅ 좋은 예
 interface Product {
@@ -296,6 +312,7 @@ const product: any = { ... };
 ```
 
 #### 함수 시그니처
+
 ```typescript
 // ✅ 좋은 예
 async function getProduct(id: string): Promise<Product | null> {
@@ -311,6 +328,7 @@ async function getProduct(id) {
 ### React/Next.js
 
 #### 컴포넌트 구조
+
 ```typescript
 // ✅ 좋은 예
 'use client';  // 클라이언트 컴포넌트인 경우
@@ -335,20 +353,21 @@ export default function Component({ title, onAction }: ComponentProps) {
 ```
 
 #### API 라우트
+
 ```typescript
 // src/app/api/example/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
-import { ErrorCode } from '@/lib/errorCodes';
+import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+import { ErrorCode } from "@/lib/errorCodes";
 
 export async function GET(request: NextRequest) {
   try {
     const data = await fetchData();
     return NextResponse.json(data);
   } catch (error) {
-    logger.error('API error', ErrorCode.API001, { error });
+    logger.error("API error", ErrorCode.API001, { error });
     return NextResponse.json(
-      { error: 'Internal server error', errorCode: ErrorCode.API001 },
+      { error: "Internal server error", errorCode: ErrorCode.API001 },
       { status: 500 }
     );
   }
@@ -358,6 +377,7 @@ export async function GET(request: NextRequest) {
 ### SCSS
 
 #### 모듈 사용
+
 ```scss
 // Component.module.scss
 
@@ -382,16 +402,21 @@ $spacing-md: 1rem;
 ```
 
 #### BEM 네이밍 (선택사항)
+
 ```scss
-.productCard {              // Block
-  &__image {                // Element
+.productCard {
+  // Block
+  &__image {
+    // Element
     width: 100%;
   }
 
-  &__title {                // Element
+  &__title {
+    // Element
     font-size: 1.2rem;
 
-    &--featured {           // Modifier
+    &--featured {
+      // Modifier
       color: red;
     }
   }
@@ -431,6 +456,7 @@ model Product {
 ### 데이터베이스 작업
 
 #### 마이그레이션
+
 ```bash
 # 스키마 변경 후
 npx prisma migrate dev --name add_new_field
@@ -440,27 +466,28 @@ npx prisma migrate deploy
 ```
 
 #### 데이터 조회 (Prisma)
+
 ```typescript
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
 
 // 단일 조회
 const product = await prisma.product.findUnique({
-  where: { id: productId }
+  where: { id: productId },
 });
 
 // 목록 조회
 const products = await prisma.product.findMany({
   where: { isActive: true },
-  orderBy: { createdAt: 'desc' }
+  orderBy: { createdAt: "desc" },
 });
 
 // 생성
 const newProduct = await prisma.product.create({
   data: {
-    name: '제품명',
-    category: '카테고리',
+    name: "제품명",
+    category: "카테고리",
     // ...
-  }
+  },
 });
 ```
 
@@ -470,15 +497,15 @@ const newProduct = await prisma.product.create({
 
 ### RESTful 엔드포인트
 
-| Method | Endpoint | 설명 | 인증 |
-|--------|----------|------|------|
-| GET | `/api/products` | 제품 목록 조회 | ❌ |
-| GET | `/api/products/:id` | 제품 상세 조회 | ❌ |
-| POST | `/api/products` | 제품 생성 | ✅ |
-| PUT | `/api/products/:id` | 제품 수정 | ✅ |
-| DELETE | `/api/products/:id` | 제품 삭제 | ✅ |
-| POST | `/api/auth/login` | 로그인 | ❌ |
-| POST | `/api/upload` | 파일 업로드 | ✅ |
+| Method | Endpoint            | 설명           | 인증 |
+| ------ | ------------------- | -------------- | ---- |
+| GET    | `/api/products`     | 제품 목록 조회 | ❌   |
+| GET    | `/api/products/:id` | 제품 상세 조회 | ❌   |
+| POST   | `/api/products`     | 제품 생성      | ✅   |
+| PUT    | `/api/products/:id` | 제품 수정      | ✅   |
+| DELETE | `/api/products/:id` | 제품 삭제      | ✅   |
+| POST   | `/api/auth/login`   | 로그인         | ❌   |
+| POST   | `/api/upload`       | 파일 업로드    | ✅   |
 
 ### 에러 응답 형식
 
@@ -496,13 +523,13 @@ const newProduct = await prisma.product.create({
 
 ### 에러 코드 체계
 
-| 코드 | 카테고리 | 설명 |
-|------|----------|------|
-| AUTH001-006 | 인증 | 인증 관련 에러 |
-| FILE001-005 | 파일 | 파일 업로드 에러 |
-| VALID001-003 | 검증 | 입력 검증 에러 |
-| DB001-005 | 데이터베이스 | DB 작업 에러 |
-| PROD001-004 | 제품 | 제품 관련 에러 |
+| 코드         | 카테고리     | 설명             |
+| ------------ | ------------ | ---------------- |
+| AUTH001-006  | 인증         | 인증 관련 에러   |
+| FILE001-005  | 파일         | 파일 업로드 에러 |
+| VALID001-003 | 검증         | 입력 검증 에러   |
+| DB001-005    | 데이터베이스 | DB 작업 에러     |
+| PROD001-004  | 제품         | 제품 관련 에러   |
 
 ---
 
@@ -521,7 +548,7 @@ const newProduct = await prisma.product.create({
 ### 비밀번호 보안
 
 ```typescript
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 // 해싱 (회원가입)
 const hashedPassword = await bcrypt.hash(password, 10);
@@ -534,11 +561,11 @@ const isValid = await bcrypt.compare(password, hashedPassword);
 
 ```typescript
 // src/lib/auth.ts
-import { withAuth } from '@/lib/auth';
+import { withAuth } from "@/lib/auth";
 
 export const POST = withAuth(async (request: NextRequest) => {
   // 인증된 사용자만 접근 가능
-  const userId = request.userId;  // withAuth가 주입
+  const userId = request.userId; // withAuth가 주입
   // ...
 });
 ```
@@ -552,13 +579,13 @@ export const POST = withAuth(async (request: NextRequest) => {
 ```typescript
 // Magic number 검증 (파일 시그니처)
 const allowedTypes = {
-  'image/jpeg': [0xFF, 0xD8, 0xFF],
-  'image/png': [0x89, 0x50, 0x4E, 0x47],
-  'image/webp': [0x52, 0x49, 0x46, 0x46]
+  "image/jpeg": [0xff, 0xd8, 0xff],
+  "image/png": [0x89, 0x50, 0x4e, 0x47],
+  "image/webp": [0x52, 0x49, 0x46, 0x46],
 };
 
 // 파일 크기 제한
-const MAX_FILE_SIZE = 10 * 1024 * 1024;  // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 ```
 
 ### 업로드 플로우
@@ -618,7 +645,7 @@ $breakpoint-lg: 1024px;
 ### 이미지 최적화
 
 ```tsx
-import Image from 'next/image';
+import Image from "next/image";
 
 <Image
   src="/products/snail.jpg"
@@ -626,19 +653,19 @@ import Image from 'next/image';
   width={400}
   height={300}
   sizes="(max-width: 768px) 100vw, 400px"
-  priority={false}  // LCP 이미지만 true
-/>
+  priority={false} // LCP 이미지만 true
+/>;
 ```
 
 ### 코드 스플리팅
 
 ```tsx
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 // 동적 임포트
-const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
+const HeavyComponent = dynamic(() => import("./HeavyComponent"), {
   loading: () => <p>Loading...</p>,
-  ssr: false  // 클라이언트에서만 로드
+  ssr: false, // 클라이언트에서만 로드
 });
 ```
 
@@ -646,8 +673,8 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 
 ```typescript
 // Next.js fetch 캐싱
-const data = await fetch('https://api.example.com/data', {
-  next: { revalidate: 3600 }  // 1시간 캐시
+const data = await fetch("https://api.example.com/data", {
+  next: { revalidate: 3600 }, // 1시간 캐시
 });
 ```
 
@@ -659,14 +686,14 @@ const data = await fetch('https://api.example.com/data', {
 
 ```typescript
 // __tests__/lib/validation.test.ts
-import { productSchema } from '@/lib/validation';
+import { productSchema } from "@/lib/validation";
 
-describe('Product Validation', () => {
-  it('should validate valid product data', () => {
+describe("Product Validation", () => {
+  it("should validate valid product data", () => {
     const data = {
-      name: '우렁이',
-      category: '제품',
-      description: '설명'
+      name: "우렁이",
+      category: "제품",
+      description: "설명",
     };
 
     expect(() => productSchema.parse(data)).not.toThrow();
@@ -678,9 +705,9 @@ describe('Product Validation', () => {
 
 ```typescript
 // e2e/products.spec.ts
-test('should display product list', async ({ page }) => {
-  await page.goto('/products');
-  await expect(page.locator('.productCard')).toHaveCount(4);
+test("should display product list", async ({ page }) => {
+  await page.goto("/products");
+  await expect(page.locator(".productCard")).toHaveCount(4);
 });
 ```
 
@@ -691,13 +718,16 @@ test('should display product list', async ({ page }) => {
 ### Vercel 배포
 
 #### 1. Vercel 프로젝트 생성
+
 ```bash
 vercel login
 vercel
 ```
 
 #### 2. 환경 변수 설정
+
 Vercel Dashboard에서 설정:
+
 - `NEXT_PUBLIC_BASE_URL`
 - `JWT_SECRET`
 - `ADMIN_USERNAME`
@@ -705,6 +735,7 @@ Vercel Dashboard에서 설정:
 - `DATABASE_URL`
 
 #### 3. 자동 배포
+
 - `master` 브랜치에 푸시하면 자동 배포
 - PR 생성 시 프리뷰 배포
 
@@ -725,6 +756,7 @@ npm start
 ### 일반적인 문제
 
 #### 1. 빌드 실패
+
 ```bash
 # 캐시 삭제
 rm -rf .next node_modules
@@ -733,12 +765,14 @@ npm run build
 ```
 
 #### 2. 타입 에러
+
 ```bash
 # TypeScript 체크
 npx tsc --noEmit
 ```
 
 #### 3. 로그 확인
+
 ```
 # 로그 파일 위치
 logs/error.log
@@ -750,6 +784,7 @@ logs/debug.log
 ```
 
 #### 4. 데이터베이스 문제
+
 ```bash
 # Prisma 재생성
 npm run db:generate
@@ -763,12 +798,14 @@ npx prisma migrate reset
 ## 참고 자료
 
 ### 공식 문서
+
 - [Next.js 문서](https://nextjs.org/docs)
 - [React 문서](https://react.dev)
 - [Prisma 문서](https://www.prisma.io/docs)
 - [TypeScript 문서](https://www.typescriptlang.org/docs)
 
 ### 프로젝트 문서
+
 - [README](../README.md)
 - [프로젝트 구조](../PROJECT_STRUCTURE.md)
 - [배포 가이드](../DEPLOYMENT.md)

@@ -1,5 +1,5 @@
-@use "../styles/variables" as *;
-@use "../styles/mixins" as *;
+@use "../styles/design-system" as *;
+@use "../styles/design-mixins" as *;
 @use "../styles/animations" as *;
 
 /* ===== BASE CONTAINER ===== */
@@ -216,6 +216,10 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.02em;
+
+    @media (max-width: 968px) {
+      font-size: clamp(1.75rem, 4.5vw, 3.5rem);
+    }
   }
 
   .heroTitleMain {
@@ -226,6 +230,10 @@
     color: $accent-light;
     font-size: clamp(2.5rem, 6vw, 4rem);
     animation: slideInRight 0.8s ease-out 0.4s both;
+
+    @media (max-width: 968px) {
+      font-size: clamp(2rem, 5.5vw, 3.25rem);
+    }
   }
 
   .heroDescription {
@@ -236,6 +244,12 @@
     max-width: 600px;
     font-weight: $font-normal;
     animation: fadeInUp 0.8s ease-out 0.6s both;
+
+    @media (max-width: 968px) {
+      font-size: clamp(0.95rem, 1.8vw, $text-lg);
+      margin: $space-lg auto $space-xl auto;
+      max-width: 550px;
+    }
   }
 
   .heroCTA {
@@ -470,6 +484,20 @@
     font-weight: $font-normal;
   }
 
+  @media (max-width: 968px) {
+    margin-bottom: $space-3xl;
+    max-width: 100%;
+
+    h2 {
+      font-size: clamp($text-2xl, 4vw, $text-3xl);
+      margin-bottom: $space-md;
+    }
+
+    p {
+      font-size: $text-base;
+    }
+  }
+
   @media (max-width: $breakpoint-md) {
     margin-bottom: $space-3xl;
     max-width: 100%;
@@ -530,6 +558,10 @@
     z-index: 1;
   }
 
+  @media (max-width: 968px) {
+    padding: $space-4xl 0;
+  }
+
   @media (max-width: $breakpoint-md) {
     padding: $space-4xl 0;
   }
@@ -544,6 +576,12 @@
   grid-template-columns: repeat(3, 1fr);
   gap: $space-2xl;
   margin-top: $space-3xl;
+
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-lg;
+    margin-top: $space-2xl;
+  }
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
@@ -674,6 +712,11 @@
   gap: $space-lg;
   margin-bottom: $space-2xl;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-md;
+  }
+
   @media (max-width: $breakpoint-lg) {
     grid-template-columns: repeat(3, 1fr);
     gap: $space-md;
@@ -753,6 +796,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 
@@ -765,6 +809,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 
@@ -775,11 +820,13 @@
       font-size: $text-sm;
       margin-bottom: 4px;
       -webkit-line-clamp: 1;
+      line-clamp: 1;
     }
 
     p {
       font-size: $text-xs;
       -webkit-line-clamp: 1;
+      line-clamp: 1;
       margin-bottom: $space-xs;
     }
   }
@@ -847,6 +894,12 @@
     transform: translateX(4px);
   }
 
+  @media (max-width: 968px) {
+    padding: $space-md $space-xl;
+    font-size: $text-base;
+    min-height: 48px;
+  }
+
   @media (max-width: $breakpoint-md) {
     padding: $space-md $space-xl;
     font-size: $text-base;
@@ -866,6 +919,10 @@
   background: $white;
   padding: $space-4xl 0;
 
+  @media (max-width: 968px) {
+    padding: $space-3xl 0;
+  }
+
   @media (max-width: $breakpoint-md) {
     padding: $space-3xl 0;
   }
@@ -881,6 +938,12 @@
   gap: $space-xl;
   margin-top: $space-3xl;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-lg;
+    margin-top: $space-2xl;
+  }
+
   @media (max-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
@@ -894,7 +957,7 @@
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr; // 작은 화면에서는 1열
+    grid-template-columns: repeat(2, 1fr); // 작은 화면에서는 1열
     gap: 1rem;
   }
 }
@@ -988,8 +1051,13 @@
   grid-template-columns: repeat(3, 1fr);
   gap: $space-xl;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-lg;
+  }
+
   @media (max-width: $breakpoint-md) {
-    grid-template-columns: 2fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
   }
 

@@ -35,10 +35,19 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 44px;
+  font-weight: 500;
 
   &:hover:not(:disabled) {
     border-color: #ccc;
     color: #1a1a1a;
+    background: #fafafa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   &:disabled {
@@ -56,7 +65,7 @@
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   margin-bottom: 2.5rem;
 }
@@ -116,6 +125,8 @@
 }
 
 .quickActions {
+  margin-bottom: 2.5rem;
+
   h2 {
     font-size: 1.25rem;
     color: #1a1a1a;
@@ -144,6 +155,7 @@
   font-weight: 400;
   font-size: 0.9rem;
   transition: all 0.15s ease;
+  min-height: 100px;
 
   &:hover {
     border-color: #ccc;
@@ -152,7 +164,7 @@
 }
 
 .actionIcon {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
 // Main Grid for Recent Items
@@ -302,11 +314,19 @@
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.15s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: #1f4037;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(45, 90, 77, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -322,13 +342,26 @@
   }
 
   .refreshButton {
-    align-self: stretch;
+    width: 100%;
     justify-content: center;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.95rem;
+    min-height: 48px;
   }
 
   .statsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+  }
+
+  .statCard {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .statIcon {
+    width: 54px;
+    height: 54px;
+    font-size: 1.75rem;
   }
 
   .mainGrid {
@@ -336,20 +369,82 @@
     gap: 1.5rem;
   }
 
+  .listItem {
+    padding: 1.25rem;
+  }
+
+  .addButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
   .actionGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
+
+  .actionCard {
+    padding: 1.5rem 1rem;
+    min-height: 110px;
+    font-size: 0.95rem;
+  }
+
+  .actionIcon {
+    font-size: 2rem;
+  }
+
+  .viewAllLink {
+    font-size: 0.9rem;
+    padding: 0.25rem;
+  }
 }
 
 @media (max-width: 480px) {
+  .header {
+    margin-bottom: 1.5rem;
+
+    h1 {
+      font-size: 1.35rem;
+    }
+  }
+
+  .statsGrid {
+    gap: 0.875rem;
+  }
+
+  .statCard {
+    padding: 1.125rem 1.25rem;
+  }
+
+  .statIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+
   .actionGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+  }
+
+  .actionCard {
+    padding: 1.25rem 1rem;
+    min-height: 90px;
   }
 
   .itemMeta {
     flex-direction: column;
     align-items: flex-end;
     gap: 0.4rem;
+  }
+
+  .quickActions {
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
   }
 }

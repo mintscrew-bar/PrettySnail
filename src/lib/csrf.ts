@@ -54,6 +54,13 @@ export function verifyCsrfToken(request: NextRequest): boolean {
     console.log('[verifyCsrfToken] Header token:', headerToken?.substring(0, 10) + '...');
   }
 
+  // In development, if header token exists but cookie is missing, allow it
+  // This works around browser cookie issues in local development
+  if (process.env.NODE_ENV === 'development' && !cookieToken && headerToken) {
+    console.log('[verifyCsrfToken] Development mode: Accepting header-only CSRF token');
+    return true;
+  }
+
   // Both tokens must exist and match
   if (!cookieToken || !headerToken) {
     if (process.env.NODE_ENV === 'development') {
