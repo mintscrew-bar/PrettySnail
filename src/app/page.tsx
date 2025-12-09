@@ -306,7 +306,7 @@ export default async function Home() {
                 </div>
                 <div className={styles.processInfo}>
                   <h3>2. 전처리 과정</h3>
-                  <p>깨끗한 물로 세척하고 이물질을 제거하여 안전성을 확보합니다</p>
+                  <p>깨끗한 물로 세척하고 이물질을 제거합니다.</p>
                 </div>
               </div>
               <div className={styles.processCard}>
@@ -319,8 +319,8 @@ export default async function Home() {
                   />
                 </div>
                 <div className={styles.processInfo}>
-                  <h3>3. 탈각 및 정제</h3>
-                  <p>전문 장비를 사용하여 껍질을 제거하고 정제 과정을 거칩니다</p>
+                  <h3>3. 탈각 및 이물질 제거</h3>
+                  <p>껍질을 제거하고 이물질을 제거합니다.</p>
                 </div>
               </div>
               <div className={styles.processCard}>
@@ -343,7 +343,7 @@ export default async function Home() {
                 </div>
                 <div className={styles.processInfo}>
                   <h3>5. 멸균 및 포장</h3>
-                  <p>HACCP 기준에 따른 멸균 처리 후 위생적으로 포장합니다</p>
+                  <p>HACCP 기준에 따른 멸균 처리 후 위생적으로 포장합니다.</p>
                 </div>
               </div>
             </div>
@@ -360,21 +360,22 @@ export default async function Home() {
               <FeatureCard
                 icon="📖"
                 title="브랜드 스토리"
-                description="20년 전통의 우렁이 전문 농장의 철학을 만나보세요"
+                description="20년 전통의 우렁이 전문 농장의 철학을 만나보세요. "
                 href="/story"
                 linkText="스토리 보기 →"
+  
               />
               <FeatureCard
                 icon="🏆"
                 title="품질관리"
-                description="HACCP 인증 시설의 엄격한 품질관리 시스템과 안전한 생산 과정"
+                description="HACCP 인증 시설의 엄격한 품질관리 시스템과 안전한 생산 과정. 신선하고 건강한 우렁이를 엄선하여 제공합니다. "
                 href="/quality"
                 linkText="품질 보기 →"
               />
               <FeatureCard
                 icon="💬"
                 title="고객센터"
-                description="전문가의 맞춤 상담 서비스로 궁금한 점을 해결해드립니다"
+                description="무엇이든 물어보세요. 궁금한 점을 해결해드립니다. "
                 href="/contact"
                 linkText="문의하기 →"
               />

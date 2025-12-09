@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { getEnv } from "@/lib/env";
@@ -64,6 +64,16 @@ export const metadata: Metadata = {
     // google: 'your-google-verification-code',
     // naver: 'your-naver-verification-code',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+  width: 'device-width',  
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({

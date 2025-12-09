@@ -134,6 +134,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 1. `https://your-project.vercel.app/admin/login` 접속
 2. 환경 변수에 설정한 `ADMIN_USERNAME`과 `ADMIN_PASSWORD`로 로그인
 3. 로그인 성공 시 `data/users.json` 자동 생성됨
+4. 꼭 설정에서 비밀번호 재설정할 것
 
 ### 2. 데이터 디렉토리 주의사항
 

@@ -39,7 +39,7 @@ export default function StoryPage() {
             <ValueCard
               icon="🌱"
               title="자연과의 조화"
-              description="자연의 순리를 따르는 양식 방법으로 우렁이가 건강하게 자랄 수 있는 최적의 환경을 조성합니다. 화학첨가물 없는 순수한 자연 그대로의 맛을 추구합니다."
+              description="자연의 순리를 따르는 양식 방법으로 우렁이가 건강하게 자랄 수 있는 최적의 환경을 조성합니다. 순수한 자연 그대로의 맛을 추구합니다."
             />
             <ValueCard
               icon="❤️"
@@ -49,12 +49,12 @@ export default function StoryPage() {
             <ValueCard
               icon="🏆"
               title="품질에 대한 자부심"
-              description="수년간간 쌓아온 노하우와 경험을 바탕으로 최상급 우렁이만을 선별합니다. 품질에 타협하지 않는 것이 우리가 지키는 원칙입니다."
+              description="수년간 쌓아온 노하우와 경험을 바탕으로 최상급 우렁이만을 선별합니다. 품질에 타협하지 않는 것이 우리가 지키는 원칙입니다."
             />
             <ValueCard
               icon="🌍"
               title="지속가능한 미래"
-              description="강가 생태계 순환을 생각해 오폐수 처리를 위한 고품질 정화조 설비를 갖추고 있습니다. 다음 세대에게 깨끗한 환경을 물려주는 것이 우리의 사명입니다."
+              description="강가 생태계 순환을 생각해 오폐수 처리를 위한 고품질 정화조 설비를 갖추고 있습니다."
             />
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function StoryPage() {
                 </div>
                 <div className={styles.infoItem}>
                   <strong>수질 관리</strong>
-                  <span>낙동강 강수, 오수 및 유기물 처리를 위한 정화조 설비 </span>
+                  <span>낙동강 강수, 오수 및 유기물 처리 및 재사용을 위한 정화조 설비 </span>
                 </div>
                 <div className={styles.infoItem}>
                   <strong>생산 주기</strong>
@@ -96,6 +96,7 @@ export default function StoryPage() {
             <div className={styles.farmImage}>
               <div className={styles.imagePlaceholder}>
                 <div className={styles.placeholderIcon}>🏭</div>
+                <img className={styles.farmImageSrc} src="/assets/농장.png" alt="농장 시설 전경" width={300} height={200} />
                 <p>농장 시설 전경</p>
               </div>
             </div>

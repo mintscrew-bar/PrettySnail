@@ -65,7 +65,7 @@ export default function ProductsPage() {
             <span className={styles.highlight}>제품 라인업</span>
           </h1>
           <p className={styles.heroDescription}>
-            37년간 축적된 노하우로 엄선한 최고급 우렁이 제품군을
+            수년간 축적된 노하우로 엄선한 최고급 우렁이 제품군을
             <br />
             고객의 다양한 요구에 맞춰 준비했습니다.
           </p>
