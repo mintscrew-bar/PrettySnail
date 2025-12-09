@@ -44,7 +44,11 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run test:run:*)",
       "Bash(python3:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(npm info:*)",
+      "Bash(npm view:*)",
+      "Bash(npm audit:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
