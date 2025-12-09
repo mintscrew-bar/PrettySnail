@@ -102,7 +102,7 @@ async function getCsrfToken(): Promise<string> {
     // Cache the token only after verifying cookie is set
     csrfToken = newToken;
 
-    return csrfToken;
+    return newToken;
   } catch (error) {
     console.error('Error getting CSRF token:', error);
     throw new Error(
