@@ -21,8 +21,8 @@ async function getBanners(): Promise<Banner[]> {
     // API may return raw array or a wrapped object { success, data }
     const banners: Banner[] = Array.isArray(body)
       ? body
-      : body && Array.isArray((body as any).data)
-        ? (body as any).data
+      : body && typeof body === 'object' && 'data' in body && Array.isArray(body.data)
+        ? body.data
         : [];
     return banners.filter(b => b.isActive);
   } catch {
@@ -43,8 +43,8 @@ async function getProducts(): Promise<Product[]> {
     // API may return raw array or a wrapped object { success, data }
     const products: Product[] = Array.isArray(body)
       ? body
-      : body && Array.isArray((body as any).data)
-        ? (body as any).data
+      : body && typeof body === 'object' && 'data' in body && Array.isArray(body.data)
+        ? body.data
         : [];
     // 활성화된 제품만 가져오고, featured 제품 우선 표시
     return products

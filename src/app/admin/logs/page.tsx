@@ -182,7 +182,7 @@ export default function LogsPage() {
     doc.save(`logs_${logType}_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
-  const exportToCSV = () => {
+  const _exportToCSV = () => {
     const headers = ["시간", "레벨", "에러코드", "메시지", "사용자", "IP", "엔드포인트", "상세"];
     const csvData = logs.map(log => [
       formatTimestamp(log.timestamp),

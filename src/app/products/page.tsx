@@ -25,8 +25,8 @@ export default function ProductsPage() {
       // API 응답 형태가 배열일 수도 있고 { data: [...] } 형태일 수도 있음
       const data: Product[] = Array.isArray(body)
         ? body
-        : body && Array.isArray((body as any).data)
-          ? (body as any).data
+        : body && typeof body === 'object' && 'data' in body && Array.isArray(body.data)
+          ? body.data
           : [];
 
       setProducts(data);
