@@ -93,7 +93,7 @@ async function getCsrfToken(): Promise<string> {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[getCsrfToken] Development mode: Using header-only CSRF token');
         csrfToken = newToken;
-        return csrfToken;
+        return newToken;
       }
 
       throw new Error('CSRF cookie was not set properly by the server');
