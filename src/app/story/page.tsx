@@ -2,7 +2,6 @@ import styles from "./story.module.scss";
 import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import ValueCard from "../../components/ValueCard";
 
 export default function StoryPage() {
   return (
@@ -36,26 +35,49 @@ export default function StoryPage() {
           </div>
 
           <div className={styles.valuesGrid}>
-            <ValueCard
-              icon="🌱"
-              title="자연과의 조화"
-              description="자연의 순리를 따르는 양식 방법으로 우렁이가 건강하게 자랄 수 있는 최적의 환경을 조성합니다. 순수한 자연 그대로의 맛을 추구합니다."
-            />
-            <ValueCard
-              icon="❤️"
-              title="가족같은 정성"
-              description="고객을 가족처럼 생각하며 최고의 품질만을 제공하겠다는 마음가짐입니다."
-            />
-            <ValueCard
-              icon="🏆"
-              title="품질에 대한 자부심"
-              description="수년간 쌓아온 노하우와 경험을 바탕으로 최상급 우렁이만을 선별합니다. 품질에 타협하지 않는 것이 우리가 지키는 원칙입니다."
-            />
-            <ValueCard
-              icon="🌍"
-              title="지속가능한 미래"
-              description="강가 생태계 순환을 생각해 오폐수 처리를 위한 고품질 정화조 설비를 갖추고 있습니다."
-            />
+            <div className={styles.valueCard}>
+              <div className={styles.valueIconWrapper}>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className={styles.valueIcon}>
+                  <path d="M16 4C16 4 12 8 12 12C12 14.2 13.8 16 16 16C18.2 16 20 14.2 20 12C20 8 16 4 16 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 16V28" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M12 20C10 20 8 22 8 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M20 20C22 20 24 22 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <h3>자연과의 조화</h3>
+              <p>자연의 순리를 따르는 양식 방법으로 우렁이가 건강하게 자랄 수 있는 최적의 환경을 조성합니다. 순수한 자연 그대로의 맛을 추구합니다.</p>
+            </div>
+            <div className={styles.valueCard}>
+              <div className={styles.valueIconWrapper}>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className={styles.valueIcon}>
+                  <path d="M16 8C13.8 8 12 9.8 12 12C12 16 16 20 16 20C16 20 20 16 20 12C20 9.8 18.2 8 16 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="16" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <h3>가족같은 정성</h3>
+              <p>고객을 가족처럼 생각하며 최고의 품질만을 제공하겠다는 마음가짐입니다.</p>
+            </div>
+            <div className={styles.valueCard}>
+              <div className={styles.valueIconWrapper}>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className={styles.valueIcon}>
+                  <path d="M16 4L18.5 11.5L26 14L18.5 16.5L16 24L13.5 16.5L6 14L13.5 11.5L16 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 28H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <h3>품질에 대한 자부심</h3>
+              <p>수년간 쌓아온 노하우와 경험을 바탕으로 최상급 우렁이만을 선별합니다. 품질에 타협하지 않는 것이 우리가 지키는 원칙입니다.</p>
+            </div>
+            <div className={styles.valueCard}>
+              <div className={styles.valueIconWrapper}>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className={styles.valueIcon}>
+                  <circle cx="16" cy="16" r="10" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M16 6V16H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="16" cy="16" r="2" fill="currentColor"/>
+                </svg>
+              </div>
+              <h3>지속가능한 미래</h3>
+              <p>강가 생태계 순환을 생각해 오폐수 처리를 위한 고품질 정화조 설비를 갖추고 있습니다.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -95,9 +117,8 @@ export default function StoryPage() {
             </div>
             <div className={styles.farmImage}>
               <div className={styles.imagePlaceholder}>
-                <div className={styles.placeholderIcon}>🏭</div>
-                <img className={styles.farmImageSrc} src="/assets/농장.png" alt="농장 시설 전경" width={300} height={200} />
-                <p>농장 시설 전경</p>
+                <img className={styles.farmImageSrc} src="/assets/농장.png" alt="농장 전경"/>
+                <p>농장 전경</p>
               </div>
             </div>
           </div>

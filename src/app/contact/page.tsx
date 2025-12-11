@@ -59,7 +59,14 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className={styles.methodCard}
             >
-              <div className={styles.methodIcon}>💬</div>
+              <div className={styles.methodIcon}>
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <path d="M35 16C35 19 32 24 26 26L20 32V26C12 26 5 22 5 16C5 10 11 5 20 5C29 5 35 10 35 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="15" cy="16" r="1.5" fill="currentColor"/>
+                  <circle cx="20" cy="16" r="1.5" fill="currentColor"/>
+                  <circle cx="25" cy="16" r="1.5" fill="currentColor"/>
+                </svg>
+              </div>
               <h3>카카오톡 채널</h3>
               <p className={styles.methodDescription}>
                 실시간 채팅 상담<br />
@@ -80,7 +87,13 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className={styles.methodCard}
             >
-              <div className={styles.methodIcon}>🟢</div>
+              <div className={styles.methodIcon}>
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <rect x="8" y="10" width="24" height="20" rx="3" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8 16L20 22L32 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="20" cy="20" r="2" fill="currentColor"/>
+                </svg>
+              </div>
               <h3>네이버 톡톡</h3>
               <p className={styles.methodDescription}>
                 간편한 네이버 상담<br />
@@ -101,8 +114,7 @@ export default function ContactPage() {
       <section className={styles.locationSection}>
         <div className={styles.sectionContainer}>
           <div className={styles.sectionHeader}>
-            
-            <h2>📍 찾아오시는 길</h2>
+            <h2>찾아오시는 길</h2>
           </div>
 
           <div className={styles.locationContent}>

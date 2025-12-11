@@ -11,7 +11,6 @@ interface BannerCarouselProps {
 export default function BannerCarousel({ banners }: BannerCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   // 자동 재생 타이머
   useEffect(() => {
@@ -24,27 +23,20 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
     return () => clearTimeout(timer);
   }, [currentIndex, banners.length]);
 
-  // 프로그레스 바 애니메이션
-  useEffect(() => {
-    if (banners.length <= 1) return;
+  // 이전/다음 배너로 이동
+  const goToPrevious = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+    setTimeout(() => setIsTransitioning(false), 500);
+  };
 
-    setProgress(0);
-    const startTime = Date.now();
-    const duration = 5000;
-
-    const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
-      const newProgress = Math.min(elapsed / duration, 1);
-      setProgress(newProgress);
-
-      if (newProgress < 1) {
-        requestAnimationFrame(updateProgress);
-      }
-    };
-
-    const animationId = requestAnimationFrame(updateProgress);
-    return () => cancelAnimationFrame(animationId);
-  }, [currentIndex, banners.length]);
+  const goToNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => (prev + 1) % banners.length);
+    setTimeout(() => setIsTransitioning(false), 500);
+  };
 
   if (banners.length === 0) {
     return null;
@@ -152,29 +144,38 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
       </BannerWrapper>
 
       {banners.length > 1 && (
-        <div className={styles.indicators}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${((currentIndex + progress) / banners.length) * 100}%` }}
-            aria-hidden="true"
-          />
+        <div className={styles.paginationIndicator}>
+          <button
+            className={styles.navButton}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goToPrevious();
+            }}
+            aria-label="이전 배너"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
 
-          {banners.map((_, index) => (
-            <button
-              key={index}
-              className={`${styles.progressSegment} ${index === currentIndex ? styles.progressSegmentActive : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!isTransitioning) {
-                  setIsTransitioning(true);
-                  setCurrentIndex(index);
-                  setTimeout(() => setIsTransitioning(false), 500);
-                }
-              }}
-              aria-label={`배너 ${index + 1}로 이동`}
-            />
-          ))}
+          <span className={styles.pageNumber}>
+            {currentIndex + 1} / {banners.length}
+          </span>
+
+          <button
+            className={styles.navButton}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goToNext();
+            }}
+            aria-label="다음 배너"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M8 4L14 10L8 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
       )}
 

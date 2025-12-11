@@ -44,21 +44,35 @@ export default function QualityPage() {
               </p>
               <div className={styles.haccpFeatures}>
                 <div className={styles.haccpFeature}>
-                  <div className={styles.featureIcon}>🔍</div>
+                  <div className={styles.featureIcon}>
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M17 17L24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
                   <div>
                     <h4>위해요소 분석</h4>
                     <p>생산 과정의 모든 위해요소를 사전에 분석하고 예방</p>
                   </div>
                 </div>
                 <div className={styles.haccpFeature}>
-                  <div className={styles.featureIcon}>⚡</div>
+                  <div className={styles.featureIcon}>
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <path d="M14 4L16 10L22 12L16 14L14 20L12 14L6 12L12 10L14 4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <div>
                     <h4>중요관리점 설정</h4>
                     <p>핵심 관리 포인트를 설정하여 지속적 모니터링</p>
                   </div>
                 </div>
                 <div className={styles.haccpFeature}>
-                  <div className={styles.featureIcon}>📊</div>
+                  <div className={styles.featureIcon}>
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <rect x="4" y="6" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M8 14L12 18L20 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <div>
                     <h4>검증 및 기록</h4>
                     <p>모든 관리 과정을 문서화하고 정기적으로 검증</p>
@@ -290,13 +304,25 @@ export default function QualityPage() {
 
           <div className={styles.certGridTwo}>
             <div className={styles.certCard}>
-              <div className={styles.certIcon}>📜</div>
+              <div className={styles.certIcon}>
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <rect x="6" y="4" width="24" height="28" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M12 10H24M12 16H24M12 22H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M18 28L22 32L28 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <h3>HACCP 인증</h3>
               <p>위해요소중점관리기준</p>
             </div>
 
             <div className={styles.certCard}>
-              <div className={styles.certIcon}>💊</div>
+              <div className={styles.certIcon}>
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  <circle cx="18" cy="18" r="12" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M18 10V18L23 23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="18" cy="18" r="2" fill="currentColor"/>
+                </svg>
+              </div>
               <h3>무항생제 인증</h3>
               <p>무항생제 사료 사용</p>
             </div>

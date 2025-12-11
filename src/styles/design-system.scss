@@ -5,20 +5,21 @@
 
 @use "sass:color";
 
-// ========== FOUNDATION COLORS ==========
-// Primary Colors (Brand)
-$color-brand-primary: #547416;      // Deep Olive Green
-$color-brand-primary-hover: #3d5610;
-$color-brand-secondary: #8b4513;    // Saddle Brown
-$color-brand-accent: #d2691e;       // Chocolate Orange
+// ========== FOUNDATION COLORS (Kakao-Inspired) ==========
+// Primary Colors (Brand) - Bright & Friendly
+$color-brand-primary: #7bc54c;      // Bright Fresh Green (친근한 연두색)
+$color-brand-primary-hover: #6ab03d;
+$color-brand-primary-light: #f0f9ec; // Very light green
+$color-brand-secondary: #95d15f;    // Lighter Green
+$color-brand-accent: #ffb84d;       // Sunny Yellow-Orange (귀여운 포인트)
 
 // Legacy aliases for backward compatibility
 $primary: $color-brand-primary;
 $primary-dark: $color-brand-primary-hover;
-$primary-light: #e7e7e7;
+$primary-light: $color-brand-primary-light;
 $secondary: $color-brand-secondary;
 $accent: $color-brand-accent;
-$accent-light: #00a00d;
+$accent-light: #a8db71;             // Soft green accent
 $white: #ffffff;
 
 // Neutral Colors (Gray Scale)
@@ -26,12 +27,12 @@ $color-neutral-50: #f9fafb;
 $color-neutral-100: #f3f4f6;
 $color-neutral-200: #e5e7eb;
 $color-neutral-300: #d1d5db;
-$color-neutral-400: #9ca3af;
-$color-neutral-500: #6b7280;
-$color-neutral-600: #4b5563;
-$color-neutral-700: #374151;
-$color-neutral-800: #1f2937;
-$color-neutral-900: #111827;
+$color-neutral-400: #a0a0a0;
+$color-neutral-500: #7c7c7c;
+$color-neutral-600: #5a5a5a;
+$color-neutral-700: #4b4b4b;
+$color-neutral-800: #333333;
+$color-neutral-900: #131313;
 
 // Legacy neutral color aliases
 $neutral-100: $color-neutral-50;
@@ -43,8 +44,8 @@ $neutral-500: $color-neutral-500;
 // ========== SEMANTIC COLORS ==========
 // Text Colors (WCAG AA compliant)
 $color-text-primary: #0f0f0f;          // 19.2:1 contrast (AAA)
-$color-text-secondary: #4b5563;        // 8.5:1 contrast (AAA)
-$color-text-tertiary: #6b7280;         // 5.7:1 contrast (AA)
+$color-text-secondary: #1d1d1d;        // 8.5:1 contrast (AAA)
+$color-text-tertiary: #727272;         // 5.7:1 contrast (AA)
 $color-text-inverse: #ffffff;
 
 // Legacy text color aliases
@@ -53,15 +54,16 @@ $text-secondary: $color-text-secondary;
 $text-tertiary: $color-text-tertiary;
 $text-inverse: $color-text-inverse;
 
-// Background Colors
+// Background Colors (Clean & Minimal)
 $color-bg-primary: #ffffff;
-$color-bg-secondary: $color-neutral-50;
+$color-bg-secondary: #fafafa;
 $color-bg-tertiary: $color-neutral-100;
 $color-bg-dark: $color-neutral-800;
-
+$color-bg-darker: $color-neutral-900;
 // Legacy background color aliases
-$background: #fdfdfd;
-$background-alt: $color-bg-secondary;
+$background: #ffffff;
+$background-alt: #fafafa;
+
 
 // Interactive Colors
 $color-interactive-primary: $color-brand-primary;
@@ -198,36 +200,39 @@ $container-padding-mobile: $space-6;
 $hero-margin-top: 80px;
 $hero-margin-top-mobile: 120px;
 
-// ========== BORDER RADIUS ==========
-$radius-xs: 3px;
-$radius-sm: 6px;
-$radius-md: 8px;
-$radius-lg: 12px;
-$radius-xl: 16px;
-$radius-2xl: 24px;
+// ========== BORDER RADIUS (Kakao-Style: Rounded) ==========
+$radius-xs: 4px;
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 28px;
+$radius-3xl: 32px;
 $radius-full: 50%;
 
-// ========== SHADOWS ==========
-$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
-$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.16);
-$shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.2);
-$shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-focus: 0 0 0 3px rgba($color-brand-primary, 0.3);
+// ========== SHADOWS (Kakao-Inspired: Subtle & Clean) ==========
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.08);
+$shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.1);
+$shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+$shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+$shadow-focus: 0 0 0 4px rgba($color-brand-primary, 0.12);
+$shadow-colored: 0 4px 12px rgba($color-brand-primary, 0.08);
 
 // ========== TRANSITIONS ==========
 $transition-fast: all 0.15s ease;
 $transition-normal: all 0.25s ease;
 $transition-slow: all 0.4s ease;
 
-// ========== GRADIENTS ==========
-$gradient-hero: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-secondary 50%, rgba($color-brand-primary, 0.8) 100%);
-$gradient-accent: linear-gradient(90deg, $color-brand-accent 0%, color.adjust($color-brand-accent, $lightness: -10%) 100%);
-$gradient-subtle: linear-gradient(to bottom, $color-bg-primary, $color-neutral-200);
-$gradient-card: linear-gradient(135deg, rgba($color-brand-secondary, 0.1) 0%, rgba($color-brand-primary, 0.05) 100%);
-$gradient-primary: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-primary-hover 100%);
+// ========== GRADIENTS (Modern & Vibrant) ==========
+$gradient-hero: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-secondary 100%);
+$gradient-accent: linear-gradient(135deg, $color-brand-accent 0%, #ff7043 100%);
+$gradient-subtle: linear-gradient(to bottom, rgba($color-brand-primary, 0.03), rgba($color-brand-primary-light, 0.5));
+$gradient-card: linear-gradient(135deg, rgba($color-brand-primary, 0.08) 0%, rgba($color-brand-secondary, 0.05) 100%);
+$gradient-primary: linear-gradient(135deg, $color-brand-primary 0%, $color-brand-secondary 100%);
+$gradient-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
 
 // ========== BREAKPOINTS ==========
 $breakpoint-mobile: 480px;    // Small phones

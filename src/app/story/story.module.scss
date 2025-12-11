@@ -281,10 +281,21 @@
   border-color: rgba(84, 116, 22, 0.4);
 }
 
+.valueIconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
 .valueIcon {
-  font-size: 4rem;
-  margin-bottom: 2rem;
-  filter: drop-shadow(0 4px 8px rgba(0, 100, 0, 0.2));
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+
+  .valueCard:hover & {
+    transform: scale(1.05);
+    color: #547416;
+  }
 }
 
 .valueCard h3 {

@@ -48,7 +48,8 @@
       "Bash(npm info:*)",
       "Bash(npm view:*)",
       "Bash(npm audit:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:ssmulsan.cafe24.com)"
     ],
     "deny": [],
     "ask": []

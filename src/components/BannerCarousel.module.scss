@@ -4,26 +4,44 @@
 
 .carousel {
   position: relative;
-  min-height: 100vh;
+  min-height: 520px;
   overflow: hidden;
-  margin-top: $hero-margin-top;
+  margin: calc($hero-margin-top + 24px) auto 0 auto;
+  max-width: $container-max-width;
+  border-radius: 32px;
+  padding: 0 $container-padding;
+
+  @media (max-width: $breakpoint-md) {
+    min-height: 450px;
+    margin: calc($hero-margin-top + 16px) $container-padding-mobile 0 $container-padding-mobile;
+    border-radius: 28px;
+    padding: 0;
+  }
 
   @media (max-width: $breakpoint-sm) {
-    margin-top: 60px;
-    min-height: 50vh; // 모바일에서 더 넉넉한 높이
+    margin: calc(60px + 16px) $space-lg 0 $space-lg;
+    min-height: 420px;
+    border-radius: 20px;
+    padding: 0;
   }
 }
 
 .bannerContainer {
   position: relative;
-  min-height: 100vh;
+  min-height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.5s ease-in-out;
+  border-radius: inherit;
+  overflow: hidden;
+
+  @media (max-width: $breakpoint-md) {
+    min-height: 450px;
+  }
 
   @media (max-width: $breakpoint-sm) {
-    min-height: 50vh; // 모바일에서 더 넉넉한 높이
+    min-height: 420px;
   }
 }
 
@@ -34,6 +52,7 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  border-radius: inherit;
 }
 
 // heroBackgroundImage 스타일은 인라인으로 적용됨
@@ -44,8 +63,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 1;
+  border-radius: inherit;
 }
 
 .heroContainer {
@@ -256,62 +276,79 @@
   }
 }
 
-// 프로그레스 바 인디케이터
-.indicators {
+// 페이지네이션 인디케이터 (< 1/3 > 형식)
+.paginationIndicator {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
   display: flex;
-  background: rgba(255, 255, 255, 0.2);
-  overflow: hidden;
+  align-items: center;
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 8px 16px;
 
   @media (max-width: $breakpoint-sm) {
-    height: 5px; // 모바일에서 터치 영역 확대
+    bottom: 16px;
+    gap: 12px;
+    padding: 6px 12px;
   }
 }
 
-.progressSegment {
-  flex: 1;
-  height: 100%;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border: none;
-  padding: 0;
   background: transparent;
-
-  // 세그먼트 사이 구분선
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: rgba(0, 0, 0, 0.2);
-  }
+  color: $white;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  padding: 0;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
-.progressFill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background: linear-gradient(90deg, $primary 0%, $primary-dark 100%);
-  transition: none; // 실시간 진행률 업데이트를 위해 transition 제거
-  box-shadow: 0 0 10px rgba($primary, 0.5);
-}
+.pageNumber {
+  color: $white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  min-width: 50px;
+  text-align: center;
 
-// 활성 세그먼트 표시
-.progressSegmentActive {
-  background: rgba(255, 255, 255, 0.1);
+  @media (max-width: $breakpoint-sm) {
+    font-size: 13px;
+    min-width: 45px;
+  }
 }
 
 // 스크롤 인디케이터

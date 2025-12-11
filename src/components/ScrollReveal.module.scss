@@ -1,0 +1,79 @@
+@use "../styles/design-system" as *;
+
+.scrollReveal {
+  opacity: 0;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  // Fade Up Animation
+  &.fade-up {
+    transform: translateY(30px);
+
+    &.visible {
+      transform: translateY(0);
+    }
+  }
+
+  // Fade Down Animation
+  &.fade-down {
+    transform: translateY(-30px);
+
+    &.visible {
+      transform: translateY(0);
+    }
+  }
+
+  // Fade Left Animation
+  &.fade-left {
+    transform: translateX(-30px);
+
+    &.visible {
+      transform: translateX(0);
+    }
+  }
+
+  // Fade Right Animation
+  &.fade-right {
+    transform: translateX(30px);
+
+    &.visible {
+      transform: translateX(0);
+    }
+  }
+
+  // Zoom In Animation
+  &.zoom-in {
+    transform: scale(0.9);
+
+    &.visible {
+      transform: scale(1);
+    }
+  }
+
+  // Simple Fade In
+  &.fade-in {
+    // No transform, just opacity
+    &.visible {
+      opacity: 1;
+    }
+  }
+}
+
+// Mobile optimization - reduce motion
+@media (prefers-reduced-motion: reduce) {
+  .scrollReveal {
+    transition: opacity 0.3s ease-out;
+    transform: none !important;
+
+    &.fade-up,
+    &.fade-down,
+    &.fade-left,
+    &.fade-right,
+    &.zoom-in {
+      transform: none !important;
+    }
+  }
+}
